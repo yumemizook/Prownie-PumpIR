@@ -1,0 +1,82 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mondstadt Brownie</title>
+  <link rel="stylesheet" href="./styles/home.css" />
+  <link rel="stylesheet" href="./styles/scoretracker.css" />
+  <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<body>
+  <script>
+    $.get("navbar.html", function (data) {
+      $("#navbar").replaceWith(data);
+      $.get("footer.html", function (data) {
+        $(".footer").replaceWith(data);
+      });
+    });
+  </script>
+  <div id="navbar"></div>
+  <h1 class="title" style="margin-top: 80px; text-align: center">
+    Upload score
+  </h1>
+  <div class="scorecontainer">
+    <div class="datacontainer">
+      Enter the judgement details here
+      <div class="numbers">
+        <div class="songinfo" oninput="calcScore()">
+          <input type="text" placeholder="Song Name" id="sn" autocomplete="off" />
+          <input type="number" placeholder="Level" id="lvl" maxlength="2" autocomplete="off" />
+          <input type="number" placeholder="Players" id="players" maxlength="1" autocomplete="off" class="hide" />
+          <select name="gamemode" id="gamemode">
+            <option value="single">Single</option>
+            <option value="double">Double</option>
+            <option value="coop">Co-op</option>
+          </select>
+        </div>
+        <form action="#" oninput="calcScore()">
+        <input type="number" placeholder="Perfect" id="pf" autocomplete="off" />
+        <input type="number" placeholder="Great" id="gr" autocomplete="off" />
+        <input type="number" placeholder="Good" id="gd" autocomplete="off" />
+        <input type="number" placeholder="Bad" id="bd" autocomplete="off" />
+        <input type="number" placeholder="Miss" id="ms" autocomplete="off" />
+        <input type="number" placeholder="Max Combo" id="mc" autocomplete="off" />
+        <input type="number" placeholder="Notes" id="nt" autocomplete="off" />
+      </form>
+      </div>
+      <div class="fastslow" oninput="calcScore()">
+        <input type="checkbox" name="isSuperbOn" id="isSuperbOn">Rainbow Fast/Slow used?
+        <br>
+        <input type="checkbox" name="chartFail" id="chartFail">Chart failed?
+        <br>
+        <input type="number" placeholder="Fast" id="fa" />
+        <input type="number" placeholder="Slow" id="sl" />
+      </div>
+      <div class="buttons">
+        <input type="button" value="Save score" id="save">
+        <input type="button" value="Reset fields" id="reset">
+      </div>
+    </div>
+    <div class="gradeandsave" style="text-align: center;">
+      <div class="grade" style="font-size: 5em;"></div>
+      <div class="cleartype">--</div>
+      <div class="score">0</div>
+      <div class="pumpbility">Pumpbility:</div>
+    </div>
+  </div>
+  <div class="footer"></div>
+</body>
+<script type="module" src="./torture/scoretracking.js"></script>
+<script type="module" src="./torture/firebase.js"></script>
+<script type="module" src="./torture/navbar.js"></script>
+
+<script>
+  // Make calcScore globally accessible for inline event handlers
+  import('./torture/scoretracking.js').then(module => {
+    window.calcScore = module.calcScore || window.calcScore;
+  });
+</script>
+</html>

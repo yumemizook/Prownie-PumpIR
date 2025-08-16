@@ -1,0 +1,19 @@
+.numbers {
+  display: flex;
+  flex-direction: column;
+  width: 125px;
+  
+}
+.songinfo{
+    display: flex;
+    
+
+}
+#lvl{
+    width: 75px;
+}
+
+#players{
+  width: 75px;
+}
+

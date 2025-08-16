@@ -1,0 +1,76 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My profile</title>
+    <link rel="stylesheet" href="./styles/home.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script
+      src="https://kit.fontawesome.com/7263e3a28f.js"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      $.get("navbar.html", function (data) {
+        $("#navbar").replaceWith(data);
+      });
+      $.get("/footer.html", function (data) {
+        $(".footer").replaceWith(data);
+      });
+    </script>
+  </head>
+  <body>
+    <div id="navbar"></div>
+    <div class="profilecontainer">
+      <div class="profile">
+        <div class="avatar">
+          <img src="./img/default-avatar.png" alt="" id="playerpfp" />
+        </div>
+        <div class="info">
+          <div class="name"><h1 playername>Default User</h1></div>
+          <div class="name"><h2 id="pbility">PUMBILITY: 0</h2></div>
+          <div class="changeset">
+            <a href="./settings.html" class="profilesettings"
+              >Change Settings</a
+            >
+            <a href="" class="profilesettings">Manage Scores</a>
+          </div>
+        </div>
+      </div>
+      <div class="plays">
+        <div class="bp">
+          <h2>Best Plays</h2>
+          <table class="play-table">
+            <tr>
+              <th>Song</th>
+              <th>Difficulty</th>
+              <th>Score</th>
+              <th>Grade</th>
+              <th>Clear Type</th>
+              <th>Pumpbility</th>
+              <th>Time</th>
+            </tr>
+          </table>
+        </div>
+        <div class="rp">
+          <h2>Recent Plays</h2>
+          <table class="play-table">
+            <tr>
+              <th>Song</th>
+              <th>Difficulty</th>
+              <th>Score</th>
+              <th>Grade</th>
+              <th>Clear Type</th>
+              <th>Pumpbility</th>
+              <th>Time</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer"></div>
+    <script type="module" src="./torture/firebase.js"></script>
+    <script type="module" src="/torture/profileloader.js"></script>
+    <script type="module" src="./torture/navbar.js"></script>
+  </body>
+</html>

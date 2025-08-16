@@ -1,0 +1,30 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coming soon!</title>
+    <link rel="stylesheet" href="./styles/home.css" />
+    <link rel="stylesheet" href="./styles/navbar.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
+  </head>
+  <!-- <script src="./torture/navbar.js"></script> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <body>
+    <script>
+      $.get("navbar.html", function (data) {
+        $("#navbar").replaceWith(data);
+      });
+      $.get("footer.html", function (data) {
+        $(".footer").replaceWith(data);
+      });
+    </script>
+    <div id="navbar"></div>
+    <div class="comingsoon" style="margin-top: 80px; text-align: center;">
+        <h1>This feature will be available soon!</h1>
+        <h2>Please check back at a later time. Maybe a day, or a month, or never ;3</h2>
+        <h2>Either way, stay tuned!</h2>
+    </div>
+    <div class="footer"></div>
+</body>
+<script type="module" src="./torture/navbar.js"></script>
+</html>

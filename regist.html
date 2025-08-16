@@ -1,0 +1,60 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register for an account</title>
+    <link rel="stylesheet" href="styles/auth.css" />
+    <script
+      src="https://kit.fontawesome.com/7263e3a28f.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="inputtext">
+      <h1>Welcome!</h1>
+      <form action="#">
+        <div class="field">
+          <input type="text" id="username" placeholder="Username" />
+        </div>
+        <div class="field">
+          <input type="email" id="email" placeholder="Email" />
+        </div>
+        <div class="field">
+          <input type="password" id="pw" placeholder="Password" />
+        </div>
+        <div class="field">
+          <input
+            type="password"
+            id="cpw"
+            placeholder="Confirm Password"
+          />
+        </div>
+        <div id="strength">
+          <span style="color: rgba(255, 255, 255, 0.4)"
+            >Password must have at least one uppercase, lowercase charcter and a
+            number and at least 8 characters.
+          </span>
+        </div>
+        <div class="help">
+          <div class="remember-pw">
+            <input type="checkbox" name="confirm" id="confirm" required />
+            <label for="remember-pw"
+              >I consent to being disturbed via unsolicited mails.</label
+            >
+          </div>
+        </div>
+        <div class="field">
+          <button type="submit" id="enter">GO!</button>
+          <button id="googlelog"><i class="fa-brands fa-google"></i> Sign in with Google</button> 
+        </div>
+      </form>
+
+      <div class="extra">
+        <div class="unregist"><a href="login.html">Have an account?</a></div>
+        <div class="unregist"><a href="index.html">Back</a></div>
+      </div>
+    </div>
+    <script type="module" src="./torture/register.js"></script>
+    <script type="module" src="./torture/firebase.js"></script>
+  </body>
+</html>

@@ -1,0 +1,74 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prownie IR</title>
+    <link rel="stylesheet" href="./styles/home.css" />
+    <link rel="stylesheet" href="./styles/navbar.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
+  </head>
+  <!-- <script src="./torture/navbar.js"></script> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <body>
+    <script>
+      $.get("navbar.html", function (data) {
+        $("#navbar").replaceWith(data);
+      });
+      $.get("/footer.html", function (data) {
+        $(".footer").replaceWith(data);
+      });
+    </script>
+    <div id="navbar"></div>
+    <div class="intro"></div>
+    <div class="brownie">
+      Welcome! This website is created for the purpose of an IR site for home Pump players.
+      <br />
+      Currently, the site is still <strong>UNDER HEAVY DEVELOPMENT</strong>
+      <br />
+      <br />
+      Breakages are really bound to occur here and there, so please report any
+      issues as you see. <br />
+      Also, please be patient as there is only one person working on this
+      project.
+      <h6>god i really should stop procastinating due is in 2 weeks-</h6>
+      <br />
+      <br />
+    </div>
+
+    <div class="footer"></div>
+    <script type="module" src="./torture/firebase.js"></script>
+    <script type="module" src="./torture/navbar.js"></script>
+    <script type="module">
+      import { getFirestore, addDoc, collection, getDocs, setDoc, doc, getDoc, db, getAuth } from "./torture/firebase.js"; // last resort method to write users to firestore. fuck.
+      const auth = getAuth();
+
+      // Wait for auth state to be ready and user to be defined
+      auth.onAuthStateChanged(async (user) => {
+        if (!user) {
+          console.warn("No user is currently signed in.");
+          return;
+        }
+        // Force use uid
+        const userKey = user.uid;
+        const userDocRef = doc(db, "users", userKey);
+        let userDoc;
+        try {
+          userDoc = await getDoc(userDocRef);
+          if (!userDoc.exists()) {
+            await setDoc(userDocRef, {
+              username: user.displayName || "",
+              email: user.email || "",
+              profilePicture: user.photoURL || "/img/default-avatar.png",
+              timeCreated: new Date().getTime(),
+              pumpbility: 0,
+              role: "user",
+              lastNameChange: new Date().getTime(),
+            });
+          }
+        } catch (firestoreReadError) {
+          console.error("Failed to read from Firestore:", firestoreReadError);
+        }
+      });
+    </script>
+  </body>
+</html>

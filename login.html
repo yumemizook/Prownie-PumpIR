@@ -1,0 +1,38 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log in...</title>
+    <link rel="stylesheet" href="styles/auth.css" />
+        <script
+      src="https://kit.fontawesome.com/7263e3a28f.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="inputtext">
+      <h1>Welcome back!</h1>
+      <form action="#">
+        <div class="field">
+          <input type="text" id="email" required placeholder="Email" />
+        </div>
+        <div class="field">
+          <input type="password" id="pw" required placeholder="Password" />
+        </div>
+        <div class="field">
+          <button type="submit">Log in...</button>
+          <button id="googlelog"><i class="fa-brands fa-google"></i> Sign in with Google</button> 
+        </div>
+        <div class="help">
+          <a href="#">Forgot Password?</a>
+        </div>
+      </form>
+      <div class="extra">
+        <div class="unregist"><a href="regist.html">Unregistered?</a></div>
+      </div>
+      <div class="error"></div>
+    </div>
+    <script type="module" src="./torture/login.js"></script>
+      <script type="module" src="./torture/firebase.js"></script>
+  </body>
+</html>

@@ -1,0 +1,56 @@
+<!-- For some reason the nabvar doesnt work with GitHub pages. -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>How do I hide this webpage</title>
+    <link rel="stylesheet" href="/styles/navbar.css" />
+    <script
+      src="https://kit.fontawesome.com/7263e3a28f.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="items">
+        <div class="item">
+          <a href="/index.html">
+            <img src="/img/brownie.png" alt="" />
+          </a>
+        </div>
+        <div class="dropdown">
+          <a class="outline" href="/comingsoon.html">Main Songs</a>
+        </div>
+        <div class="dropdown">
+          <a class="outline" href="/scoretracker.html">Submit score</a>
+        </div>
+        <div class="dropdown">
+          <a class="outline" href="/comingsoon.html">Wiki / FAQ</a>
+        </div>
+
+        <div class="account">
+          <a id="search" href="/search.html">Search</a>
+          <a id="logger" href="/login.html">Login</a>
+          <div class="dropdown">
+            <a id="avatar" href="/profile.html">
+              <img src="" alt="" id="avatardisp" />
+            </a>
+
+            <div
+              class="dropdown-content"
+              style="margin-top: -7px; margin-left: -240px; text-align: center"
+            >
+              <div class="item" id="name"></div>
+              <div class="item" id="pb"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/torture/navbar.js"></script>
+    <script type="module" src="./torture/firebase.js"></script>
+  </body>
+</html>

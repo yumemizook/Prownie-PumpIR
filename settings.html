@@ -1,0 +1,83 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Change profile settings...</title>
+    <link rel="stylesheet" href="./styles/home.css" />
+  </head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+      $.get("navbar.html", function (data) {
+        $("#navbar").replaceWith(data);
+      });
+      $.get("/footer.html", function (data) {
+        $(".footer").replaceWith(data);
+      });
+  </script>
+  <body>
+    <div id="navbar"></div>
+    <div class="settings" style="margin-top: 80px">
+      <h1
+        style="
+          color: white;
+          font-size: 40px;
+          text-align: center;
+          margin-top: 50px;
+        "
+      >
+        Change profile settings
+      </h1>
+      More configuration options coming soon!
+      <div class="notlabel">
+
+        <div class="labelscontainer">
+          <div class="input">
+            Avatar link (paste to change):
+
+          <input id="file-upload-link" type="text"/>
+        
+          </div>
+          <div class="input">
+            <span style="margin-bottom: 10px" current-player-name>Current player name: </span>
+            New player name:
+            <input type="text" name="" id="namechange" autocomplete="off"/>
+          </div>
+          <div class="input">
+            <span style="margin-bottom: 10px" current-email>Current email: </span>
+            New email account:
+            <input type="text" name="" id="emailchange" autocomplete="off"> 
+            <input type="button" value="Save changes" save-modified-changes>
+          </div>
+          <div class="input">
+            <span style="margin-top: 20px; margin-bottom: 20px; font-weight:700; font-size:x-large">Change password</span>
+            Old password:
+            <input type="password" name="" id="oldpw" autocomplete="off">
+            <br>New Password:
+            <input type="password" name="" id="newpw" autocomplete="off">
+            <div id="strength" style="width: 250px;">
+              <span style="color: rgba(255,255,255,0.4); font-size: smaller;">Password must have at least one uppercase, lowercase charcter and a number and at least 8 characters. </span>
+            </div>
+            <br>Repeat New Password:
+            <input type="password" name="" id="confirmnewpw" autocomplete="off">
+            <input type="button" value="Change password" confirm-new-pw>
+          </div>
+        </div>
+
+        <div class="avatarpreview">
+          <!-- what do you know, im having a headache from this -->
+
+          <img
+            src="./img/default-avatar.png"
+            alt=""
+            id="image-display"
+            style="max-width: 150px; max-height: 150px"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="footer"></div>
+  </body>
+  <script type="module" src="./torture/config.js"></script>
+<script type="module" src="./torture/firebase.js"></script>
+<script type="module" src="./torture/navbar.js"></script>
+</html>
