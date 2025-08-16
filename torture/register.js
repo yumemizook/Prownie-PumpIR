@@ -111,8 +111,8 @@ passwordInput.addEventListener("input", function () {
 });
 
 async function validatePasswords() {
-  let form = document.querySelector("form");
-  form.addEventListener("submit", (e) => {
+  let registerButton = document.querySelector("#enter");
+  registerButton.addEventListener("click", (e) => {
     e.preventDefault();
   });
   var username = document.getElementById("username").value.trim();
@@ -155,12 +155,11 @@ async function validatePasswords() {
         password
       );
       user = userCredential.user;
-      onAuthStateChanged(auth, async (user) => {
-      await updateProfile(auth.currentUser, {
+      // Update the user's profile immediately after creation
+      await updateProfile(user, {
         displayName: username,
         photoURL: profilePicture,
       });
-    });
       console.log("User created:", user);
     } catch (error) {
       const errorCode = error.code;
@@ -169,7 +168,7 @@ async function validatePasswords() {
       switch (errorCode) {
         case "auth/email-already-in-use":
           alert(
-            "This email is already in use. If you want to use this emai, please reset your password."
+            "This email is already in use. If you want to use this email, please reset your password."
           );
           break;
         case "auth/invalid-email":

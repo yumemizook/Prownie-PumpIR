@@ -13,8 +13,8 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-let form = document.querySelector("form");
-form.addEventListener("submit", async (e) => {
+let loginButton = document.querySelector("#login");
+loginButton.addEventListener("click", async (e) => {
   e.preventDefault();
 
   // Get the latest values from the input fields
@@ -52,13 +52,13 @@ form.addEventListener("submit", async (e) => {
     }
   }
 });
+
 const googleButton = document.getElementById("googlelog");
 googleButton.addEventListener("click", async () => {
   const provider = new GoogleAuthProvider();
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
-    console.log("User signed in with Google:", user);
     window.location.href = "index.html";
   } catch (error) {
     const errorCode = error.code;

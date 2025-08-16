@@ -84,6 +84,7 @@
     const auth = getAuth();
     const sn = new URLSearchParams(window.location.search).get("sn");
     const lvl = new URLSearchParams(window.location.search).get("lvl");
+    const timestamp = Number(new URLSearchParams(window.location.search).get("t"));
     let playModeIndex = new URLSearchParams(window.location.search).get("lvl").charAt(0);
     const title = document.querySelector("[title]");
     const playModeDisplay = document.querySelector("[playMode]");
@@ -120,7 +121,8 @@
         });
 
         // Find the score for this song and level
-        const play = scores.find(score => score.sn === sn && score.lvl === lvl);
+        // Get timestamp from URL (for unique play selection)
+        const play = scores.find(score => score.sn === sn && score.lvl === lvl && Number(score.timestamp) === timestamp);
         if (play) {
             // Defensive: avoid division by zero or undefined
             const nt = Number(play.pf) + Number(play.gr) + Number(play.gd) + Number(play.bd) + Number(play.ms);

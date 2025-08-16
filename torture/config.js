@@ -66,7 +66,7 @@ async function saveData() {
     const timeCreated = docSnap.data().timeCreated;
     const nameChangeDue = lastNameChange + 60000 * 60 * 24 * 7;
     const formattedNameChangeDue = new Date(nameChangeDue).toLocaleDateString() + " " + new Date(nameChangeDue).toLocaleTimeString();
-    if (nameChangeDue > new Date().getTime() && lastNameChange !== timeCreated) { // if the user has changed their name in the last 7 days, they cannot change it again
+    if (nameChangeDue > new Date().getTime() && lastNameChange !== timeCreated && updatedName !== user.displayName) { // if the user has changed their name in the last 7 days, they cannot change it again
       alert(
         `You have to wait until ${formattedNameChangeDue} before changing your name again.`
       );
@@ -75,6 +75,10 @@ async function saveData() {
       await updateProfile(user, {
         displayName: updatedName,
         photoURL: photoURL,
+      });
+      await updateDoc(docRef, {
+        username: updatedName,
+        profilePicture: photoURL,
       });
       // Update email if changed
       if (updatedEmail !== user.email) {
