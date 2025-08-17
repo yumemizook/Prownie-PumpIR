@@ -1,8 +1,48 @@
 import { getAuth, onAuthStateChanged, signOut, getDoc, doc, db } from "./firebase.js";
 
+const pumpbilityColors = [
+  { pumpbility: 0, color: "rgb(183, 250, 255)" },
+  { pumpbility: 2000, color: "rgb(47, 154, 255)" },
+  { pumpbility: 4000, color: "rgb(0, 255, 115)" },
+  { pumpbility: 6000, color: "rgb(141, 255, 47)" },
+  { pumpbility: 8000, color: "rgb(255, 255, 125)" },
+  { pumpbility: 10000, color: "rgb(255, 12, 12)" },
+  { pumpbility: 12000, color: "rgb(153, 0, 255)" },
+  { pumpbility: 15000, color: "rgb(133, 102, 0)" },
+  { pumpbility: 20000, color: "rgb(179, 179, 179)" },
+  { pumpbility: 24000, color: "rgb(255, 238, 0)" },
+  { pumpbility: 26000, color: "rgb(143, 212, 203)" },
+  { pumpbility: 28000, color: "linear-gradient(90deg, rgba(255, 0, 0, 1) 0%, rgba(255, 154, 0, 1) 10%, rgba(208, 222, 33, 1) 20%, rgba(79, 220, 74, 1) 30%, rgba(63, 218, 216, 1) 40%, rgba(47, 201, 226, 1) 50%, rgba(28, 127, 238, 1) 60%, rgba(95, 21, 242, 1) 70%, rgba(186, 12, 248, 1) 80%, rgba(251, 7, 217, 1) 90%, rgba(255, 0, 0, 1) 100%)" },
+  { pumpbility: 30000, color: "linear-gradient(90deg,rgba(191, 0, 255, 1) 0%, rgba(255, 94, 0, 1) 33%, rgba(54, 255, 221, 1) 66%, rgba(130, 84, 255, 1) 100%)" },
+];
+
+function getPumpbilityColor(value) {
+  let lastColor = pumpbilityColors[0].color;
+  for (const entry of pumpbilityColors) {
+    if (value >= entry.pumpbility) {
+      lastColor = entry.color;
+    } else {
+      break;
+    }
+  }
+  return lastColor;
+}
+
+function setPumpbilityColor(value) {
+  const pumpbility = document.querySelector("#pb");
+  if (pumpbility) {
+    // If the color is a gradient, set background and text color
+    const color = getPumpbilityColor(value);
+    if (color.startsWith("linear-gradient")) {
+      pumpbility.style.color = color; //make it look like how it is displayed in chunithm
+    } else {
+      pumpbility.style.color = color;
+    }
+  }
+}
+
 // Helper to ensure avatar is loaded even if DOM is not ready when onAuthStateChanged fires
 function setAvatarImage(user) {
-  // Try to get the avatar element, retry if not found
   let tries = 0;
   function trySet() {
     const avatar = document.querySelector("#avatardisp");
@@ -94,16 +134,19 @@ onAuthStateChanged(auth, async (user) => {
     setAvatarFrameDisplay(true);
     setWelcomeText(user.displayName || "User");
     // Set pumpbility (fetch from Firestore)
+    let pb = 0;
     try {
       const userDocRef = doc(db, "users", user.uid);
       const userDocSnap = await getDoc(userDocRef);
-      const pb = userDocSnap.exists() && typeof userDocSnap.data().pumpbility === "number"
+      pb = userDocSnap.exists() && typeof userDocSnap.data().pumpbility === "number"
         ? userDocSnap.data().pumpbility
         : 0;
       setPumpbilityHTML(`<h3>Pumpbility: ${pb}</h3>`);
     } catch (e) {
       setPumpbilityHTML(`<h3>Pumpbility: nothing</h3>`);
+      pb = 0;
     }
+    setPumpbilityColor(pb);
     setLoginButtonHTML(`<a href="javascript:void(0)" id="signout">Sign Out</a>`, true, auth);
   } else {
     setAvatarFrameDisplay(false);
@@ -122,5 +165,6 @@ onAuthStateChanged(auth, async (user) => {
     setWelcomeText("");
     setPumpbilityHTML("");
     setLoginButtonHTML(`<a href="/login.html">Login</a>`);
+    setPumpbilityColor(0);
   }
 });
