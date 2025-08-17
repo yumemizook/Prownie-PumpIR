@@ -141,11 +141,10 @@
             document.querySelector(".bd").innerHTML = `Bad <br> <span style="color: #FF00BF; font-size: 2em;">${play.bd ?? ""}</span> (${bdPercentage.toFixed(2)}%)`;
             document.querySelector(".ms").innerHTML = `Miss <br> <span style="color: #FF0000; font-size: 2em;">${play.ms ?? ""}</span> (${msPercentage.toFixed(2)}%)`;
             document.querySelector(".combo").innerHTML = `Max Combo <br> <span style="color: #FFFFFF; font-size: 2em;">${play.mc ?? ""}</span> (${comboPercentage.toFixed(2)}%)`;
-            if (Number(play.gr) + Number(play.gd) + Number(play.bd) + Number(play.ms) === 0) {
-                document.querySelector(".maxminus").innerHTML = `(MAX -${minusMax})`;
-            }
-            else if (Number(play.fa) + Number(play.sl) === 0) {
+            if (Number(play.fa) + Number(play.sl) === 0) {
                 document.querySelector(".maxminus").innerHTML = `MAX!!!`;
+            } else if (Number(play.gr) + Number(play.gd) + Number(play.bd) + Number(play.ms) === 0) {
+                document.querySelector(".maxminus").innerHTML = `(MAX -${minusMax})`;
             }
             else {
                 document.querySelector(".maxminus").innerHTML = ``;

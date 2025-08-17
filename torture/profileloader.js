@@ -111,19 +111,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         // Helper to render table rows
                         function renderRows(plays) {
-                            return plays.map(play =>
-                                `<tr>
-                                    <td><a style="text-decoration: none; color: white;" href="/score.html?sn=${play.sn}&lvl=${play.lvl}&t=${play.timestamp} ">${play.sn || ""}</a></td>
+                            return plays.map(play => {
+                                // Clean up: remove trailing space in href param
+                                const href = `/score.html?sn=${encodeURIComponent(play.sn || "")}&lvl=${encodeURIComponent(play.lvl || "")}&t=${encodeURIComponent(play.timestamp || "")}`;
+                                // Score display logic
+                                let scoreCell = "";
+                                if (play.score === 1000000) {
+                                    const minusMax = Number(play.fa) + Number(play.sl);
+                                    if (minusMax === 0) {
+                                        scoreCell = `1000000 <span style='color:rgb(174, 255, 248); font-size: 0.6em;'>(MAX)</span>`;
+                                    } else if (
+                                        Number(play.gr) + Number(play.gd) + Number(play.bd) + Number(play.ms) === 0
+                                    ) {
+                                        scoreCell = `1000000 <span style='color:rgb(174, 255, 248); font-size: 0.6em;'>(MAX-${minusMax})</span>`;
+                                    } else {
+                                        scoreCell = `1000000`;
+                                    }
+                                } else {
+                                    scoreCell = play.score || "";
+                                }
+                                return `<tr>
+                                    <td><a style="text-decoration: none; color: white;" href="${href}">${play.sn || ""}</a></td>
                                     <td>${play.lvl || ""}</td>
-                                    <td>${play.score === 1000000 ? `1000000 <span style="color:rgb(174, 255, 248); font-size: 0.6em;">(MAX-${Number(play.fa) + Number(play.sl)})</span>` : play.score || ""}</td>
+                                    <td>${scoreCell}</td>
                                     <td>${play.grade || ""}</td>
                                     <td>${play.cleartype || ""}</td>
-                                    <td>${play.pumpbility || ""}</td>
+                                    <td>${play.pumpbility ?? ""}</td>
                                     <td>${play.timeString || ""}</td>
-                                </tr>`
-                            ).join("");
-
+                                </tr>`;
+                            }).join("");
                         }
+
                         // Render Best Plays
                         if (bestPlaysTable) {
                             bestPlaysTable.innerHTML = `
