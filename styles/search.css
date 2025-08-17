@@ -13,9 +13,9 @@ h1{
   width: 50%;
   padding: 10px;
   margin: 10px 0;
-  border: 1px solid #8a571d80;
+  border: 1px solid #1d858a80;
   border-radius: 4px;
-  background-color: #383030;
+  background-color: #303638;
   color: #fff;
 }
 
@@ -24,7 +24,7 @@ padding: .5rem;
 }
 
 .songcard{
-  background-color: #383030;
+  background-color: #303638;
   border-radius: 8px;
   padding: 20px;
   margin: 10px;

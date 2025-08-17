@@ -55,7 +55,7 @@ body::before {
 }
 
 .field input:is(:focus) {
-  background: #4f4842;
+  background: #424d4f;
   color: #fff;
   animation: glow 3s infinite ease;
 }
@@ -82,7 +82,7 @@ form button {
   width: 100%;
   padding: 12px 0;
   font-size: 1rem;
-  background: #332b20;
+  background: #202d33;
   color: #fff;
   font-weight: 500;
   border-radius: 4px;
@@ -94,7 +94,7 @@ form button {
 }
 
 form button:hover {
-  background: #6a5940;
+  background: #405d6a;
   transition: 0.5s ease;
 }
 

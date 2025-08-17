@@ -1,45 +1,53 @@
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Search song database...</title>
     <link rel="stylesheet" href="./styles/home.css" />
     <link rel="stylesheet" href="./styles/navbar.css" />
     <link rel="stylesheet" href="./styles/search.css" />
-
-</head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
-<body>
-<script>
-$.get("navbar.html", function(data){
-$("#nav").replaceWith(data);
-});
-$.get("footer.html", function (data) {
+  </head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <body>
+    <script>
+      $.get("navbar.html", function (data) {
+        $("#nav").replaceWith(data);
+      });
+      $.get("footer.html", function (data) {
         $(".footer").replaceWith(data);
       });
-</script>
-<div id="nav"></div>
- <div class="search-wrp">
-    <div class="inputtext">
-      <h1>Search for a song...</h1>
-      <form action="#">
-        <div class="field">
-          <input type="text" id="search" data-search required placeholder="Song name..." />
-        </div>
-        <div class="songcards" data-songcards-container></div>
-        <template data-songcard-template>  
-          <div class="songcard" >
-            <!-- <div class="name" data-title></div> -->
-           <a href="" class="name" data-title></a>
-           <div class="info">
-            <div class="artist" data-artist></div>
-            <div class="series" data-series></div>
+    </script>
+    <div id="nav"></div>
+    <div class="search-wrp">
+      <div class="inputtext">
+        <h1>Search players...</h1>
+        <form action="#">
+          <div class="field">
+            <span class="search-type-text"></span>
+            <input
+              type="text"
+              id="search"
+              data-search
+              autocomplete="off"
+              placeholder=""
+            />
           </div>
-          </div>
-        </template>
-</div>
-<div class="footer"></div>
-<script type="module" src="./torture/search.js"></script>
-  <script type="module" src="./torture/firebase.js"></script>
-</body>
- 
+          <div class="songcards" data-container></div>
+          <template data-template>
+            <div class="songcard">
+              <img src="" alt="" data-pfp style="width: 60px; height: 60px;">
+              <a href="" class="name" data-title></a>
+              <div class="info">
+                <div class="artist" data-artist></div>
+                <div class="series" data-series></div>
+              </div>
+            </div>
+          </template>
+        </form>
+      </div>
+    </div>
+    <div class="footer"></div>
+    <script type="module" src="./torture/search.js"></script>
+    <script type="module" src="./torture/firebase.js"></script>
+  </body>
+</html>
