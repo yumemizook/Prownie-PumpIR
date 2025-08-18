@@ -149,7 +149,7 @@ timecreated.addEventListener("mouseout", () => {
           !bestPlaysMap.has(key) ||
           (play.pumpbility || 0) > (bestPlaysMap.get(key).pumpbility || 0) ||
           (
-            play.score === 1000000 && //if the player got a PG, prefer the play closest to the max
+            play.score === 1000000 && play.isSuperbOn === true &&//if the player got a PG, prefer the play closest to the max and has a rainbow fast/slow
             (Number(play.fa) + Number(play.sl) < (Number(bestPlaysMap.get(key).fa) + Number(bestPlaysMap.get(key).sl) || 0))
           )
         ) {

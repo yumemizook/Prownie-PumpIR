@@ -46,6 +46,7 @@
                 <br>
                 <div class="score" style="font-size: 2.5em;"></div>
                 <div class="maxminus"></div>
+                <div class="exscore" style="font-size: 0.75em;"></div>
                 <br>
                 <div class="pumpbility"></div>
             </div>
@@ -148,6 +149,10 @@
             const comboPercentage = nt > 0 ? (play.mc / nt * 100) : 0;
             const minusMax = Number(play.fa) + Number(play.sl); //shows how far the player is from all rainbow Perfects
             const minusAcc = Number(play.fa) + Number(play.sl) - Number(play.gr) - Number(play.gd) - Number(play.bd); //shows how far the player is from all rainbow Perfects, ignoring the non-Perfects
+            const minusAcc2 = Number(play.fa) + Number(play.sl) - Number(play.gd) - Number(play.bd); //shows how far the player is from a Perfect Game (if Superb is off, otherwise it's the same as minusAcc)
+            const exscore = Number(play.pf) + Number(play.gr) * 0.6 + Number(play.gd) * 0.2 + Number(play.bd) * 0.1;
+            const exscorePercentage = nt > 0 ? (exscore / nt * 100) : 0;
+            const exscorehue = ((exscorePercentage) *220) / 100;
             // Fill in the judgements
             document.querySelector("[time]").innerHTML = `Uploaded at <br> ${play.timeString ?? ""}`;
             document.querySelector(".pf").innerHTML = `Perfect <br> <span style="color: #00E3FF; font-size: 2em;">${parseInt(play.pf) ?? ""}</span> (${pfPercentage.toFixed(2)}%)`;
@@ -158,10 +163,15 @@
             document.querySelector(".combo").innerHTML = `Max Combo <br> <span style="color: #FFFFFF; font-size: 2em;">${parseInt(play.mc) ?? ""}</span> (${comboPercentage.toFixed(2)}%)`;
             document.querySelector(".fast").innerHTML = `Fast <br> <span style="color: #00E3FF; font-size: 1.25em;">${parseInt(play.fa) ?? ""}</span>`;
             document.querySelector(".slow").innerHTML = `Slow <br> <span style="color: #FF0000; font-size: 1.25em;">${parseInt(play.sl) ?? ""}</span>`;
-            if (Number(play.fa) + Number(play.sl) === 0) {
+            document.querySelector(".exscore").innerHTML = `Ex Score <br> <span style="color: #FFFF55;">${exscore.toFixed(2)}</span> <span style="color: hsl(${exscorehue}, 100%, 50%);">(${exscorePercentage.toFixed(4)}%)</span>`;
+            if (Number(play.fa) + Number(play.sl) === 0 && play.isSuperbOn === true) {
                 document.querySelector(".maxminus").innerHTML = `MAX!!!`;
-            } else if (Number(play.gr) + Number(play.gd) + Number(play.bd) + Number(play.ms) === 0) {
+            } 
+            else if (Number(play.gr) + Number(play.gd) + Number(play.bd) + Number(play.ms) === 0 && play.isSuperbOn === true) {
                 document.querySelector(".maxminus").innerHTML = `(MAX -${minusMax})`;
+            }
+            else if (play.isSuperbOn === false) {
+                document.querySelector(".maxminus").innerHTML = ` (PG -${minusAcc2})`;
             }
             else {
                 document.querySelector(".maxminus").innerHTML = ` (ACC -${minusAcc})`;

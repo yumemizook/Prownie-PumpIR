@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         !existing ||
                         (play.pumpbility || 0) > (existing.pumpbility || 0) ||
                         (
-                            play.score === 1000000 &&
+                            play.score === 1000000 && play.isSuperbOn === true &&
                             (Number(play.fa) + Number(play.sl) < (Number(existing?.fa) + Number(existing?.sl) || 0))
                         )
                     ) {
