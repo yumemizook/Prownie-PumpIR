@@ -16,8 +16,8 @@ const pumpbilityColors = [
   { pumpbility: 20000, color: "rgb(179, 179, 179)" },
   { pumpbility: 24000, color: "rgb(255, 238, 0)" },
   { pumpbility: 26000, color: "rgb(143, 212, 203)" },
-  { pumpbility: 28000, color: "linear-gradient(90deg, rgb(255, 87, 87) 0%, rgb(255, 190, 92) 20%, rgba(208, 222, 33, 1) 40%, rgb(171, 255, 138) 60%, rgb(100, 255, 162) 80%, rgba(47, 201, 226, 1) 0%" },
-  { pumpbility: 30000, color: "linear-gradient(90deg,rgba(251, 255, 8, 1) 0%, rgba(255, 3, 255, 1) 25%, rgba(0, 38, 255, 1) 50%, rgba(0, 242, 255, 1) 75%, rgba(0, 255, 170, 1) 100%)" },
+  { pumpbility: 30000, color: "linear-gradient(90deg, rgb(255, 87, 87) 0%, rgb(255, 190, 92) 20%, rgba(208, 222, 33, 1) 40%, rgb(171, 255, 138) 60%, rgb(100, 255, 162) 80%, rgba(47, 201, 226, 1) 0%" },
+  { pumpbility: 35000, color: "linear-gradient(90deg,rgba(251, 255, 8, 1) 0%, rgba(255, 3, 255, 1) 25%, rgba(0, 38, 255, 1) 50%, rgba(0, 242, 255, 1) 75%, rgba(0, 255, 170, 1) 100%)" },
 ];
 
 function getPumpbilityColor(value) {
@@ -186,23 +186,36 @@ timecreated.addEventListener("mouseout", () => {
 
     // Helper to render table rows
     function renderRows(plays) {
-      plays.forEach(play => {
+      return plays.map(play => {
+        let scoreCell = play.score || "";
+        // If chart failed, clear cleartype and set pumpbility to 0
         if (play.chartFail === true || play.chartFail === "true") {
           play.cleartype = "";
           play.pumpbility = 0;
         }
-      });
-      return plays.map(play =>
-        `<tr>
-            <td><a style="text-decoration: none; color: white;" href="/score.html?user=${foundUser.username}&sn=${play.sn}&lvl=${play.lvl}&t=${play.timestamp} ">${play.sn || ""}</a></td>
+        // Special formatting for perfect scores
+        if (play.score === 1000000) {
+          const minusMax = Number(play.fa) + Number(play.sl);
+          if (minusMax === 0) {
+            scoreCell = `1000000 <span style='color:rgb(174, 255, 248); font-size: 0.6em;'>(MAX)</span>`;
+          } else if (
+            Number(play.gr) + Number(play.gd) + Number(play.bd) + Number(play.ms) === 0
+          ) {
+            scoreCell = `1000000 <span style='color:rgb(174, 255, 248); font-size: 0.6em;'>(MAX-${minusMax})</span>`;
+          } else {
+            scoreCell = `1000000`;
+          }
+        }
+        return `<tr>
+            <td><a style="text-decoration: none; color: white;" href="/score.html?user=${foundUser.username}&sn=${encodeURIComponent(play.sn || "")}&lvl=${encodeURIComponent(play.lvl || "")}&t=${encodeURIComponent(play.timestamp || "")}">${play.sn || ""}</a></td>
             <td>${play.lvl || ""}</td>
-            <td>${play.score === 1000000 ? `1000000 <span style="color:rgb(174, 255, 248); font-size: 0.6em;">(MAX-${Number(play.fa) + Number(play.sl)})</span>` : play.score || ""}</td>
+            <td>${scoreCell}</td>
             <td>${play.grade || ""}</td>
             <td>${play.cleartype || ""}</td>
-            <td>${play.pumpbility || ""}</td>
+            <td>${play.pumpbility ?? ""}</td>
             <td>${play.timeString || ""}</td>
-        </tr>`
-      ).join("");
+        </tr>`;
+      }).join("");
     }
     // Render Best Plays
     if (bestPlaysTable) {

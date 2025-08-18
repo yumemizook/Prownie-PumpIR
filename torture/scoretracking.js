@@ -1,8 +1,8 @@
-import { addDoc, collection, getDocs, setDoc, doc, getDoc, db, getAuth, updateDoc } from "./firebase.js";
+import { addDoc, collection, doc, db, getAuth } from "./firebase.js";
+
 const save = document.getElementById("save");
 const reset = document.getElementById("reset");
 const gamemode = document.getElementById("gamemode");
-
 
 gamemode.addEventListener("change", () => {
   const playersInput = document.getElementById("players");
@@ -18,6 +18,7 @@ gamemode.addEventListener("change", () => {
     pumpbilityDisplay.style.display = "block";
   }
 });
+
 reset.addEventListener("click", () => {
   window.location.reload();
 });
@@ -168,12 +169,11 @@ function getClearTypeFromJudgement(p, gr, gd, bd, ms) {
 }
 
 function getPumpbilityFromLevel(playLevel, score) {
-  const level = Number(playLevel.value);
-  if (level >= 33) // capping it to 32 for now, because that is the hardest charts ever made
-  // hopefully they dont release 1948 D40 or something i dont want someone to be hospitalized from attempting it
-  {
-    level = 32
-  } const pbObj = pbConstants.find(pb => pb.level === level);
+  let level = Number(playLevel.value);
+  if (level >= 33) {
+    level = 32;
+  }
+  const pbObj = pbConstants.find(pb => pb.level === level);
   const pb = pbObj ? pbObj.pb : 0;
 
   // Find the highest score threshold less than or equal to the actual score
@@ -312,7 +312,7 @@ async function uploadScore() {
     isSuperbOn: isSuperbOn,
     pumpbility: pumpbility,
     timestamp: Date.now(),
-    timeString: new Date().toLocaleString('en-GB', { hour12: false }), // temporary way to display time in human readable format
+    timeString: new Date().toLocaleString('en-GB', { hour12: false }),
   };
 
   try {
@@ -322,7 +322,7 @@ async function uploadScore() {
       return;
     }
     const userKey = user.uid;
-    const userDocRef = doc(db, "users", userKey);
+
 
     // Add the score to the user's scores subcollection
     await addDoc(collection(db, "users", userKey, "scores"), scoreObj);
