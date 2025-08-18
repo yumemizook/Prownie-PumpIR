@@ -18,9 +18,9 @@ const pumpbilityColors = [
     { pumpbility: 20000, color: "rgb(179, 179, 179)" },
     { pumpbility: 24000, color: "rgb(255, 238, 0)" },
     { pumpbility: 26000, color: "rgb(143, 212, 203)" },
-    { pumpbility: 28000, color: "linear-gradient(90deg, rgba(255, 0, 0, 1) 0%, rgba(255, 154, 0, 1) 10%, rgba(208, 222, 33, 1) 20%, rgba(79, 220, 74, 1) 30%, rgba(63, 218, 216, 1) 40%, rgba(47, 201, 226, 1) 50%, rgba(28, 127, 238, 1) 60%, rgba(95, 21, 242, 1) 70%, rgba(186, 12, 248, 1) 80%, rgba(251, 7, 217, 1) 90%, rgba(255, 0, 0, 1) 100%)" },
-    { pumpbility: 30000, color: "linear-gradient(90deg,rgba(191, 0, 255, 1) 0%, rgba(255, 94, 0, 1) 33%, rgba(54, 255, 221, 1) 66%, rgba(130, 84, 255, 1) 100%)" },
-];
+    { pumpbility: 28000, color: "linear-gradient(90deg, rgb(255, 87, 87) 0%, rgb(255, 190, 92) 20%, rgba(208, 222, 33, 1) 40%, rgb(171, 255, 138) 60%, rgb(100, 255, 162) 80%, rgba(47, 201, 226, 1) 0%" },
+    { pumpbility: 30000, color: "linear-gradient(90deg,rgba(251, 255, 8, 1) 0%, rgba(255, 3, 255, 1) 25%, rgba(0, 38, 255, 1) 50%, rgba(0, 242, 255, 1) 75%, rgba(0, 255, 170, 1) 100%)" },
+  ];
 
 function getPumpbilityColor(value) {
     // Find the highest pumpbility threshold not exceeding value
@@ -152,7 +152,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!["sysop", "admin", "moderator"].includes(userData.role)) {
                     const color = getPumpbilityColor(pumpbilityTotal);
                     if (color.startsWith("linear-gradient")) {
-                        pumpbility.style.color = color;
+                        pumpbility.style.background = color;
+                        pumpbility.style.webkitTextFillColor = "transparent";
+                        pumpbility.style.color = "transparent";
+                        pumpbility.style.webkitBackgroundClip = "text";
+                        pumpbility.style.backgroundClip = "text";
                     } else {
                         pumpbility.style.color = color;
                     }
@@ -166,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     pumpbility.style.webkitTextFillColor = "";
                 }
 
-                await updateDoc(userDocRef, { pumpbility: pumpbilityTotal });
+                await updateDoc(userDocRef, { pumpbility: pumpbilityTotal});
 
                 // Recent Plays: top 30 by timestamp (descending)
                 const recentPlays = scores
@@ -181,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Helper to render table rows
                 function renderRows(plays) {
                     return plays.map(play => {
-                        const href = `/score.html?sn=${encodeURIComponent(play.sn || "")}&lvl=${encodeURIComponent(play.lvl || "")}&t=${encodeURIComponent(play.timestamp || "")}`;
+                        const href = `/score.html?user=${user.displayName}&sn=${encodeURIComponent(play.sn || "")}&lvl=${encodeURIComponent(play.lvl || "")}&t=${encodeURIComponent(play.timestamp || "")}`;
                         let scoreCell = "";
                         if (play.chartFail === true || play.chartFail === "true") {
                             play.cleartype = "";

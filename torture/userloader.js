@@ -16,8 +16,8 @@ const pumpbilityColors = [
   { pumpbility: 20000, color: "rgb(179, 179, 179)" },
   { pumpbility: 24000, color: "rgb(255, 238, 0)" },
   { pumpbility: 26000, color: "rgb(143, 212, 203)" },
-  { pumpbility: 28000, color: "linear-gradient(90deg, rgba(255, 0, 0, 1) 0%, rgba(255, 154, 0, 1) 10%, rgba(208, 222, 33, 1) 20%, rgba(79, 220, 74, 1) 30%, rgba(63, 218, 216, 1) 40%, rgba(47, 201, 226, 1) 50%, rgba(28, 127, 238, 1) 60%, rgba(95, 21, 242, 1) 70%, rgba(186, 12, 248, 1) 80%, rgba(251, 7, 217, 1) 90%, rgba(255, 0, 0, 1) 100%)" },
-  { pumpbility: 30000, color: "linear-gradient(90deg,rgba(191, 0, 255, 1) 0%, rgba(255, 94, 0, 1) 33%, rgba(54, 255, 221, 1) 66%, rgba(130, 84, 255, 1) 100%)" },
+  { pumpbility: 28000, color: "linear-gradient(90deg, rgb(255, 87, 87) 0%, rgb(255, 190, 92) 20%, rgba(208, 222, 33, 1) 40%, rgb(171, 255, 138) 60%, rgb(100, 255, 162) 80%, rgba(47, 201, 226, 1) 0%" },
+  { pumpbility: 30000, color: "linear-gradient(90deg,rgba(251, 255, 8, 1) 0%, rgba(255, 3, 255, 1) 25%, rgba(0, 38, 255, 1) 50%, rgba(0, 242, 255, 1) 75%, rgba(0, 255, 170, 1) 100%)" },
 ];
 
 function getPumpbilityColor(value) {
@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const playerNameParam = new URLSearchParams(window.location.search).get(
     "name"
   );
+  document.querySelector("title").innerHTML = `${playerNameParam}'s Profile`;
 
   // Query the users collection for a user with the given username
   const usersRef = collection(db, "users");
@@ -164,7 +165,11 @@ timecreated.addEventListener("mouseout", () => {
 
     const color = getPumpbilityColor(pumpbilityTotal);
     if (color.startsWith("linear-gradient")) {
-      pumpbility.style.color = color;
+      pumpbility.style.color = "transparent";
+      pumpbility.style.background = color;
+      pumpbility.style.webkitTextFillColor = "transparent";
+      pumpbility.style.webkitBackgroundClip = "text";
+      pumpbility.style.backgroundClip = "text";
     } else {
       pumpbility.style.color = color;
     }
@@ -181,9 +186,15 @@ timecreated.addEventListener("mouseout", () => {
 
     // Helper to render table rows
     function renderRows(plays) {
+      plays.forEach(play => {
+        if (play.chartFail === true || play.chartFail === "true") {
+          play.cleartype = "";
+          play.pumpbility = 0;
+        }
+      });
       return plays.map(play =>
         `<tr>
-            <td><a style="text-decoration: none; color: white;" href="/score.html?sn=${play.sn}&lvl=${play.lvl}&t=${play.timestamp} ">${play.sn || ""}</a></td>
+            <td><a style="text-decoration: none; color: white;" href="/score.html?user=${foundUser.username}&sn=${play.sn}&lvl=${play.lvl}&t=${play.timestamp} ">${play.sn || ""}</a></td>
             <td>${play.lvl || ""}</td>
             <td>${play.score === 1000000 ? `1000000 <span style="color:rgb(174, 255, 248); font-size: 0.6em;">(MAX-${Number(play.fa) + Number(play.sl)})</span>` : play.score || ""}</td>
             <td>${play.grade || ""}</td>

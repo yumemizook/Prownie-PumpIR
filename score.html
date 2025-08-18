@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coming soon!</title>
+    <title>Score</title>
     <link rel="stylesheet" href="./styles/home.css" />
     <link rel="stylesheet" href="./styles/navbar.css" />
     <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
@@ -25,6 +25,7 @@
             <h1 title></h1>
             <h4 playMode></h4>
             <h5 time></h5>
+            <h6 user></h6>
         </div>
         <div class="stats" style="display: flex; justify-content: space-between; align-items: center; margin: 20px;">
             <div class="judgements">
@@ -34,6 +35,10 @@
                 <div class="bd"></div>
                 <div class="ms"></div>
                 <div class="combo"></div>
+                <div class="fastslow" style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+                    <div class="fast"></div>
+                    <div class="slow"></div>
+                </div>
             </div>
             <div class="score" style="text-align: center;">
                 <div class="grade" style="font-size: 6em;"></div>
@@ -82,6 +87,7 @@
 
     import { getAuth, onAuthStateChanged, getDoc, doc, db, getDocs, collection } from "./torture/firebase.js";
     const auth = getAuth();
+    const user = new URLSearchParams(window.location.search).get("user");
     const sn = new URLSearchParams(window.location.search).get("sn");
     const lvl = new URLSearchParams(window.location.search).get("lvl");
     const timestamp = Number(new URLSearchParams(window.location.search).get("t"));
@@ -89,6 +95,7 @@
     const title = document.querySelector("[title]");
     const playModeDisplay = document.querySelector("[playMode]");
     const timeDisplay = document.querySelector("[time]");
+    const time = new Date(timestamp);
     let playMode = playModeIndex.toUpperCase();
     const lvlnumerical = new URLSearchParams(window.location.search).get("lvl").slice(1);
     switch (playMode) {
@@ -104,8 +111,15 @@
             playMode = "Co-op";
             playModeDisplay.style.color = "#fcff52";
             break;
+        case "H":
+            playMode = "Half Double";
+            playModeDisplay.style.color = "#70fdff";
+            break;
     }
+    const userDisplay = document.querySelector("[user]");
+    userDisplay.innerHTML = `Played by ${user}`;
 
+    document.querySelector("title").innerHTML = `${sn} (${playModeIndex}${lvlnumerical}) - Played by ${user} at ${time.toLocaleString()}`;
 
     onAuthStateChanged(auth, async (user) => {
         title.innerHTML = `${sn}`;
@@ -133,29 +147,32 @@
             const msPercentage = nt > 0 ? (play.ms / nt * 100) : 0;
             const comboPercentage = nt > 0 ? (play.mc / nt * 100) : 0;
             const minusMax = Number(play.fa) + Number(play.sl); //shows how far the player is from all rainbow Perfects
+            const minusAcc = Number(play.fa) + Number(play.sl) - Number(play.gr) - Number(play.gd) - Number(play.bd); //shows how far the player is from all rainbow Perfects, ignoring the non-Perfects
             // Fill in the judgements
             document.querySelector("[time]").innerHTML = `Uploaded at <br> ${play.timeString ?? ""}`;
-            document.querySelector(".pf").innerHTML = `Perfect <br> <span style="color: #00E3FF; font-size: 2em;">${play.pf ?? ""}</span> (${pfPercentage.toFixed(2)}%)`;
-            document.querySelector(".gr").innerHTML = `Great <br> <span style="color: #00FF2F; font-size: 2em;">${play.gr ?? ""}</span> (${grPercentage.toFixed(2)}%)`;
-            document.querySelector(".gd").innerHTML = `Good <br> <span style="color: #FFEE00; font-size: 2em;">${play.gd ?? ""}</span> (${gdPercentage.toFixed(2)}%)`;
-            document.querySelector(".bd").innerHTML = `Bad <br> <span style="color: #FF00BF; font-size: 2em;">${play.bd ?? ""}</span> (${bdPercentage.toFixed(2)}%)`;
-            document.querySelector(".ms").innerHTML = `Miss <br> <span style="color: #FF0000; font-size: 2em;">${play.ms ?? ""}</span> (${msPercentage.toFixed(2)}%)`;
-            document.querySelector(".combo").innerHTML = `Max Combo <br> <span style="color: #FFFFFF; font-size: 2em;">${play.mc ?? ""}</span> (${comboPercentage.toFixed(2)}%)`;
+            document.querySelector(".pf").innerHTML = `Perfect <br> <span style="color: #00E3FF; font-size: 2em;">${parseInt(play.pf) ?? ""}</span> (${pfPercentage.toFixed(2)}%)`;
+            document.querySelector(".gr").innerHTML = `Great <br> <span style="color: #00FF2F; font-size: 2em;">${parseInt(play.gr) ?? ""}</span> (${grPercentage.toFixed(2)}%)`;
+            document.querySelector(".gd").innerHTML = `Good <br> <span style="color: #FFEE00; font-size: 2em;">${parseInt(play.gd) ?? ""}</span> (${gdPercentage.toFixed(2)}%)`;
+            document.querySelector(".bd").innerHTML = `Bad <br> <span style="color: #FF00BF; font-size: 2em;">${parseInt(play.bd) ?? ""}</span> (${bdPercentage.toFixed(2)}%)`;
+            document.querySelector(".ms").innerHTML = `Miss <br> <span style="color: #FF0000; font-size: 2em;">${parseInt(play.ms) ?? ""}</span> (${msPercentage.toFixed(2)}%)`;
+            document.querySelector(".combo").innerHTML = `Max Combo <br> <span style="color: #FFFFFF; font-size: 2em;">${parseInt(play.mc) ?? ""}</span> (${comboPercentage.toFixed(2)}%)`;
+            document.querySelector(".fast").innerHTML = `Fast <br> <span style="color: #00E3FF; font-size: 1.25em;">${parseInt(play.fa) ?? ""}</span>`;
+            document.querySelector(".slow").innerHTML = `Slow <br> <span style="color: #FF0000; font-size: 1.25em;">${parseInt(play.sl) ?? ""}</span>`;
             if (Number(play.fa) + Number(play.sl) === 0) {
                 document.querySelector(".maxminus").innerHTML = `MAX!!!`;
             } else if (Number(play.gr) + Number(play.gd) + Number(play.bd) + Number(play.ms) === 0) {
                 document.querySelector(".maxminus").innerHTML = `(MAX -${minusMax})`;
             }
             else {
-                document.querySelector(".maxminus").innerHTML = ``;
+                document.querySelector(".maxminus").innerHTML = ` (ACC -${minusAcc})`;
             }
             // Fill in the score, grade, cleartype, pumpbility
             document.querySelector(".score .score").textContent = `${play.score ?? ""}`;
             document.querySelector(".score .grade").textContent = `${play.grade ?? ""}`;
-            document.querySelector(".score .cleartype").textContent = `${play.cleartype ?? ""}`;
+            document.querySelector(".score .cleartype").textContent = (play.chartFail === true || play.chartFail === "true") ? "" : (play.cleartype ?? "");
             document.querySelector(".score .pumpbility").textContent = `Pumpbility: ${play.pumpbility ?? ""}`;
-            document.querySelector(".score .grade").style.color = colorTable.find(color => color.grade === play.grade)?.color || "#000";
-            document.querySelector(".score .cleartype").style.color = clearTypeTable.find(obj => obj.clearType === play.cleartype)?.color || "#000";
+            document.querySelector(".score .grade").style.color = (play.chartFail === true || play.chartFail === "true") ? "#888888" : (colorTable.find(color => color.grade === play.grade)?.color || "#000");
+            document.querySelector(".score .cleartype").style.color = (play.chartFail === true || play.chartFail === "true") ? "#888888" : (clearTypeTable.find(obj => obj.clearType === play.cleartype)?.color || "#000");
         } else {
             // If no play found, clear the fields
             document.querySelector(".scorecontainer2").innerHTML = "Failed to fetch score.";
