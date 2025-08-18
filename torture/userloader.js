@@ -160,6 +160,16 @@ timecreated.addEventListener("mouseout", () => {
       .sort((a, b) => (b.pumpbility || 0) - (a.pumpbility || 0))
       .slice(0, 30);
 
+    if (bestPlays.length === 0) {
+      const bestPlaysTable = document.querySelector(".bp .play-table");
+      if (bestPlaysTable) {
+        bestPlaysTable.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align:center; color:#aaa;">No best plays</td>
+          </tr>
+        `;
+      }
+    }
     const pumpbilityTotal = bestPlays.reduce((acc, play) => acc + (play.pumpbility || 0), 0);
     pumpbility.innerHTML = `PUMBILITY: ${pumpbilityTotal}`;
 
@@ -176,10 +186,20 @@ timecreated.addEventListener("mouseout", () => {
 
     // Recent Plays: top 30 by timestamp (descending)
     const recentPlays = scores
-      .filter(play => typeof play.timestamp === "number")
+      .filter(play => typeof play.timestamp === "number" && play.timestamp > Date.now() - 1000 * 60 * 60 * 24 * 7) //only show plays from the last 7 days
       .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
       .slice(0, 30);
 
+    if (recentPlays.length === 0 || recentPlays[0].timestamp < Date.now() - 1000 * 60 * 60 * 24 * 30) {
+      const recentPlaysTable = document.querySelector(".rp .play-table");
+      if (recentPlaysTable) {
+        recentPlaysTable.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align:center; color:#aaa;">No recent plays</td>
+          </tr>
+        `;
+      }
+    }
     // Find the tables
     const bestPlaysTable = document.querySelector(".bp .play-table");
     const recentPlaysTable = document.querySelector(".rp .play-table");
