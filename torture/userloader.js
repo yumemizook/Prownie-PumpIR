@@ -61,7 +61,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       break;
     }
   }
-
   if (!foundUser) {
     document.querySelector(".profilecontainer").innerHTML =
       "User not found! <br> You might have mistyped something, or the user might not exist. <h4><a href='./index.html'>Go back to the home page?</a></h4>";
@@ -87,6 +86,25 @@ timecreated.addEventListener("mouseover", () => {
 timecreated.addEventListener("mouseout", () => {
     timecreated.innerHTML = `Joined ${timeCreatedFormatted}`;
 });
+if (foundUser.role === "banned") {
+  // Set the role text and hide profile details for banned users
+  role.innerHTML = "<span style='color:rgb(121, 121, 121); font-size: 1.5em;'>Banned.</span> <br> This account has been banned from the site.";
+  document.querySelector(".plays").innerHTML = "";
+  document.querySelector(".plays").style.alignItems = "center";
+  document.querySelector(".plays").style.display = "flex";
+  document.querySelector(".plays").style.flexDirection = "column";
+  document.querySelector(".plays").style.justifyContent = "center";
+  document.querySelector(".plays").style.marginTop = "100px";
+  document.querySelector(".plays").style.fontSize = "1.5em";
+  document.querySelector(".plays").style.color = "rgb(121, 121, 121)";
+  document.querySelector("#add-rival").style.display = "none";
+  document.querySelector("#report-user").style.display = "none";
+  document.querySelector("#pbility").style.display = "none";
+  document.querySelector(".timecreated").style.display = "none";
+  document.querySelector(".avatar img").src = "img/default-avatar.png";
+  return;
+}
+
   const userRole = foundUser.role || "Player";
   switch (userRole) {
     case "owner":
@@ -108,6 +126,7 @@ timecreated.addEventListener("mouseout", () => {
     case "veteran":
       role.innerHTML =
         "<span style='color:rgb(255, 146, 82);'>- Leg of God -</span>";
+      break;
     case "user":
     default:
       role.innerHTML = "";

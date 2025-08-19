@@ -52,6 +52,9 @@ function setRoleText(roleElem, userRole) {
         case "veteran":
             roleElem.innerHTML = "<span style='color:rgb(255, 146, 82);'>- Leg of God -</span>";
             break;
+        case "banned":
+            roleElem.innerHTML = "<span style='color:rgb(121, 121, 121);'>Banned.</span> <br> This account has been banned from the site.";
+            break;
         case "user":
         default:
             roleElem.innerHTML = "";

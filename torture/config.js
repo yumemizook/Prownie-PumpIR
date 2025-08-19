@@ -99,6 +99,25 @@ async function saveData() {
   }
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  const deleteAccountWarning = document.getElementById("delete-account-warning");
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // Fetch user role from Firestore if not present on user object
+      const docRef = doc(db, "users", user.uid);
+      getDoc(docRef).then((docSnap) => {
+        const userData = docSnap.data();
+        if ((user.role === "owner") || (userData && userData.role === "owner")) {
+          if (typeof deleteAccount !== "undefined" && deleteAccount.style) {
+            deleteAccount.style.display = "none";
+            deleteAccountWarning.innerHTML = "You are the owner of the site. You cannot delete your account.";
+          }
+        }
+      });
+    }
+  });
+});
+
 deleteAccount.addEventListener("click", async () => {
   const user = auth.currentUser;
   if (!user) {
