@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compose update news...</title>
+    <link rel="stylesheet" href="./styles/home.css">
+    <link rel="stylesheet" href="./styles/navbar.css">
+    <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<style>
+    .news-post {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .news-post input {
+        width: 25%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+    }
+    .news-post textarea {
+        width: 25%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        background-color: #11313f;
+        color: #fff;
+    }
+    .news-post button {
+        width: 10%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+    }
+</style>
+<script>
+    $.get("navbar.html", function (data) {
+        $(".navbar").replaceWith(data);
+    });
+    $.get("footer.html", function (data) {
+        $(".footer").replaceWith(data);
+    });
+</script>
+<body>
+    <div class="navbar"></div>
+    <div class="news-post" style="margin-top: 80px; text-align: center;">
+        <h1>Compose update news...</h1>
+        <input type="text" id="news-post-title" placeholder="Title of the news post...">
+        <textarea id="news-post-content" placeholder="Write your news post here..."></textarea>
+        <button id="save-news-post">Save</button>
+    </div>
+
+    <div class="footer"></div>
+</body>
+<script type="module" src="./torture/firebase.js"></script>
+<script type="module">
+    import { getFirestore, addDoc, collection, getDocs, setDoc, doc, getDoc, db, getAuth } from "./torture/firebase.js"; // need getAuth to check user role, and addDoc to write to firestore
+        const newsPostContent = document.getElementById('news-post-content');
+        const saveNewsPost = document.getElementById('save-news-post');
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Wait for auth state to be ready before checking user
+            const auth = getAuth();
+            auth.onAuthStateChanged(async (user) => {
+                if (!user) {
+                    document.querySelector('.news-post').innerHTML = "You must be signed in as an admin to compose a news post.";
+                    return;
+                }
+                const userDocRef = doc(db, "users", user.uid);
+                const userDocSnap = await getDoc(userDocRef);
+                if (!userDocSnap.exists()) {
+                    document.querySelector('.news-post').innerHTML = "User data not found.";
+                    return;
+                }
+                const userData = userDocSnap.data();
+                const userRole = userData.role;
+                if (userRole !== "admin" && userRole !== "sysop" && userRole !== "owner") {
+                    document.querySelector('.news-post').innerHTML = "You must be an admin to compose a news post.";
+                    return;
+                }
+                // If admin, do nothing (allow composing)
+            });
+        });
+
+        saveNewsPost.addEventListener('click', async () => {
+            const newsPostTitle = document.getElementById('news-post-title');
+            const newsPostContent = document.getElementById('news-post-content');
+            const newsPost = {
+                title: newsPostTitle.value,
+                text: newsPostContent.value,
+                timestamp: new Date().toISOString(),
+            };
+            const newsPostRef = await addDoc(collection(db, "updates"), newsPost);
+            console.log("News post added with ID: ", newsPostRef.id);
+            newsPostTitle.value = "";
+            newsPostContent.value = "";
+        });
+</script>
+</html>
