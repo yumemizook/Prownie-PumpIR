@@ -14,6 +14,27 @@
         $(".footer").replaceWith(data);
       });
   </script>
+  <style>
+    .dangerzone h2 {
+      color: #8a1d1d;
+    }
+    .dangerzone h2:hover {
+      color: #ff0000;
+    }
+    .dangerzone button {
+      background-color: #383030;
+      color: #fff;
+      border: 1px solid #8a1d1d80;
+      border-radius: 4px;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .dangerzone button:hover {
+      background-color: #ff000080;
+      color: #fff;
+      border: 1px solid #ff0000;
+    }
+  </style>
   <body>
     <div id="navbar"></div>
     <div class="settings" style="margin-top: 80px">
@@ -72,6 +93,25 @@
             id="image-display"
             style="max-width: 150px; max-height: 150px"
           />
+        </div>
+      </div>
+      <div class="dangerzone">
+        <h2>!! DANGER ZONE !!</h2>
+        <div class="delete-account">
+        <p>
+          <b>Delete account</b>
+          <br>
+          <span>This will delete your account and all of your data. This action is irreversible and you won't be allowed to re-register.</span>
+        </p>
+        <button id="delete-account" style="background-color: #383030; color: #fff; border: 1px solid #8a1d1d80; border-radius: 4px; padding: 10px; cursor: pointer;">Delete account</button>
+        </div>
+        <div class="scorewipe">
+          <p>
+            <b>Wipe all scores</b>
+            <br>
+            <span>This will delete all of your scores. This action is irreversible.</span>
+          </p>
+          <button id="wipe-scores" style="background-color: #383030; color: #fff; border: 1px solid #8a1d1d80; border-radius: 4px; padding: 10px; cursor: pointer;">Wipe all scores</button>
         </div>
       </div>
     </div>

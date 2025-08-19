@@ -12,12 +12,14 @@ import {
   onAuthStateChanged,
 } from "./firebase.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "./firebase.js"; // update user profile picture? (might be changed if i find a better way)
-import { setDoc, doc, getDoc, updateDoc } from "./firebase.js";
-
+import { setDoc, doc, getDoc, updateDoc, deleteDoc } from "./firebase.js";
+const deleteAccount = document.querySelector("#delete-account");
+const wipeScores = document.querySelector("#wipe-scores");
 const saveChanges = document.querySelector("[save-modified-changes]");
 const savePassword = document.querySelector("[confirm-new-pw]");
 const newPasswordInput = document.querySelector("#newpw");
 const confirmNewPasswordInput = document.querySelector("#confirmnewpw");
+
 
 const auth = getAuth();
 let user = auth.currentUser;
@@ -96,3 +98,74 @@ async function saveData() {
     console.error("Error saving profile changes:", error);
   }
 }
+
+deleteAccount.addEventListener("click", async () => {
+  const user = auth.currentUser;
+  if (!user) {
+    alert("You are not logged in.");
+    return;
+  }
+  const confirmed = window.confirm("Are you sure you want to delete your account? This action is irreversible and you won't be allowed to re-register.");
+  if (!confirmed) return;
+  window.location.href = `/goodbyetotheworld.html?uid=${user.uid}`; // redirect to a goodbye page as a last chance to turn back
+});
+
+wipeScores.addEventListener("click", async () => {
+  const user = auth.currentUser;
+  if (!user) {
+    alert("You are not logged in.");
+    return;
+  }
+  const scoresSnap = await getDocs(collection(db, "users", user.uid, "scores"));
+  if (scoresSnap.empty) {
+    alert("You don't have any scores to wipe.");
+    return;
+  }
+  const confirmed = window.confirm("Are you sure you want to wipe all of your scores? This action is irreversible.");
+  if (!confirmed) return;
+
+  // Show a temporary message while waiting
+  const timer = document.createElement("div");
+  timer.style.position = "fixed";
+  timer.style.top = "20px";
+  timer.style.left = "50%";
+  timer.style.transform = "translateX(-50%)";
+  timer.style.background = "#383030";
+  timer.style.color = "#fff";
+  timer.style.padding = "16px 32px";
+  timer.style.borderRadius = "8px";
+  timer.style.zIndex = "9999";
+  let timeLeft = 15000;
+  timer.innerHTML = `Wiping scores in ${(timeLeft/1000).toFixed(1)} seconds... <br> Reload page to cancel deletion`;
+  document.body.appendChild(timer);
+
+  // Countdown
+  const interval = setInterval(() => {
+    timeLeft -= 100;
+    if (timeLeft > 0) {
+      timer.innerHTML = `Wiping scores in ${(timeLeft/1000).toFixed(1)} seconds... <br> Reload page to cancel deletion`;
+    }
+  }, 100);
+
+  // Wait 15 seconds before deleting
+  await new Promise(resolve => setTimeout(resolve, 15000));
+  clearInterval(interval);
+
+  try {
+    // Delete all scores in parallel
+    const deletePromises = [];
+    scoresSnap.forEach((scoreDoc) => {
+      deletePromises.push(deleteDoc(scoreDoc.ref));
+    });
+    await Promise.all(deletePromises);
+    timer.innerHTML = "Scores wiped!";
+    setTimeout(() => {
+      if (timer.parentNode) timer.parentNode.removeChild(timer);
+    }, 2000);
+    alert("Scores wiped");
+  } catch (err) {
+    if (timer.parentNode) timer.parentNode.removeChild(timer);
+    alert("An error occurred while wiping scores. Please try again.");
+    console.error(err);
+  }
+});

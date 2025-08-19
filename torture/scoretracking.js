@@ -260,8 +260,8 @@ async function uploadScore() {
 
 
   const playMode = document.getElementById("gamemode").value;
-  const playModeLetter = playMode === "coop" ? `Co-op x${players}` : playMode.charAt(0).toUpperCase(); //ensure the correct level display notation
   const players = document.getElementById("players").value;
+  const playModeLetter = playMode === "coop" ? `Co-op x${players}` : playMode.charAt(0).toUpperCase(); // ensure the correct level display notation
   // Calculate score, grade, cleartype, pumpbility for upload
   const p = Number(pf);
   const g = Number(gr);

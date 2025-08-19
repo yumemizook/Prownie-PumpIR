@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -7,18 +8,10 @@
     <link rel="stylesheet" href="./styles/home.css" />
     <link rel="stylesheet" href="./styles/navbar.css" />
     <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <body>
-    <script>
-        $.get("navbar.html", function (data) {
-            $("#navbar").replaceWith(data);
-        });
-        $.get("footer.html", function (data) {
-            $(".footer").replaceWith(data);
-        });
-    </script>
     <div id="navbar"></div>
     <div class="scorecontainer2" style="margin-top:80px; align-items: center;">
         <div class="datacontainer" style="text-align: center;">
@@ -51,145 +44,232 @@
                 <div class="pumpbility"></div>
             </div>
         </div>
+        <div class="buttons">
+            <button class="report">Report</button>
+            <button class="delete">Delete</button>
+        </div>
     </div>
     <div class="footer"></div>
-</body>
-<script type="module">
-
-    const colorTable = [
-        { grade: "SSS+", color: "#00E3FF" },
-        { grade: "SSS", color: "#00E3FF" },
-        { grade: "SS+", color: "#FFC900" },
-        { grade: "SS", color: "#FFC900" },
-        { grade: "S+", color: "#FFC900" },
-        { grade: "S", color: "#FFC900" },
-        { grade: "AAA+", color: "#AFAFAF" },
-        { grade: "AAA", color: "#AFAFAF" },
-        { grade: "AA+", color: "#844400" },
-        { grade: "AA", color: "#844400" },
-        { grade: "A+", color: "#844400" },
-        { grade: "A", color: "#844400" },
-        { grade: "B", color: "#00FF90" },
-        { grade: "C", color: "#00FF90" },
-        { grade: "D", color: "#00FF90" },
-        { grade: "F", color: "#00FF90" },
-    ];
-
-    const clearTypeTable = [
-        { clearType: "Perfect Game", color: "#00E3FF" },
-        { clearType: "Ultimate Game", color: "#00E3FF" },
-        { clearType: "Extreme Game", color: "#FFC900" },
-        { clearType: "Superb Game", color: "#FFC900" },
-        { clearType: "Marvelous Game", color: "#AFAFAF" },
-        { clearType: "Talented Game", color: "#AFAFAF" },
-        { clearType: "Fair Game", color: "#844400" },
-        { clearType: "Rough Game", color: "#844400" },
-    ];
-
-    import { getAuth, onAuthStateChanged, getDoc, doc, db, getDocs, collection } from "./torture/firebase.js";
-    const auth = getAuth();
-    const user = new URLSearchParams(window.location.search).get("user");
-    const sn = new URLSearchParams(window.location.search).get("sn");
-    const lvl = new URLSearchParams(window.location.search).get("lvl");
-    const timestamp = Number(new URLSearchParams(window.location.search).get("t"));
-    let playModeIndex = new URLSearchParams(window.location.search).get("lvl").charAt(0);
-    const title = document.querySelector("[title]");
-    const playModeDisplay = document.querySelector("[playMode]");
-    const timeDisplay = document.querySelector("[time]");
-    const time = new Date(timestamp);
-    let playMode = playModeIndex.toUpperCase();
-    const lvlnumerical = new URLSearchParams(window.location.search).get("lvl").slice(1);
-    switch (playMode) {
-        case "S":
-            playMode = "Single";
-            playModeDisplay.style.color = "#ff5252";
-            break;
-        case "D":
-            playMode = "Double";
-            playModeDisplay.style.color = "#52ff7a";
-            break;
-        case "C":
-            playMode = "Co-op";
-            playModeDisplay.style.color = "#fcff52";
-            break;
-        case "H":
-            playMode = "Half Double";
-            playModeDisplay.style.color = "#70fdff";
-            break;
-    }
-    const userDisplay = document.querySelector("[user]");
-    userDisplay.innerHTML = `Played by ${user}`;
-
-    document.querySelector("title").innerHTML = `${sn} (${playModeIndex}${lvlnumerical}) - Played by ${user} at ${time.toLocaleString()}`;
-
-    onAuthStateChanged(auth, async (user) => {
-        title.innerHTML = `${sn}`;
-        playModeDisplay.innerHTML = `${playMode} Lv.${lvlnumerical}`;
-        if (!user) return;
-
-        // Load scores for this user
-        const { collection, getDocs } = await import("./torture/firebase.js");
-        const scoresSnap = await getDocs(collection(db, "users", user.uid, "scores"));
-        const scores = [];
-        scoresSnap.forEach(doc => {
-            scores.push(doc.data());
+    <script>
+        // Load navbar and footer
+        $(function () {
+            $.get("navbar.html", function (data) {
+                $("#navbar").replaceWith(data);
+            });
+            $.get("footer.html", function (data) {
+                $(".footer").replaceWith(data);
+            });
         });
+    </script>
+    <script type="module">
+        const colorTable = [
+            { grade: "SSS+", color: "#00E3FF" },
+            { grade: "SSS", color: "#00E3FF" },
+            { grade: "SS+", color: "#FFC900" },
+            { grade: "SS", color: "#FFC900" },
+            { grade: "S+", color: "#FFC900" },
+            { grade: "S", color: "#FFC900" },
+            { grade: "AAA+", color: "#AFAFAF" },
+            { grade: "AAA", color: "#AFAFAF" },
+            { grade: "AA+", color: "#844400" },
+            { grade: "AA", color: "#844400" },
+            { grade: "A+", color: "#844400" },
+            { grade: "A", color: "#844400" },
+            { grade: "B", color: "#00FF90" },
+            { grade: "C", color: "#00FF90" },
+            { grade: "D", color: "#00FF90" },
+            { grade: "F", color: "#00FF90" },
+        ];
 
-        // Find the score for this song and level
-        // Get timestamp from URL (for unique play selection)
-        const play = scores.find(score => score.sn === sn && score.lvl === lvl && Number(score.timestamp) === timestamp);
-        if (play) {
-            // Defensive: avoid division by zero or undefined
-            const nt = Number(play.pf) + Number(play.gr) + Number(play.gd) + Number(play.bd) + Number(play.ms);
-            const pfPercentage = nt > 0 ? (play.pf / nt * 100) : 0;
-            const grPercentage = nt > 0 ? (play.gr / nt * 100) : 0;
-            const gdPercentage = nt > 0 ? (play.gd / nt * 100) : 0;
-            const bdPercentage = nt > 0 ? (play.bd / nt * 100) : 0;
-            const msPercentage = nt > 0 ? (play.ms / nt * 100) : 0;
-            const comboPercentage = nt > 0 ? (play.mc / nt * 100) : 0;
-            const minusMax = Number(play.fa) + Number(play.sl); //shows how far the player is from all rainbow Perfects
-            const minusAcc = Number(play.fa) + Number(play.sl) - Number(play.gr) - Number(play.gd) - Number(play.bd); //shows how far the player is from all rainbow Perfects, ignoring the non-Perfects
-            const minusAcc2 = Number(play.fa) + Number(play.sl) - Number(play.gd) - Number(play.bd); //shows how far the player is from a Perfect Game (if Superb is off, otherwise it's the same as minusAcc)
-            const exscore = Number(play.pf) + Number(play.gr) * 0.6 + Number(play.gd) * 0.2 + Number(play.bd) * 0.1;
-            const exscorePercentage = nt > 0 ? (exscore / nt * 100) : 0;
-            const exscorehue = ((exscorePercentage) *220) / 100;
-            // Fill in the judgements
-            document.querySelector("[time]").innerHTML = `Uploaded at <br> ${play.timeString ?? ""}`;
-            document.querySelector(".pf").innerHTML = `Perfect <br> <span style="color: #00E3FF; font-size: 2em;">${parseInt(play.pf) ?? ""}</span> (${pfPercentage.toFixed(2)}%)`;
-            document.querySelector(".gr").innerHTML = `Great <br> <span style="color: #00FF2F; font-size: 2em;">${parseInt(play.gr) ?? ""}</span> (${grPercentage.toFixed(2)}%)`;
-            document.querySelector(".gd").innerHTML = `Good <br> <span style="color: #FFEE00; font-size: 2em;">${parseInt(play.gd) ?? ""}</span> (${gdPercentage.toFixed(2)}%)`;
-            document.querySelector(".bd").innerHTML = `Bad <br> <span style="color: #FF00BF; font-size: 2em;">${parseInt(play.bd) ?? ""}</span> (${bdPercentage.toFixed(2)}%)`;
-            document.querySelector(".ms").innerHTML = `Miss <br> <span style="color: #FF0000; font-size: 2em;">${parseInt(play.ms) ?? ""}</span> (${msPercentage.toFixed(2)}%)`;
-            document.querySelector(".combo").innerHTML = `Max Combo <br> <span style="color: #FFFFFF; font-size: 2em;">${parseInt(play.mc) ?? ""}</span> (${comboPercentage.toFixed(2)}%)`;
-            document.querySelector(".fast").innerHTML = `Fast <br> <span style="color: #00E3FF; font-size: 1.25em;">${parseInt(play.fa) ?? ""}</span>`;
-            document.querySelector(".slow").innerHTML = `Slow <br> <span style="color: #FF0000; font-size: 1.25em;">${parseInt(play.sl) ?? ""}</span>`;
-            document.querySelector(".exscore").innerHTML = `Ex Score <br> <span style="color: #FFFF55;">${exscore.toFixed(2)}</span> <span style="color: hsl(${exscorehue}, 100%, 50%);">(${exscorePercentage.toFixed(4)}%)</span>`;
-            if (Number(play.fa) + Number(play.sl) === 0 && play.isSuperbOn === true) {
-                document.querySelector(".maxminus").innerHTML = `MAX!!!`;
-            } 
-            else if (Number(play.gr) + Number(play.gd) + Number(play.bd) + Number(play.ms) === 0 && play.isSuperbOn === true) {
-                document.querySelector(".maxminus").innerHTML = `(MAX -${minusMax})`;
-            }
-            else if (play.isSuperbOn === false) {
-                document.querySelector(".maxminus").innerHTML = ` (PG -${minusAcc2})`;
-            }
-            else {
-                document.querySelector(".maxminus").innerHTML = ` (ACC -${minusAcc})`;
-            }
-            // Fill in the score, grade, cleartype, pumpbility
-            document.querySelector(".score .score").textContent = `${play.score ?? ""}`;
-            document.querySelector(".score .grade").textContent = `${play.grade ?? ""}`;
-            document.querySelector(".score .cleartype").textContent = (play.chartFail === true || play.chartFail === "true") ? "" : (play.cleartype ?? "");
-            document.querySelector(".score .pumpbility").textContent = `Pumpbility: ${play.pumpbility ?? ""}`;
-            document.querySelector(".score .grade").style.color = (play.chartFail === true || play.chartFail === "true") ? "#888888" : (colorTable.find(color => color.grade === play.grade)?.color || "#000");
-            document.querySelector(".score .cleartype").style.color = (play.chartFail === true || play.chartFail === "true") ? "#888888" : (clearTypeTable.find(obj => obj.clearType === play.cleartype)?.color || "#000");
-        } else {
-            // If no play found, clear the fields
-            document.querySelector(".scorecontainer2").innerHTML = "Failed to fetch score.";
+        const clearTypeTable = [
+            { clearType: "Perfect Game", color: "#00E3FF" },
+            { clearType: "Ultimate Game", color: "#00E3FF" },
+            { clearType: "Extreme Game", color: "#FFC900" },
+            { clearType: "Superb Game", color: "#FFC900" },
+            { clearType: "Marvelous Game", color: "#AFAFAF" },
+            { clearType: "Talented Game", color: "#AFAFAF" },
+            { clearType: "Fair Game", color: "#844400" },
+            { clearType: "Rough Game", color: "#844400" },
+        ];
+
+        import { getAuth, onAuthStateChanged, db, getDocs, collection, deleteDoc, doc, query, where } from "./torture/firebase.js";
+        const auth = getAuth();
+
+        // Get URL params
+        const params = new URLSearchParams(window.location.search);
+        const userParam = params.get("user");
+        const sn = params.get("sn");
+        const lvl = params.get("lvl");
+        const timestamp = Number(params.get("t"));
+        let playModeIndex = lvl ? lvl.charAt(0) : "";
+        const title = document.querySelector("[title]");
+        const playModeDisplay = document.querySelector("[playMode]");
+        const timeDisplay = document.querySelector("[time]");
+        const time = new Date(timestamp);
+        let playMode = playModeIndex ? playModeIndex.toUpperCase() : "";
+        const lvlnumerical = playModeIndex === "C" ? lvl.slice(6) : lvl.slice(1);
+
+        // Set play mode display and color
+        switch (playModeIndex) {
+            case "S":
+                playMode = "Single";
+                playModeDisplay.style.color = "#ff5252";
+                break;
+            case "D":
+                playMode = "Double";
+                playModeDisplay.style.color = "#52ff7a";
+                break;
+            case "C":
+                playMode = "Co-op";
+                playModeDisplay.style.color = "#fcff52";
+                break;
+            case "H":
+                playMode = "Half Double";
+                playModeDisplay.style.color = "#70fdff";
+                break;
         }
-    });
 
-</script>
-<script type="module" src="./torture/navbar.js"></script>
+        // Set user display
+        const userDisplay = document.querySelector("[user]");
+        userDisplay.innerHTML = `Played by ${userParam}`;
 
+        // Set page title
+        document.querySelector("title").innerHTML = (playModeIndex === "C") ? `${sn} (${lvlnumerical}) - Played by ${userParam} at ${time.toLocaleString()}` : `${sn} (${playModeIndex}${lvlnumerical}) - Played by ${userParam} at ${time.toLocaleString()}`;
+
+        onAuthStateChanged(auth, async (firebaseUser) => {
+            title.innerHTML = `${sn}`;
+            if (playModeIndex === "C") {
+                playModeDisplay.innerHTML = `${playMode} ${lvlnumerical}`;
+            } else {
+                playModeDisplay.innerHTML = `${playMode} Lv.${lvlnumerical}`;
+            }
+            if (!firebaseUser) return;
+
+            // Defensive: userParam is the username, not UID
+            // Find the user by username
+            const usersSnap = await getDocs(collection(db, "users"));
+            let userDoc = null;
+            usersSnap.forEach(doc => {
+                if (
+                    (doc.data().displayName && doc.data().displayName === userParam) ||
+                    (doc.data().username && doc.data().username === userParam)
+                ) {
+                    userDoc = doc;
+                }
+            });
+            if (!userDoc) {
+                document.querySelector(".scorecontainer2").innerHTML = "User not found.";
+                return;
+            }
+
+            // Load scores for this user
+            const scoresSnap = await getDocs(collection(db, "users", userDoc.id, "scores"));
+            const scores = [];
+            scoresSnap.forEach(doc => {
+                scores.push(doc.data());
+            });
+
+            // Find the score for this song and level
+            const play = scores.find(score => score.sn === sn && score.lvl === lvl && Number(score.timestamp) === timestamp);
+            if (play) {
+                // Defensive: avoid division by zero or undefined
+                const nt = Number(play.pf) + Number(play.gr) + Number(play.gd) + Number(play.bd) + Number(play.ms);
+                const pfPercentage = nt > 0 ? (play.pf / nt * 100) : 0;
+                const grPercentage = nt > 0 ? (play.gr / nt * 100) : 0;
+                const gdPercentage = nt > 0 ? (play.gd / nt * 100) : 0;
+                const bdPercentage = nt > 0 ? (play.bd / nt * 100) : 0;
+                const msPercentage = nt > 0 ? (play.ms / nt * 100) : 0;
+                const comboPercentage = nt > 0 ? (play.mc / nt * 100) : 0;
+                const minusMax = Number(play.fa) + Number(play.sl);
+                const minusAcc = Number(play.fa) + Number(play.sl) - Number(play.gr) - Number(play.gd) - Number(play.bd);
+                const minusAcc2 = Number(play.fa) + Number(play.sl) - Number(play.gd) - Number(play.bd);
+                const exscore = Number(play.pf) + Number(play.gr) * 0.6 + Number(play.gd) * 0.2 + Number(play.bd) * 0.1;
+                const exscorePercentage = nt > 0 ? (exscore / nt * 100) : 0;
+                const exscorehue = ((exscorePercentage) * 220) / 100;
+
+                // Fill in the judgements
+                timeDisplay.innerHTML = `Uploaded at <br> ${play.timeString ?? ""}`;
+                document.querySelector(".pf").innerHTML = `Perfect <br> <span style="color: #00E3FF; font-size: 2em;">${parseInt(play.pf) ?? ""}</span> (${pfPercentage.toFixed(2)}%)`;
+                document.querySelector(".gr").innerHTML = `Great <br> <span style="color: #00FF2F; font-size: 2em;">${parseInt(play.gr) ?? ""}</span> (${grPercentage.toFixed(2)}%)`;
+                document.querySelector(".gd").innerHTML = `Good <br> <span style="color: #FFEE00; font-size: 2em;">${parseInt(play.gd) ?? ""}</span> (${gdPercentage.toFixed(2)}%)`;
+                document.querySelector(".bd").innerHTML = `Bad <br> <span style="color: #FF00BF; font-size: 2em;">${parseInt(play.bd) ?? ""}</span> (${bdPercentage.toFixed(2)}%)`;
+                document.querySelector(".ms").innerHTML = `Miss <br> <span style="color: #FF0000; font-size: 2em;">${parseInt(play.ms) ?? ""}</span> (${msPercentage.toFixed(2)}%)`;
+                document.querySelector(".combo").innerHTML = `Max Combo <br> <span style="color: #FFFFFF; font-size: 2em;">${parseInt(play.mc) ?? ""}</span> (${comboPercentage.toFixed(2)}%)`;
+                document.querySelector(".fast").innerHTML = playModeIndex === "C" ? "" : `Fast <br> <span style="color: #00E3FF; font-size: 1.25em;">${parseInt(play.fa) ?? ""}</span>`;
+                document.querySelector(".slow").innerHTML = playModeIndex === "C" ? "" : `Slow <br> <span style="color: #FF0000; font-size: 1.25em;">${parseInt(play.sl) ?? ""}</span>`;
+                document.querySelector(".exscore").innerHTML = `Ex Score <br> <span style="color: #FFFF55;">${exscore.toFixed(2)}</span> <span style="color: hsl(${exscorehue}, 100%, 50%);">(${exscorePercentage.toFixed(4)}%)</span>`;
+
+                // Max/Minus display logic
+                if (Number(play.fa) + Number(play.sl) === 0 && play.isSuperbOn === true && playModeIndex !== "C") {
+                    document.querySelector(".maxminus").innerHTML = `MAX!!!`;
+                }
+                else if (Number(play.gr) + Number(play.gd) + Number(play.bd) + Number(play.ms) === 0 && play.isSuperbOn === true && playModeIndex !== "C") {
+                    document.querySelector(".maxminus").innerHTML = `(MAX -${minusMax})`;
+                }
+                else if (play.isSuperbOn === false && playModeIndex !== "C") {
+                    document.querySelector(".maxminus").innerHTML = ` (PG -${minusAcc2})`;
+                }
+                else if (playModeIndex !== "C") {
+                    document.querySelector(".maxminus").innerHTML = ` (ACC -${minusAcc})`;
+                } else {
+                    document.querySelector(".maxminus").innerHTML = "";
+                }
+
+                // Fill in the score, grade, cleartype, pumpbility
+                document.querySelector(".score .score").textContent = `${play.score ?? ""}`;
+                document.querySelector(".score .grade").textContent = `${play.grade ?? ""}`;
+                document.querySelector(".score .cleartype").textContent = (play.chartFail === true || play.chartFail === "true") ? "" : (play.cleartype ?? "");
+                document.querySelector(".score .pumpbility").textContent = (playModeIndex === "C") ? "" : `Pumpbility: ${play.pumpbility ?? ""}`;
+                document.querySelector(".score .grade").style.color = (play.chartFail === true || play.chartFail === "true") ? "#888888" : (colorTable.find(color => color.grade === play.grade)?.color || "#000");
+                document.querySelector(".score .cleartype").style.color = (play.chartFail === true || play.chartFail === "true") ? "#888888" : (clearTypeTable.find(obj => obj.clearType === play.cleartype)?.color || "#000");
+            } else {
+                // If no play found, clear the fields
+                document.querySelector(".scorecontainer2").innerHTML = "Failed to fetch score.";
+            }
+
+            // Hide/show report/delete buttons
+            // Only show delete if current user is the owner
+            // Only show report if current user is not the owner
+            if (
+                (firebaseUser.displayName && firebaseUser.displayName === userParam) ||
+                (firebaseUser.username && firebaseUser.username === userParam)
+            ) {
+                document.querySelector(".report").style.display = "none";
+            } else {
+                document.querySelector(".delete").style.display = "none";
+            }
+            document.querySelector(".report").addEventListener("click", () => {
+                window.location.href = `./report.html?user=${userParam}&sn=${sn}&lvl=${lvl}&t=${timestamp}`;
+            });
+            document.querySelector(".delete").addEventListener("click", async () => {
+                const confirmed = window.confirm("Are you sure you want to delete this score?");
+                if (!confirmed) return;
+                try {
+                    // Find the score document with a query instead of fetching all
+                    const scoreRef = collection(db, "users", userDoc.id, "scores");
+                    const q = query(
+                        scoreRef,
+                        where("sn", "==", sn),
+                        where("lvl", "==", lvl),
+                        where("timestamp", "==", timestamp)
+                    );
+                    const querySnapshot = await getDocs(q);
+                    if (!querySnapshot || querySnapshot.empty) {
+                        alert("Score not found or already deleted.");
+                        return;
+                    }
+                    // There should only be one matching document
+                    const docRef = querySnapshot.docs[0].ref;
+                    await deleteDoc(docRef);
+                    alert("Score deleted successfully.");
+                    window.location.href = "./profile.html?user=" + encodeURIComponent(userParam);
+                } catch (error) {
+                    console.error("Error deleting score:", error);
+                    alert("Failed to delete score.");
+                }
+            });
+        });
+    </script>
+    <script type="module" src="./torture/navbar.js"></script>
+</body>
 </html>

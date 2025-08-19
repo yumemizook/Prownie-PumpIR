@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report</title>
+    <link rel="stylesheet" href="./styles/home.css" />
+    <link rel="stylesheet" href="./styles/navbar.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div id="navbar"></div>
+    <div class="reportcontainer" style="margin-top:80px; align-items: center;">
+        <div class="datacontainer" style="text-align: center;">
+            <h1>Report a falsified score</h1>
+            <div class="selected">You are reporting this score:
+                <div class="scorecontent"></div>
+            </div>
+            <br>
+            <form id="reportform" style="display: flex; flex-direction: column; align-items: center;">
+                <label for="reason" style="margin-bottom: 8px; font-weight: bold;">Reason</label>
+                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-bottom: 12px;">
+                    <label>
+                        <input type="radio" name="reportoption" id="reportoption1" value="nochart">
+                        Chart doesn't exist
+                    </label>
+                    <label>
+                        <input type="radio" name="reportoption" id="reportoption2" value="chartincorrect">
+                        Incorrectly inputted chart data
+                    </label>
+                    <label>
+                        <input type="radio" name="reportoption" id="reportoption3" value="falsified">
+                        Falsified score / Cheating
+                    </label>
+                    <label>
+                        <input type="radio" name="reportoption" id="reportoption4" value="grief">
+                        Abusing features to harass other players
+                    </label>
+                    <label>
+                        <input type="radio" name="reportoption" id="reportoption5" value="other">
+                        Other
+                    </label>
+                </div>
+                <textarea name="reason" id="reason" placeholder="Please give us other information to assist us in investigating this report." style="width: 50%; min-width: 300px; min-height: 80px; margin-bottom: 12px;"></textarea>
+                <button type="submit" style="margin-top: 12px; background-color: #303438; color: #fff; border: 1px solid #1d678a80; border-radius: 4px; padding: 10px; cursor: pointer;">Report</button>
+            </form>
+            <div class="info" style="margin-top: 12px;">
+                <span>Depending on the severity of the infraction, the score may be edited to correct the issue or will be deleted. If the infraction is severe, the user statistics will be partially rolled back or be completely wiped.</span>
+                <br>
+                <span>Forementioned users might face a leaderboard ban or a account-wide ban.</span>
+                <br><br>
+                <span>Repeated false reports will incur penalties on your account!</span>
+            </div>
+        </div>
+    </div>
+    <div class="footer"></div>
+    <script>
+        // Load navbar and footer
+        $(function () {
+            $.get("navbar.html", function (data) {
+                $("#navbar").replaceWith(data);
+            });
+            $.get("footer.html", function (data) {
+                $(".footer").replaceWith(data);
+            });
+        });
+    </script>
+    <script type="module">
+        import { db, updateDoc, doc, getAuth, onAuthStateChanged, getDoc, collection, getDocs, query, where } from "./torture/firebase.js";
+
+        const params = new URLSearchParams(window.location.search);
+        const sn = params.get("sn");
+        const lvl = params.get("lvl");
+        const t = params.get("t");
+        const userParam = params.get("user");
+        const scorecontent = document.querySelector(".scorecontent");
+        // Display score info in a more user-friendly way
+        let playMode = lvl ? lvl.charAt(0) : "";
+        let lvlnumerical = playMode === "C" ? lvl.slice(6) : lvl.slice(1);
+        let playModeText = "";
+        switch (playMode) {
+            case "S": playModeText = "Single"; break;
+            case "D": playModeText = "Double"; break;
+            case "C": playModeText = "Co-op"; break;
+            case "H": playModeText = "Half Double"; break;
+            default: playModeText = playMode;
+        }
+        let displayLvl = (playMode === "C") ? lvlnumerical : (playMode ? playMode + lvlnumerical : lvl);
+        scorecontent.innerHTML = `Score: <b>${sn}</b> (${displayLvl ? " " + displayLvl : ""})<br>Played at ${new Date(Number(t)).toLocaleString("en-GB", { hour12: false })} by <b>${userParam}</b>`;
+        const reportform = document.querySelector("#reportform");
+
+        // Show a message to the user
+        function showMessage(msg, color = "#333") {
+            let msgDiv = document.getElementById("report-msg");
+            if (!msgDiv) {
+                msgDiv = document.createElement("div");
+                msgDiv.id = "report-msg";
+                msgDiv.style.marginTop = "10px";
+                msgDiv.style.fontWeight = "bold";
+                reportform.parentNode.insertBefore(msgDiv, reportform.nextSibling);
+            }
+            msgDiv.textContent = msg;
+            msgDiv.style.color = color;
+        }
+
+        reportform.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const reason = document.querySelector("#reason").value.trim();
+            const reportoptionInput = document.querySelector('input[name="reportoption"]:checked');
+            if (!reportoptionInput) {
+                showMessage("Please select a report reason.", "#c00");
+                return;
+            }
+            const reportoption = reportoptionInput.value;
+
+            // Optionally, require a reason for "other"
+            if (reportoption === "other" && reason.length < 5) {
+                showMessage("Please provide more details for 'Other'.", "#c00");
+                return;
+            }
+            // Get user info and submit report
+            const auth = getAuth();
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    showMessage("You must be logged in to submit a report.", "#c00");
+                    return;
+                }
+
+                // Find the user document by username (userParam)
+                const usersSnap = await getDocs(collection(db, "users"));
+                let userDoc = null;
+                usersSnap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if (
+                        (data.displayName && data.displayName === userParam) ||
+                        (data.username && data.username === userParam)
+                    ) {
+                        userDoc = docSnap;
+                    }
+                });
+                if (!userDoc) {
+                    showMessage("Score owner not found.", "#c00");
+                    return;
+                }
+
+                // Find the score document for this song/level/timestamp
+                const scoresRef = collection(db, "users", userDoc.id, "scores");
+                const q = query(
+                    scoresRef,
+                    where("sn", "==", sn),
+                    where("lvl", "==", lvl),
+                    where("timestamp", "==", Number(t))
+                );
+                const querySnapshot = await getDocs(q);
+                if (querySnapshot.empty) {
+                    showMessage("Score not found.", "#c00");
+                    return;
+                }
+                // There should only be one matching document
+                const scoreDoc = querySnapshot.docs[0];
+                if (scoreDoc.data().flagged) {
+                    showMessage("Score already flagged. Please wait for the score to be reviewed.", "#ff0");
+                    return;
+                }
+                // Prepare report object
+                try {
+                    await updateDoc(scoreDoc.ref, {
+                        flagged: true,
+                        reason: reason,
+                        reportoption: reportoption,
+                    });
+                    showMessage("Report submitted successfully. Thank you!", "#090");
+                    reportform.reset();
+                } catch (err) {
+                    showMessage("Failed to submit report. Please try again later.", "#c00");
+                    console.error("Report error:", err);
+                }
+            });
+        });
+    </script>
+    <script type="module" src="./torture/navbar.js"></script>
+</body>
+</html>

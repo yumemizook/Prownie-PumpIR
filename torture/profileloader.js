@@ -215,10 +215,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                         if (play.score === 1000000) {
                             const minusMax = Number(play.fa) + Number(play.sl);
-                            if (minusMax === 0) {
+                            if (minusMax === 0 && play.isSuperbOn === true) {
                                 scoreCell = `1000000 <span style='color:rgb(174, 255, 248); font-size: 0.6em;'>(MAX)</span>`;
                             } else if (
-                                Number(play.gr) + Number(play.gd) + Number(play.bd) + Number(play.ms) === 0
+                                Number(play.gr) + Number(play.gd) + Number(play.bd) + Number(play.ms) === 0 && play.isSuperbOn === true
                             ) {
                                 scoreCell = `1000000 <span style='color:rgb(174, 255, 248); font-size: 0.6em;'>(MAX-${minusMax})</span>`;
                             } else {
