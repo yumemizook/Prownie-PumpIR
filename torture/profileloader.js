@@ -109,7 +109,18 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 timecreated.innerHTML = "";
             }
-
+            if (userData.role === "banned") {
+                // Set the role text and hide profile details if user is banned
+                role.innerHTML = "<span style='color:rgb(121, 121, 121); font-size: 1.5em;'>Banned.</span> <br> You have been banned from the site. <br> <span style='font-size: 0.8em;'>If you think this is a mistake, please contact an admin.</span>";
+                document.querySelector(".bp").innerHTML = "";
+                document.querySelector(".rp").innerHTML = "";
+                document.querySelector("#settings").style.display = "none";
+                document.querySelector("#statistics").style.display = "none";
+                document.querySelector("#pbility").style.display = "none";
+                document.querySelector(".timecreated").style.display = "none";
+                document.querySelector(".avatar img").src = "img/default-avatar.png";
+                return;
+              }
             // Role
             setRoleText(role, userData.role || "Player");
 

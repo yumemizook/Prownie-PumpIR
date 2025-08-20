@@ -135,19 +135,38 @@ function setLoginButtonHTML(html, addSignOutListener = false, auth = null) {
 const auth = getAuth();
 onAuthStateChanged(auth, async (user) => {
   if (user) {
-    setAvatarImage(user);
-    setAvatarFrameDisplay(true);
-    setWelcomeText(user.displayName || "User");
-    // Set pumpbility (fetch from Firestore)
+    // Fetch user document to check for ban and get pumpbility
     let pb = 0;
+    let userData = {};
     try {
       const userDocRef = doc(db, "users", user.uid);
       const userDocSnap = await getDoc(userDocRef);
-      pb = userDocSnap.exists() && typeof userDocSnap.data().pumpbility === "number"
-        ? userDocSnap.data().pumpbility
-        : 0;
+      if (userDocSnap.exists()) {
+        userData = userDocSnap.data();
+        if (userData.role === "banned") {
+          // Banned user: show banned state
+          setAvatarFrameDisplay(false);
+          setWelcomeText("");
+          setPumpbilityHTML("");
+          setLoginButtonHTML(`<a href="javascript:void(0)" id="signout">Sign Out</a>`, true, auth);
+          setPumpbilityColor(0);
+          // Set avatar to default and clear name
+          const nameElem = document.querySelector("#name");
+          if (nameElem) nameElem.innerHTML = "";
+          const avatarFrame = document.querySelector("#avatar");
+          if (avatarFrame) avatarFrame.style.display = "none";
+          return;
+        }
+        pb = typeof userData.pumpbility === "number" ? userData.pumpbility : 0;
+      }
+      setAvatarImage(user);
+      setAvatarFrameDisplay(true);
+      setWelcomeText(user.displayName || "User");
       setPumpbilityHTML(`<h3>Pumpbility: ${pb}</h3>`);
     } catch (e) {
+      setAvatarImage(user);
+      setAvatarFrameDisplay(true);
+      setWelcomeText(user.displayName || "User");
       setPumpbilityHTML(`<h3>Pumpbility: nothing</h3>`);
       pb = 0;
     }

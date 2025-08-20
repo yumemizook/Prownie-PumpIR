@@ -1,9 +1,49 @@
-import { addDoc, collection, doc, db, getAuth } from "./firebase.js";
+import { addDoc, collection, doc, db, getAuth, getDoc } from "./firebase.js";
 
 const save = document.getElementById("save");
 const reset = document.getElementById("reset");
 const gamemode = document.getElementById("gamemode");
 
+document.addEventListener("DOMContentLoaded", () => {
+  const auth = getAuth();
+
+  auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+      document.querySelector(".scorecontainer").innerHTML = "You must be logged in to upload a score.";
+      document.querySelector(".scorecontainer").style.textAlign = "center";
+      document.querySelector(".scorecontainer").style.fontSize = "1.5em";
+      document.querySelector(".scorecontainer").style.marginTop = "100px";
+      document.querySelector(".scorecontainer").style.display = "flex";
+      document.querySelector(".scorecontainer").style.flexDirection = "column";
+      document.querySelector(".scorecontainer").style.justifyContent = "center";
+      document.querySelector(".title").style.display = "none";
+      return;
+    }
+
+    try {
+      const userDocRef = doc(db, "users", user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        if (userData.role === "banned") {
+          document.querySelector(".scorecontainer").innerHTML = "You have been banned from the site and cannot upload scores.";
+          document.querySelector(".scorecontainer").style.textAlign = "center";
+          document.querySelector(".scorecontainer").style.fontSize = "1.5em";
+          document.querySelector(".scorecontainer").style.marginTop = "100px";
+          document.querySelector(".scorecontainer").style.display = "flex";
+          document.querySelector(".scorecontainer").style.flexDirection = "column";
+          document.querySelector(".scorecontainer").style.justifyContent = "center";
+          document.querySelector(".title").style.display = "none";
+          return;
+        }
+      }
+    } catch (e) {
+      console.error("Error checking user role:", e);
+      alert("An error occurred while checking your account status. Please try again later.");
+      return;
+    }
+  });
+});
 gamemode.addEventListener("change", () => {
   const playersInput = document.getElementById("players");
   const lvlInput = document.getElementById("lvl");

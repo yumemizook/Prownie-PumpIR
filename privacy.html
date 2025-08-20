@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy</title>
+    <link rel="stylesheet" href="/styles/home.css">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/brownie.ico">
+    <script src="https://kit.fontawesome.com/ced4c4a7f8.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $.get("navbar.html", function (data) {
+            $("#navbar").replaceWith(data);
+        });
+        $.get("footer.html", function (data) {
+            $(".footer").replaceWith(data);
+        });
+    </script>
+</head>
+
+<body>
+    <div id="navbar"></div>
+    <div class="privacy" style="margin-top: 100px;">
+        <h1>Privacy Policy</h1>
+        <p>Other than what you enter and what can be publicly seen, we <span style="color: red;">DO NOT</span> store any personal or identifiable information in our databases.</p>
+        <p>We also <span style="color: red;">DO NOT</span> share any of your data with any third parties.</p>
+        <p>And we also <span style="color: red;">DO NOT</span> use any of your data for any purpose other than to provide you with the service.</p>
+        <br>
+        <p>However, we use Firebase for our backend, and Firebase <span style="color: rgb(166, 255, 0); text-decoration: underline;">does</span> collect some information about you.</p>
+        <p>Please refer to Firebase's privacy policy for more information. <a href="https://firebase.google.com/support/privacy" target="_blank" style="color: rgb(61, 255, 245); text-decoration: none;">(it's here i think)</a></p>
+        <br>
+        <p>If you have any questions, please contact an admin.</p>
+        <br>
+        <p>GLHF!</p>
+    </div>
+    <div class="footer"></div>
+</body>
+
+</html>

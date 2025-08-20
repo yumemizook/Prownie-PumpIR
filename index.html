@@ -3,6 +3,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Prownie IR</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./styles/home.css" />
     <link rel="stylesheet" href="./styles/navbar.css" />
     <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
@@ -37,7 +40,6 @@
     </div>
 
       <div class="news" style="display: flex; flex-direction: column; gap: 20px; flex-wrap: wrap; justify-content: space-between; align-items: top; margin: 20px;">
-        <h3>Latest news:</h3>
         <template id="news-post-template">
           <div class="news-post">
             <h4 data-title></h4>
@@ -91,9 +93,24 @@
         } catch (firestoreReadError) {
           console.error("Failed to read from Firestore:", firestoreReadError);
         }
+        if (userDoc.data().role === "banned") {
+          const status = document.createElement("div");
+          status.innerHTML = "You have been banned from the site. <br> If you think this is a mistake, please contact an admin.";
+          status.style.color = "white";
+          status.style.textAlign = "center";
+          status.style.fontSize = "1.5em";
+          status.style.marginTop = "100px";
+          status.style.backgroundColor = "red";
+          status.style.padding = "10px";
+          status.style.borderRadius = "10px";
+          status.style.display = "flex";
+          status.style.flexDirection = "column";
+          status.style.justifyContent = "center";
+          document.querySelector(".intro").appendChild(status);
+        }
       });
       document.addEventListener("DOMContentLoaded", () => {
-      // Get news posts and render them using the template
+      // Get news posts and render them using innerHTML
       (async () => {
         try {
           const newsPostRef = collection(db, "updates");
@@ -109,36 +126,42 @@
               return tb - ta;
             });
 
-          const template = document.getElementById("news-post-template");
           const newsContainer = document.querySelector(".news");
-          if (!template || !newsContainer) {
-            console.error("Missing template or news container element.");
+          if (!newsContainer) {
+            console.error("Missing news container element.");
             return;
           }
 
           // Clear previous content
           newsContainer.innerHTML = "";
 
+          // Add "Latest posts" text at the start of the news container, only once
+          if (!newsContainer.dataset.latestPostsAdded) {
+            const latestPostsDiv = document.createElement("div");
+            latestPostsDiv.textContent = "Latest posts:";
+            latestPostsDiv.style.fontWeight = "bold";
+            latestPostsDiv.style.fontSize = "1.3em";
+            latestPostsDiv.style.marginBottom = "10px";
+            newsContainer.appendChild(latestPostsDiv);
+            newsContainer.dataset.latestPostsAdded = "true";
+          }
+
           newsPostData.forEach((post) => {
-            const clone = template.content.cloneNode(true);
-            const titleElem = clone.querySelector("[data-title]");
-            const textElem = clone.querySelector("[data-text]");
-            const timeElem = clone.querySelector("[data-time]");
-            const latestNewsPost = document.createElement("div");
-            latestNewsPost.innerHTML = `<h3>Latest news:</h3>`;
-            newsContainer.appendChild(latestNewsPost);
-            if (titleElem) titleElem.textContent = post.title || "";
-            if (textElem) textElem.textContent = post.text || "";
-            if (timeElem) {
-              if (post.timestamp) {
-                // Format timestamp as readable date
-                const date = new Date(post.timestamp);
-                timeElem.textContent = date.toLocaleString('en-GB', { hour12: false, day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-              } else {
-                timeElem.textContent = "";
-              }
+            // Format timestamp as readable date
+            let formattedTime = "";
+            if (post.timestamp) {
+              const date = new Date(post.timestamp);
+              formattedTime = date.toLocaleString('en-GB', { hour12: false, day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
             }
-            newsContainer.appendChild(clone);
+            // Compose the HTML for the post
+            const postDiv = document.createElement("div");
+            postDiv.className = "news-post";
+            postDiv.innerHTML = `
+              <div data-title style="font-weight:bold;font-size:1.1em;">${post.title ? post.title : ""}</div>
+              <div data-time style="color:gray;font-size:0.9em;margin-bottom:4px;">${formattedTime}</div>
+              <div data-text>${post.text ? post.text : ""}</div>
+            `;
+            newsContainer.appendChild(postDiv);
           });
         } catch (err) {
             console.error("Failed to load news posts:", err);

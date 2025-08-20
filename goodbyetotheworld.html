@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>-- ACCOUNT DELETION PENDING --</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./styles/home.css" />
     <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
     <style>
@@ -54,9 +57,9 @@
             align-items: flex-end;
         }
     </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
+
     <div class="goodbye" id="goodbye">
         <h3>Account deletion pending...</h3>
         <h4>It's not too late to salvage your account! Click out of this page to cancel deletion!</h4>
@@ -82,10 +85,19 @@
     const db = getFirestore();
     const urlParams = new URLSearchParams(window.location.search);
     const uidURL = urlParams.get("uid");
+    
+    if (!uidURL) {
+        alert("No user ID provided. Redirecting to home page.");
+        window.location.href = "/index.html";
+    }
 
-  document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", () => {
         // Wait for auth state to be ready before accessing currentUser
         onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                // Defensive programming for when the user is deleted
+                return;
+            }
             const uid = user.uid;
             console.log(uid, uidURL);
             if (uid !== uidURL) {
@@ -93,86 +105,88 @@
                 window.location.href = "/index.html";
                 return;
             }
+            
+            // User is authenticated and matches the UID, start the deletion process
+            console.log("User authenticated, starting deletion process...");
+            
+            // Start the deletion countdown
+            let timeLeft = 15000; // ms
+            const timerElem = document.getElementById("timer");
+            const timermsElem = document.getElementById("timerms");
+
+            function updateTimerDisplay(ms) {
+                const seconds = Math.floor(ms / 1000);
+                const msRemainder = ms % 1000;
+                timerElem.textContent = seconds;
+                timermsElem.textContent = "." + msRemainder.toString().padStart(3, "0").slice(0, 2);
+            }
+
+            updateTimerDisplay(timeLeft);
+
+            // Make interval accessible for clearing in deleteAccount
+            window.__accountDeletionInterval = setInterval(() => {
+                timeLeft -= 10;
+                if (timeLeft > 0) {
+                    updateTimerDisplay(timeLeft);
+                } else {
+                    clearInterval(window.__accountDeletionInterval);
+                    timerElem.textContent = "-";
+                    timermsElem.textContent = ".--";
+                    // Proceed with account deletion
+                    deleteAccount(user);
+                }
+            }, 10);
+
+            // If user leaves the page, cancel deletion (handled by not deleting if not present)
+
+            async function deleteAccount(user) {
+                try {
+                    // Ensure user and uid are valid
+                    if (!user || !user.uid) {
+                        throw new Error("Invalid user.");
+                    }
+                    const uid = user.uid;
+
+                    // Delete all documents in the scores subcollection
+                    const scoresColRef = collection(db, "users", uid, "scores");
+                    const scoresSnap = await getDocs(scoresColRef);
+                    const deleteScorePromises = [];
+                    scoresSnap.forEach((scoreDoc) => {
+                        deleteScorePromises.push(deleteDoc(scoreDoc.ref));
+                    });
+                    await Promise.all(deleteScorePromises);
+
+                    // Delete the user document from Firestore
+                    const userDocRef = doc(db, "users", uid);
+                    await deleteDoc(userDocRef);
+
+                    // Delete the user from Firebase Auth
+                    await deleteUser(user);
+
+                    // Update UI to reflect deletion
+                    const timerElem = document.getElementById("timer");
+                    if (timerElem) timerElem.textContent = "";
+                    const timermsElem = document.getElementById("timerms");
+                    if (timermsElem) timermsElem.textContent = "";
+                    const goodbyeElem = document.getElementById("goodbye");
+                    if (goodbyeElem) goodbyeElem.innerHTML = "<h3>Your account has been deleted.</h3><h4>We are sorry to see you go.</h4>";
+                    const goodbye2Elem = document.getElementById("goodbye2");
+                    if (goodbye2Elem) goodbye2Elem.innerHTML = "<h4>We are sorry to see you go.</h4><h3>Your account has been deleted.</h3>";
+                    const timerwrapperElem = document.querySelector(".timertext");
+                    if (timerwrapperElem) timerwrapperElem.innerHTML = "";
+                    if (window.__accountDeletionInterval) {
+                        clearInterval(window.__accountDeletionInterval);
+                        window.__accountDeletionInterval = undefined;
+                    }
+                } catch (err) {
+                    if (err?.code === "auth/requires-recent-login") {
+                        alert("Please re-login to confirm account deletion.");
+                        window.location.href = "/index.html";
+                    }
+                }
+            }
         });
     });
-
-        let timeLeft = 15000; // ms
-        const timerElem = document.getElementById("timer");
-        const timermsElem = document.getElementById("timerms");
-
-        function updateTimerDisplay(ms) {
-            const seconds = Math.floor(ms / 1000);
-            const msRemainder = ms % 1000;
-            timerElem.textContent = seconds;
-            timermsElem.textContent = "." + msRemainder.toString().padStart(3, "0").slice(0, 2);
-        }
-
-        updateTimerDisplay(timeLeft);
-
-        // Make interval accessible for clearing in deleteAccount
-        window.__accountDeletionInterval = setInterval(() => {
-            timeLeft -= 10;
-            if (timeLeft > 0) {
-                updateTimerDisplay(timeLeft);
-            } else {
-                clearInterval(window.__accountDeletionInterval);
-                timerElem.textContent = "0";
-                timermsElem.textContent = ".00";
-                // Proceed with account deletion
-                onAuthStateChanged(auth, async (user) => {
-                    await deleteAccount(user);
-                });
-            }
-        }, 10);
-
-        // If user leaves the page, cancel deletion (handled by not deleting if not present)
-
-    async function deleteAccount(user) {
-        try {
-            // Ensure user and uid are valid
-            if (!user || !user.uid) {
-                throw new Error("Invalid user.");
-            }
-            const uid = user.uid;
-
-            // Delete all documents in the scores subcollection
-            const scoresColRef = collection(db, "users", uid, "scores");
-            const scoresSnap = await getDocs(scoresColRef);
-            const deleteScorePromises = [];
-            scoresSnap.forEach((scoreDoc) => {
-                deleteScorePromises.push(deleteDoc(scoreDoc.ref));
-            });
-            await Promise.all(deleteScorePromises);
-
-            // Delete the user document from Firestore
-            const userDocRef = doc(db, "users", uid);
-            await deleteDoc(userDocRef);
-
-            // Delete the user from Firebase Auth
-            await deleteUser(user);
-
-            // Update UI to reflect deletion
-            const timerElem = document.getElementById("timer");
-            if (timerElem) timerElem.textContent = "";
-            const timermsElem = document.getElementById("timerms");
-            if (timermsElem) timermsElem.textContent = "";
-            const goodbyeElem = document.getElementById("goodbye");
-            if (goodbyeElem) goodbyeElem.innerHTML = "<h3>Your account has been deleted.</h3><h4>We are sorry to see you go.</h4>";
-            const goodbye2Elem = document.getElementById("goodbye2");
-            if (goodbye2Elem) goodbye2Elem.innerHTML = "<h4>We are sorry to see you go.</h4><h3>Your account has been deleted.</h3>";
-            const timerwrapperElem = document.getElementById("timertext");
-            if (timerwrapperElem) timerwrapperElem.innerHTML = "";
-            if (window.__accountDeletionInterval) {
-                clearInterval(window.__accountDeletionInterval);
-                window.__accountDeletionInterval = undefined;
-            }
-        } catch (err) {
-            if (err?.code === "auth/requires-recent-login") {
-                alert("Please re-login to confirm account deletion.");
-                window.location.href = "/index.html";
-            }
-        }
-    }
     </script>
 </body>
 </html>
