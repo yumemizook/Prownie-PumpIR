@@ -23,68 +23,14 @@ async function fetchUsers() {
       return user;
     });
 
+    // Remove banned users from allUsers array
+    allUsers = allUsers.filter(user => !(user.role && user.role.includes("banned")));
     // Clear previous results before rendering new cards
     searchContainer.innerHTML = "";
-
-    // allUsers.forEach((user) => {
-    //   const card = searchTemplate.content.cloneNode(true);
-    //   const titleLink = card.querySelector("[data-title]");
-    //   const pfp = card.querySelector("[data-pfp]");
-    //   pfp.src =
-    //     user.profilePicture &&
-    //     typeof user.profilePicture === "string" &&
-    //     user.profilePicture.trim() !== ""
-    //       ? user.profilePicture
-    //       : "img/default-avatar.png";
-    //   const username =
-    //     typeof user.username === "string" && user.username.trim() !== ""
-    //       ? user.username
-    //       : typeof user.displayName === "string" && user.displayName.trim() !== ""
-    //       ? user.displayName
-    //       : "Unknown User";
-    //   titleLink.textContent = username;
-    //   titleLink.href = `user.html?name=${encodeURIComponent(username)}`;
-    //   const pumpbillDiv = card.querySelector("[data-artist]");
-    //   let pumpbilityValue = "0";
-    //   if (
-    //     user.pumpbility !== undefined &&
-    //     user.pumpbility !== null &&
-    //     user.pumpbility !== ""
-    //   ) {
-    //     pumpbilityValue = user.pumpbility;
-    //   }
-    //   pumpbillDiv.textContent = "Pumpbility: " + pumpbilityValue;
-    //   const timeDiv = card.querySelector("[data-series]");
-    //   // Format timeCreated if it's a timestamp
-    //   if (user.timeCreated) {
-    //     let timeString = "";
-    //     if (typeof user.timeCreated === "number") {
-    //       const date = new Date(user.timeCreated);
-    //       if (!isNaN(date.getTime())) {
-    //         timeString = date.toLocaleString("en-GB", { hour12: false });
-    //       } else {
-    //         timeString = user.timeCreated.toString();
-    //       }
-    //     } else if (
-    //       typeof user.timeCreated === "string" &&
-    //       user.timeCreated.trim() !== ""
-    //     ) {
-    //       timeString = user.timeCreated;
-    //     }
-    //     if (timeString) {
-    //       timeDiv.textContent = "Joined: " + timeString;
-    //     } else {
-    //       timeDiv.textContent = "";
-    //     }
-    //   } else {
-    //     timeDiv.textContent = "";
-    //   }
-    //   searchContainer.appendChild(card);
-    // });
   } catch (err) {
     allUsers = [];
     // Optionally log the error for debugging
-    // console.error("Error fetching users:", err);
+    console.error("Error fetching users:", err);
   }
 }
 

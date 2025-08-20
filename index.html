@@ -67,6 +67,7 @@
       } from "./torture/firebase.js"; // last resort method to write users to firestore. fuck.
       const auth = getAuth();
 
+      let formatDistanceToNow;
       // Wait for auth state to be ready and user to be defined
       auth.onAuthStateChanged(async (user) => {
         if (!user) {
@@ -132,6 +133,10 @@
             return;
           }
 
+          if (!formatDistanceToNow) {
+            ({ formatDistanceToNow } = await import("https://unpkg.com/date-fns@3.6.0/formatDistanceToNow.mjs"));
+          }
+
           // Clear previous content
           newsContainer.innerHTML = "";
 
@@ -150,8 +155,7 @@
             // Format timestamp as readable date
             let formattedTime = "";
             if (post.timestamp) {
-              const date = new Date(post.timestamp);
-              formattedTime = date.toLocaleString('en-GB', { hour12: false, day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+              formattedTime = formatDistanceToNow(post.timestamp, { addSuffix: true });
             }
             // Compose the HTML for the post
             const postDiv = document.createElement("div");
