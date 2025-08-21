@@ -71,7 +71,8 @@
     </script>
     <script type="module">
         import { db, updateDoc, doc, getAuth, onAuthStateChanged, getDoc, collection, getDocs, query, where } from "./torture/firebase.js";
-
+        
+    
         const params = new URLSearchParams(window.location.search);
         const sn = params.get("sn");
         const lvl = params.get("lvl");
@@ -107,6 +108,32 @@
             msgDiv.style.color = color;
         }
 
+        document.addEventListener("DOMContentLoaded", async () => {
+            const auth = getAuth();
+            let user = auth.currentUser;
+            onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                showMessage("You must be logged in to submit a report.", "#c00");
+                return;
+            }
+
+            let userUid = user.uid;
+            let userDocSnap;
+            try {
+                userDocSnap = await getDoc(doc(db, "users", userUid));
+            } catch (err) {
+                showMessage("Failed to fetch user data. Please try again later.", "#c00");
+                return;
+            }
+            const userData = userDocSnap.data();
+            if (userData && userData.role === "banned") {
+                showMessage("You are banned and cannot submit reports. Please contact an administrator if you believe this is an error.", "#c00");
+                document.querySelector("#reportform").style.display = "none";
+                document.querySelector(".info").style.display = "none";
+                document.querySelector(".selected").style.display = "none";
+                return;
+            }
+        });
         reportform.addEventListener("submit", async (e) => {
             e.preventDefault();
             const reason = document.querySelector("#reason").value.trim();
@@ -129,7 +156,8 @@
                     showMessage("You must be logged in to submit a report.", "#c00");
                     return;
                 }
-
+ 
+                if (userData.username !== userParam) {
                 // Find the user document by username (userParam)
                 const usersSnap = await getDocs(collection(db, "users"));
                 let userDoc = null;
@@ -179,8 +207,10 @@
                     showMessage("Failed to submit report. Please try again later.", "#c00");
                     console.error("Report error:", err);
                 }
+                }
             });
         });
+    });
     </script>
     <script type="module" src="./torture/navbar.js"></script>
 </body>
