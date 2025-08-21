@@ -96,7 +96,7 @@
               lastNameChange: new Date().getTime(),
             });
           }
-          document.querySelector(".intro").innerHTML = "Welcome back, " + userDoc.data().username + "! <br> You are currently logged in as " + userDoc.data().role + ".";
+          document.querySelector(".intro").innerHTML = "Welcome back, " + userDoc.data().username + "!";
         } catch (firestoreReadError) {
           console.error("Failed to read from Firestore:", firestoreReadError);
         }
@@ -116,6 +116,7 @@
           status.style.display = "flex";
           status.style.flexDirection = "column";
           status.style.justifyContent = "center";
+          document.querySelector(".intro").innerHTML = "";
           document.querySelector(".intro").appendChild(status);
         }
       });
