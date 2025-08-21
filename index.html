@@ -38,7 +38,7 @@
       <br />
       <br />
     </div>
-
+    <button id="news-post-button" style="background-color: #224a50; color: white;margin-left: 20px; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px;">Write a post</button>
       <div class="news" style="display: flex; flex-direction: column; gap: 20px; flex-wrap: wrap; justify-content: space-between; align-items: top; margin: 20px;">
         <template id="news-post-template">
           <div class="news-post">
@@ -67,11 +67,16 @@
       } from "./torture/firebase.js"; // last resort method to write users to firestore. fuck.
       const auth = getAuth();
 
+      document.getElementById("news-post-button").addEventListener("click", () => {
+        window.location.href = "/newspost.html";
+      });
+
       let formatDistanceToNow;
       // Wait for auth state to be ready and user to be defined
       auth.onAuthStateChanged(async (user) => {
         if (!user) {
           console.warn("No user is currently signed in.");
+          document.getElementById("news-post-button").style.display = "none";
           return;
         }
         // Force use uid
@@ -91,8 +96,12 @@
               lastNameChange: new Date().getTime(),
             });
           }
+          document.querySelector(".intro").innerHTML = "Welcome back, " + userDoc.data().username + "! <br> You are currently logged in as " + userDoc.data().role + ".";
         } catch (firestoreReadError) {
           console.error("Failed to read from Firestore:", firestoreReadError);
+        }
+        if (userDoc.data().role !== "sysop" && userDoc.data().role !== "owner") {
+          document.getElementById("news-post-button").style.display = "none";
         }
         if (userDoc.data().role === "banned") {
           const status = document.createElement("div");
