@@ -19,6 +19,7 @@
     <div class="scorecontainer2" style="margin-top:80px; align-items: center;">
         <div class="datacontainer" style="text-align: center;">
             <h1 title></h1>
+            <h6 rate></h6>
             <h4 playMode></h4>
             <h5 time></h5>
             <h6 user></h6>
@@ -111,7 +112,6 @@
         const time = new Date(timestamp);
         let playMode = playModeIndex ? playModeIndex.toUpperCase() : "";
         const lvlnumerical = playModeIndex === "C" ? lvl.slice(6) : lvl.slice(1);
-
         // Set play mode display and color
         switch (playModeIndex) {
             case "S":
@@ -189,7 +189,15 @@
                 const exscore = Number(play.pf) + Number(play.gr) * 0.6 + Number(play.gd) * 0.2 + Number(play.bd) * 0.1;
                 const exscorePercentage = nt > 0 ? (exscore / nt * 100) : 0;
                 const exscorehue = ((exscorePercentage) * 220) / 100;
-
+                const rateDisplay = document.querySelector("[rate]");
+                const rateValue = play.rate ?? "";
+                if (rateValue === "undefined" || rateValue === "undefined" || rateValue === "" || rateValue === null) {
+                    rateDisplay.innerHTML = "";
+                } else if (Number(rateValue) === 1) {
+                    rateDisplay.innerHTML = "";
+                } else {
+                    rateDisplay.innerHTML = `${rateValue}x Rate`;
+                }
                 // Fill in the judgements
                 timeDisplay.innerHTML = `Uploaded at <br> ${play.timeString ?? ""}`;
                 document.querySelector(".pf").innerHTML = `Perfect <br> <span style="color: #00E3FF; font-size: 2em;">${parseInt(play.pf) ?? ""}</span> (${pfPercentage.toFixed(2)}%)`;

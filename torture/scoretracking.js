@@ -3,7 +3,7 @@ import { addDoc, collection, doc, db, getAuth, getDoc } from "./firebase.js";
 const save = document.getElementById("save");
 const reset = document.getElementById("reset");
 const gamemode = document.getElementById("gamemode");
-
+const rate = document.getElementById("rate");
 document.addEventListener("DOMContentLoaded", () => {
   const auth = getAuth();
 
@@ -210,6 +210,9 @@ function getClearTypeFromJudgement(p, gr, gd, bd, ms) {
 
 function getPumpbilityFromLevel(playLevel, score) {
   let level = Number(playLevel.value);
+  if (isNaN(level) || level < 1) {
+    return 0;
+  }
   if (level >= 33) {
     level = 32;
   }
@@ -224,6 +227,14 @@ function getPumpbilityFromLevel(playLevel, score) {
       break;
     }
   }
+  let rateValue = 1.0;
+  if (rate && typeof rate.value !== "undefined" && rate.value !== "") {
+    rateValue = Number(rate.value);
+    if (isNaN(rateValue) || rateValue <= 0) {
+      rateValue = 1.0;
+    }
+  }
+  multiplier *= Math.pow(rateValue, 1.03); // reward pumpbility for higher rates, keeping the multiplier *somewhat* linear
   return Math.round(pb * multiplier);
 }
 
@@ -346,6 +357,7 @@ async function uploadScore() {
     fa: fa,
     sl: sl,
     score: scoreValue,
+    rate: rate.value ? rate.value : 1,
     grade: grade,
     cleartype: cleartype,
     chartFail: chartFail,

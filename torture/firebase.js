@@ -30,6 +30,9 @@ import {
   deleteDoc,
   query,
   where,
+  getCountFromServer,
+  orderBy,
+  limit,
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -73,6 +76,9 @@ export {
   query,
   where,
   deleteUser,
+  getCountFromServer,
+  orderBy,
+  limit,
 };
 export default app;
 export { firebaseConfig };

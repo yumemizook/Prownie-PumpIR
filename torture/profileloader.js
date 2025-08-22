@@ -1,10 +1,12 @@
-import { getAuth, onAuthStateChanged, getDoc, doc, db, updateDoc } from "./firebase.js";
+import { getAuth, onAuthStateChanged, getDoc, doc, db, updateDoc, collection, query, where, getDocs, getCountFromServer } from "./firebase.js";
 let formatDistanceToNow;
 const playerName = document.querySelector("[playername]");
 const playerAvatar = document.querySelector("#playerpfp");
 const pumpbility = document.querySelector("#pbility");
 const role = document.querySelector(".role");
 const timecreated = document.querySelector(".timecreated");
+const stats = document.querySelector(".stats");
+const statsbutton = document.querySelector("#statistics");
 
 const pumpbilityColors = [
     { pumpbility: 0, color: "rgb(183, 250, 255)" },
@@ -18,7 +20,7 @@ const pumpbilityColors = [
     { pumpbility: 20000, color: "rgb(179, 179, 179)" },
     { pumpbility: 24000, color: "rgb(255, 238, 0)" },
     { pumpbility: 26000, color: "rgb(143, 212, 203)" },
-    { pumpbility: 30000, color: "linear-gradient(90deg, rgb(255, 87, 87) 0%, rgb(255, 190, 92) 20%, rgba(208, 222, 33, 1) 40%, rgb(171, 255, 138) 60%, rgb(100, 255, 162) 80%, rgba(47, 201, 226, 1) 0%" },
+    { pumpbility: 30000, color: "linear-gradient(90deg, rgb(255, 87, 87) 0%, rgb(255, 190, 92) 20%, rgba(208, 222, 33, 1) 40%, rgb(171, 255, 138) 60%, rgb(100, 255, 162) 80%, rgba(47, 201, 226, 1) 100%" },
     { pumpbility: 35000, color: "linear-gradient(90deg,rgba(251, 255, 8, 1) 0%, rgba(255, 3, 255, 1) 25%, rgba(0, 38, 255, 1) 50%, rgba(0, 242, 255, 1) 75%, rgba(0, 255, 170, 1) 100%)" },
   ];
 
@@ -61,6 +63,171 @@ function setRoleText(roleElem, userRole) {
             break;
     }
 }
+
+async function getHardestDifficulty(uid) {
+    try {
+        const scoresRef = collection(db, "users", uid, "scores");
+        const scoresSnapshot = await getDocs(scoresRef);
+
+        if (scoresSnapshot.empty) {
+            return "No plays";
+        }
+
+        // Filter out failed charts and find the highest level
+        let highestLevel = 0;
+        scoresSnapshot.forEach(doc => {
+            const scoreData = doc.data();
+            if (scoreData.chartFail !== true && scoreData.chartFail !== "true") {
+                let level = 0;
+                if (typeof scoreData.lvl === "number") {
+                    level = scoreData.lvl;
+                } else if (typeof scoreData.lvl === "string") {
+                    // Remove any non-digit prefix (e.g., "L15" or "15")
+                    const match = scoreData.lvl.match(/\d+/);
+                    if (match) {
+                        level = Number(match[0]);
+                    }
+                }
+                if (level > highestLevel) {
+                    highestLevel = level;
+                }
+            }
+        });
+
+        return highestLevel > 0 ? highestLevel : "None";
+    } catch (err) {
+        console.error("Error fetching hardest difficulty:", err);
+        return "???";
+    }
+}
+
+async function getHardestPerfectGame(uid) {
+    try {
+        const scoresRef = collection(db, "users", uid, "scores");
+        const scoresSnapshot = await getDocs(scoresRef);
+
+        let highestLevel = 0;
+        scoresSnapshot.forEach(doc => {
+            const scoreData = doc.data();
+            if (scoreData.score === 1000000) {
+                let level = 0;
+                if (typeof scoreData.lvl === "number") {
+                    level = scoreData.lvl;
+                } else if (typeof scoreData.lvl === "string") {
+                    const match = scoreData.lvl.match(/\d+/);
+                    if (match) {
+                        level = Number(match[0]);
+                    }
+                }
+                if (level > highestLevel) {
+                    highestLevel = level;
+                }
+            }
+        });
+
+        return highestLevel > 0 ? highestLevel : "None";
+    } catch (err) {
+        console.error("Error fetching hardest perfect game:", err);
+        return "???";
+    }
+}
+
+async function getHardestMax(uid) {
+    try {
+        const scoresRef = collection(db, "users", uid, "scores");
+        const scoresSnapshot = await getDocs(scoresRef);
+
+        let highestLevel = 0;
+        scoresSnapshot.forEach(doc => {
+            const scoreData = doc.data();
+            const fa = Number(scoreData.fa) || 0;
+            const sl = Number(scoreData.sl) || 0;
+            
+            if (
+                scoreData.score === 1000000 &&
+                (scoreData.isSuperbOn === true || scoreData.isSuperbOn === "true") &&
+                fa + sl === 0 &&
+                scoreData.chartFail !== true &&
+                scoreData.chartFail !== "true"
+            ) { 
+                let level = 0;
+                if (typeof scoreData.lvl === "number") {
+                    level = scoreData.lvl;
+                } else if (typeof scoreData.lvl === "string") {
+                    const match = scoreData.lvl.match(/\d+/);
+                    if (match) {
+                        level = Number(match[0]);
+                    }
+                }
+                if (level > highestLevel) {
+                    highestLevel = level;
+                }
+            }
+        });
+
+        return highestLevel > 0 ? highestLevel : "None";
+    } catch (err) {
+        console.error("Error fetching hardest MAX:", err);
+        return "???";
+    }
+}
+
+async function getTotalScore(uid) {
+    const scoresRef = collection(db, "users", uid, "scores");
+    const scoresSnapshot = await getDocs(scoresRef);
+    let totalScore = 0;
+    scoresSnapshot.forEach(doc => {
+        const scoreData = doc.data();
+        totalScore += Number(scoreData.score) || 0;
+    });
+    return totalScore;
+}
+
+statsbutton.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const statsElem = document.querySelector(".stats");
+    if (statsElem.style.display === "none" || statsElem.style.display === "") {
+        statsElem.style.display = "block";
+    } else {
+        statsElem.style.display = "none";
+        return;
+    }
+    const user = getAuth().currentUser;
+    if (!user) {
+        return;
+    }
+    
+    try {
+        const scoresRef = collection(db, "users", user.uid, "scores");
+        const count = await getCountFromServer(scoresRef);
+        const playCount = count.data().count;
+
+        const hardestDiff = await getHardestDifficulty(user.uid);
+        const hardestPerfectGame = await getHardestPerfectGame(user.uid);
+        const hardestMax = await getHardestMax(user.uid);
+        const totalScore = await getTotalScore(user.uid);
+        statsElem.innerHTML = `
+            <h2>Statistics</h2>
+            <div class="stats-container" style="display: flex; justify-content: space-between;">
+            <div class="stats-row">
+                <p>Total plays: ${playCount}</p>
+                <p>Hardest Difficulty cleared: Lv.${hardestDiff || "???"}</p>
+                <p>Hardest Perfect Game: Lv.${hardestPerfectGame || "???"}</p>
+                <p>Hardest MAX: Lv.${hardestMax || "???"}</p>
+            </div>
+            <div class="stats-row">
+                <p>Total Score: ${totalScore}</p>
+            </div>
+            </div>
+        `; //TODO: add Single and Double diffentation
+    } catch (error) {
+        console.error("Error fetching playcount:", error);
+        statsElem.innerHTML = `
+            <h2>Statistics</h2>
+            <p>Error loading statistics.</p>
+        `;
+    }
+});
 
 document.addEventListener("DOMContentLoaded", () => {
     const auth = getAuth();
@@ -137,12 +304,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     scores.push(doc.data());
                 });
 
-                // Best Plays: top 30 by pumpbility, unique by song name and level
+                // Best Plays: top 30 by pumpbility, unique by song name and level and rate
                 const bestPlaysMap = new Map();
                 for (const play of scores) {
                     if (typeof play.pumpbility !== "number") continue;
                     if (play.chartFail === true || play.chartFail === "true") continue;
-                    const key = `${play.sn}__${play.lvl}`;
+                    if (play.rate === "undefined" || play.rate === "undefined" || play.rate === "" || play.rate === null || isNaN(play.rate)) {
+                        play.rate = 1;
+                    }
+                    const key = `${play.sn}__${play.lvl}__${Number(play.rate)}`;
                     const existing = bestPlaysMap.get(key);
                     if (
                         !existing ||
@@ -221,19 +391,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Helper to render table rows
                 function renderRows(plays) {
                     return plays.map(play => {
-                        const href = `/score.html?user=${user.displayName}&sn=${encodeURIComponent(play.sn || "")}&lvl=${encodeURIComponent(play.lvl || "")}&t=${encodeURIComponent(play.timestamp || "")}`;
+                        const href = `/score.html?user=${encodeURIComponent(user.displayName)}&sn=${encodeURIComponent(play.sn || "")}&lvl=${encodeURIComponent(play.lvl || "")}&t=${encodeURIComponent(play.timestamp || "")}`;
                         let scoreCell = "";
-                        if (play.chartFail === true || play.chartFail === "true") {
+
+                        // Normalize chartFail
+                        const chartFail = play.chartFail === true || play.chartFail === "true";
+                        if (chartFail) {
                             play.cleartype = "";
                             play.pumpbility = 0;
                         }
+
+                        // Score cell logic
                         if (play.score === 1000000) {
                             const minusMax = Number(play.fa) + Number(play.sl);
-                            if (minusMax === 0 && play.isSuperbOn === true) {
+                            const isSuperb = play.isSuperbOn === true || play.isSuperbOn === "true";
+                            const isPerfect = Number(play.gr) + Number(play.gd) + Number(play.bd) + Number(play.ms) === 0;
+
+                            if (minusMax === 0 && isSuperb) {
                                 scoreCell = `1000000 <span style='color:rgb(174, 255, 248); font-size: 0.6em;'>(MAX)</span>`;
-                            } else if (
-                                Number(play.gr) + Number(play.gd) + Number(play.bd) + Number(play.ms) === 0 && play.isSuperbOn === true
-                            ) {
+                            } else if (isPerfect && isSuperb) {
                                 scoreCell = `1000000 <span style='color:rgb(174, 255, 248); font-size: 0.6em;'>(MAX-${minusMax})</span>`;
                             } else {
                                 scoreCell = `1000000`;
@@ -248,16 +424,28 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                         return `<tr>
                             <td><a style="text-decoration: none; color: white;" href="${href}">${play.sn || ""}</a></td>
-                            <td>${play.lvl || ""}</td>
+                            <td>
+                                ${play.lvl || ""}
+                                <span style="font-size: 0.8em; color: #f22;">
+                                    ${
+                                        Number(play.rate) === 1 ||
+                                        play.rate === undefined ||
+                                        play.rate === "undefined" ||
+                                        play.rate === "" ||
+                                        play.rate === null
+                                            ? ""
+                                            : `(${play.rate}x)`
+                                    }
+                                </span>
+                            </td>
                             <td>${scoreCell}</td>
                             <td>${play.grade || ""}</td>
                             <td>${play.cleartype || ""}</td>
-                            <td>${play.pumpbility ?? ""}</td>
+                            <td>${typeof play.pumpbility === "number" && !isNaN(play.pumpbility) ? play.pumpbility : ""}</td>
                             <td>${play.timeString || ""}</td>
                         </tr>`;
                     }).join("");
                 }
-
                 // Render Best Plays
                 if (bestPlaysTable) {
                     bestPlaysTable.innerHTML = `
