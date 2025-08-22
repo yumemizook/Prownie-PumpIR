@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report a user</title>
+    <link rel="stylesheet" href="./styles/home.css" />
+    <link rel="stylesheet" href="./styles/navbar.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $.get("navbar.html", function (data) {
+            $("#navbar").replaceWith(data);
+        });
+        $.get("footer.html", function (data) {
+            $("#footer").replaceWith(data);
+        });
+    </script>
+</head>
+<body>
+    <div id="navbar"></div>
+    <div class="reportcontainer" style="margin-top: 100px; text-align: center;">
+        <h1>Report a user</h1>
+        <br>
+        <div class="reporttarget">
+            <h2>You are reporting:</h2>
+            <h3 id="report-username">Default User</h3>
+            <h5 id="report-userid"></h5>
+        </div>
+        <br>
+        <p>Please select the reason for reporting the user.</p>
+        <select name="reason" id="reasonchoice">
+            <option value="0">Select a reason</option>
+            <option value="1">NSFW content</option>
+            <option value="2">Harassment</option>
+            <option value="3">Hate speech</option>
+            <option value="4">Racism</option>
+            <option value="5">Alt account</option>
+            <option value="6">Other</option>
+        </select>
+        <br>
+        <textarea name="reason" id="reasontext" placeholder="Please provide a detailed reason for reporting the user." style="width: 50%;"></textarea>
+        <br>
+        <button id="report-button">Report</button>
+    </div>
+    <div id="footer"></div>
+</body>
+<script type="module">
+    import {updateDoc, doc, onAuthStateChanged, getAuth, getDoc, collection, getDocs, query, where, arrayUnion, db} from "./torture/firebase.js";
+    const params = new URLSearchParams(window.location.search);
+    const userParam = params.get("name");
+    const useridParam = params.get("id");
+    const reportusername = document.querySelector("#report-username");
+    const reportuserid = document.querySelector("#report-userid");
+    reportusername.innerHTML = userParam;
+    reportuserid.innerHTML = `ID: ${useridParam}`;
+    const reportButton = document.querySelector("#report-button");
+    reportButton.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const reason = document.querySelector("#reasonchoice").value;
+        const reasontext = document.querySelector("#reasontext").value;
+        try {
+            const reportdoc = doc(db, "users", useridParam);
+            await updateDoc(reportdoc, {
+                reports: arrayUnion({
+                    reason: reason,
+                    reasontext: reasontext,
+                    timestamp: new Date().toISOString(),
+                }),
+            });
+            showMessage("Report submitted successfully! Successive reports will increase priority.", "#0c0");
+        } catch (error) {
+            console.error(error);
+        }
+    });
+        // Show a message to the user
+            function showMessage(msg, color = "#333") {
+            let msgDiv = document.getElementById("report-msg");
+            if (!msgDiv) {
+                msgDiv = document.createElement("div");
+                msgDiv.id = "report-msg";
+                msgDiv.style.marginTop = "10px";
+                msgDiv.style.fontWeight = "bold";
+                reportButton.parentNode.insertBefore(msgDiv, reportButton.nextSibling);
+            }
+            msgDiv.textContent = msg;
+            msgDiv.style.color = color;
+        }
+document.addEventListener("DOMContentLoaded", async () => {
+    const auth = getAuth();
+    let user = auth.currentUser;
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            showMessage("You must be logged in to submit a report.", "#c00");
+            document.querySelector("#report-username").style.display = "none";
+            document.querySelector("#report-userid").style.display = "none";
+            document.querySelector("#report-button").style.display = "none";
+            document.querySelector("#reasonchoice").style.display = "none";
+            document.querySelector("#reasontext").style.display = "none";
+            return;
+        }
+        if (user.uid === useridParam) {
+            showMessage("You cannot report yourself.", "#c00");
+            document.querySelector("#report-username").style.display = "none";
+            document.querySelector("#report-userid").style.display = "none";
+            document.querySelector("#report-button").style.display = "none";
+            document.querySelector("#reasonchoice").style.display = "none";
+            document.querySelector("#reasontext").style.display = "none";
+            return;
+        }
+        let userDocSnap;
+        try {
+            userDocSnap = await getDoc(doc(db, "users", user.uid));
+        } catch (err) {
+            showMessage("Failed to fetch user data. Please try again later.", "#c00");
+            return;
+        }
+        const userData = userDocSnap.data();
+        if (userData && userData.role === "banned") {
+            showMessage("You are banned and cannot submit reports", "#c00");
+            document.querySelector("#report-username").style.display = "none";
+            document.querySelector("#report-userid").style.display = "none";
+            document.querySelector("#report-button").style.display = "none";
+            document.querySelector("#reasonchoice").style.display = "none";
+            document.querySelector("#reasontext").style.display = "none";
+            return;
+        }
+    });
+});
+
+</script>
+</html>

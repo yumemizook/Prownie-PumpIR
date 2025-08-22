@@ -288,6 +288,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.querySelector(".avatar img").src = "img/default-avatar.png";
                 return;
               }
+              if (userData.timeBanned && (Date.now() - userData.timeBanned < 1000 * 60 * 60 * 24 * 180)) { // if the user has been banned in the last 180 days
+                document.querySelector(".badstanding").style.display = "block";
+              }
             // Role
             setRoleText(role, userData.role || "Player");
 

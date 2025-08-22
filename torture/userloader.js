@@ -38,6 +38,9 @@ const playerAvatar = document.querySelector("#playerpfp");
 const pumpbility = document.querySelector("#pbility");
 const role = document.querySelector(".role");
 const timecreated = document.querySelector(".timecreated");
+const reportButton = document.querySelector("#report-user");
+
+  
 document.addEventListener("DOMContentLoaded", async () => {
   const playerNameParam = new URLSearchParams(window.location.search).get(
     "name"
@@ -77,6 +80,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!formatDistanceToNow) {
     ({ formatDistanceToNow } = await import("https://unpkg.com/date-fns@3.6.0/formatDistanceToNow.mjs"));
 }
+
+reportButton.addEventListener("click", (e) => {
+  e.preventDefault();
+  const url = new URL("userreport.html", window.location.origin);
+  url.searchParams.set("name", foundUser.username);
+  url.searchParams.set("id", foundUser.id || foundUser.uid || foundUser.userId || foundUser.docId || foundUserDocId || "");
+  window.location.href = url.toString();
+});
+
 const timeCreated = foundUser.timeCreated;
 const timeCreatedFormatted = formatDistanceToNow(timeCreated, { addSuffix: true });
 timecreated.innerHTML = `Joined ${timeCreatedFormatted}`;
@@ -104,7 +116,9 @@ if (foundUser.role === "banned") {
   document.querySelector(".avatar img").src = "img/default-avatar.png";
   return;
 }
-
+if (foundUser.timeBanned && (Date.now() - foundUser.timeBanned < 1000 * 60 * 60 * 24 * 180)) { // if the user has been banned in the last 180 days
+  document.querySelector(".badstanding").style.display = "block";
+}
   const userRole = foundUser.role || "Player";
   switch (userRole) {
     case "owner":

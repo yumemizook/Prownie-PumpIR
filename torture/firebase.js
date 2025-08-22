@@ -32,6 +32,7 @@ import {
   where,
   getCountFromServer,
   orderBy,
+  arrayUnion,
   limit,
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
@@ -79,6 +80,7 @@ export {
   getCountFromServer,
   orderBy,
   limit,
+  arrayUnion,
 };
 export default app;
 export { firebaseConfig };

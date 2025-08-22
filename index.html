@@ -103,6 +103,9 @@
         if (userDoc.data().role !== "sysop" && userDoc.data().role !== "owner") {
           document.getElementById("news-post-button").style.display = "none";
         }
+        if (userDoc.data().timeBanned && (Date.now() - userDoc.data().timeBanned < 1000 * 60 * 60 * 24 * 180)) { // if the user has been banned in the last 180 days
+          document.querySelector(".intro").innerHTML = `Welcome back, ${userDoc.data().username}! <br> We are still watching you. Don't break the rules again.`;
+        }
         if (userDoc.data().role === "banned") {
           const status = document.createElement("div");
           status.innerHTML = "You have been banned from the site. <br> If you think this is a mistake, please contact an admin.";

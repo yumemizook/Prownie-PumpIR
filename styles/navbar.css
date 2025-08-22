@@ -10,17 +10,14 @@ body {
   box-sizing: border-box;
   color: white;
 }
-/* wtf is happening */
+
+/* Navbar link hover effects */
 .navbar a:hover {
-  background-color: rgb(150,223,255);
+  background-color: rgb(150, 223, 255);
   color: white;
   transition: background-color 0.5s, color 0.5s;
 }
-/* #logger a:hover {
-  background-color: rgb(255, 150, 150);
-  color: white;
-  transition: background-color 0.5s, color 0.5s;
-}  */
+
 .navbar {
   width: 100%;
   position: fixed;
@@ -52,6 +49,7 @@ body {
 .dropdown {
   display: flex;
 }
+
 .navbar .item a:hover {
   background-color: rgb(150, 223, 255);
   color: whitesmoke;
@@ -62,7 +60,6 @@ body {
   width: 25px;
   height: 20px;
   margin-left: 10px;
-
   margin-right: 15px;
 }
 
@@ -81,19 +78,37 @@ body {
   font-size: 17px;
 }
 
-#avatar{
-  display: none
+#avatar {
+  display: none;
+  position: relative;
+  z-index: 1000;
 }
 
 #avatar:hover {
   background-color: rgba(255, 150, 150, 0);
 }
+
 #avatar img {
   width: 40px;
   height: 40px;
   border: 2px solid #888888;
   border-radius: 10%;
   margin-right: 30px;
+  margin-left: 0;
+  display: block;
+  object-fit: cover;
+}
+
+.account .dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+
+.navbar #avatar img {
+  margin-right: 30px;
+  margin-left: 0;
 }
 
 .outline {
@@ -104,6 +119,7 @@ body {
   text-decoration: none;
   cursor: pointer;
 }
+
 .outline:hover {
   background-color: rgb(150, 223, 255);
 }
@@ -123,12 +139,11 @@ body {
   display: none;
   position: absolute;
   right: 0px;
-  top: 30px;
+  top: 100%;
   background-color: #1f99a7;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
-  top: 100%;
   animation: moveDown 0.5s ease-out;
 }
 
