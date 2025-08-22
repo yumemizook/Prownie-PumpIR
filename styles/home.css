@@ -330,3 +330,15 @@ textarea {
   background-color: #303438;
   color: #fff;
 }
+
+.leaderboards {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 80px;
+}
+
+.leaderboards h1 {
+  font-size: 2rem;
+}

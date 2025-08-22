@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Player Leaderboards</title>
+    <link rel="stylesheet" href="/styles/home.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="/img/brownie.ico" />
+    <script
+      src="https://kit.fontawesome.com/7263e3a28f.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  </head>
+  <body>
+    <div class="navbar"></div>
+    <div class="main">
+      <div class="leaderboards">
+        <h1>Player Leaderboards</h1>
+        <select id="leaderboard-type">
+          <option value="pumpbility">Pumpbility</option>
+          <option value="score">Score</option>
+        </select>
+      </div>
+    </div>
+    <div class="footer"></div>
+    
+    <script>
+      $(function () {
+        $.get("navbar.html", function (data) {
+          $(".navbar").replaceWith(data);
+        });
+        $.get("footer.html", function (data) {
+          $(".footer").replaceWith(data);
+        });
+      });
+    </script>
+    
+    <script type="module">
+      import { db, collection, getDocs } from "./torture/firebase.js";
+      
+      let allUsers = [];
+      const leaderboardType = document.querySelector("#leaderboard-type");
+      
+      document.addEventListener("DOMContentLoaded", async () => {
+        // Fetch users from database
+        const usersCol = collection(db, "users");
+        const usersSnapshot = await getDocs(usersCol);
+        allUsers = usersSnapshot.docs.map((doc) => {
+          const user = doc.data();
+          user.id = doc.id;
+          return user;
+        });
+
+        // Remove banned users
+        allUsers = allUsers.filter(
+          (user) => !(user.role && user.role.includes("banned"))
+        );
+
+        // Helper to sort and re-render leaderboard
+        function renderLeaderboard() {
+          // Remove any previous leaderboard table if present
+          const leaderboardDiv = document.querySelector(".leaderboards");
+          const oldTable = leaderboardDiv.querySelector("table");
+          if (oldTable) oldTable.remove();
+
+          // Sort users based on selected type
+          if (leaderboardType.value === "pumpbility") {
+            allUsers.sort((a, b) => (b.pumpbility || 0) - (a.pumpbility || 0));
+          } else if (leaderboardType.value === "score") {
+            allUsers.sort((a, b) => (b.score || 0) - (a.score || 0));
+          }
+
+          // Create table
+          const table = document.createElement("table");
+          table.className = "leaderboard-table";
+          table.style.marginTop = "24px";
+          table.style.minWidth = "100%";
+          table.style.borderCollapse = "collapse";
+          table.style.border = "1px solid #444";
+          
+          table.innerHTML = `
+            <thead>
+              <tr>
+                <th style="text-align:center; padding: 12px; border: 1px solid #444; background-color: #333;">Rank</th>
+                <th style="text-align:left; padding: 12px; border: 1px solid #444; background-color: #333;">Player</th>
+                <th style="text-align:center; padding: 12px; border: 1px solid #444; background-color: #333;">Date Joined</th>
+                <th style="text-align:center; padding: 12px; border: 1px solid #444; background-color: #333;">${leaderboardType.value === 'score' ? 'Score' : 'Pumpbility'}</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          `;
+
+          const tbody = table.querySelector("tbody");
+
+          allUsers.forEach((user, idx) => {
+            const tr = document.createElement("tr");
+            tr.style.border = "1px solid #444";
+
+            // Get username (prefer username, then displayName, then name, then fallback)
+            const username =
+              typeof user.username === "string" && user.username.trim() !== ""
+                ? user.username
+                : typeof user.displayName === "string" &&
+                  user.displayName.trim() !== ""
+                ? user.displayName
+                : typeof user.name === "string" && user.name.trim() !== ""
+                ? user.name
+                : "Unknown User";
+
+            // Get profile picture
+            const pfp =
+              user.profilePicture &&
+              typeof user.profilePicture === "string" &&
+              user.profilePicture.trim() !== ""
+                ? user.profilePicture
+                : "img/default-avatar.png";
+
+            // Get date joined
+            let dateJoined = "Unknown";
+            if (user.timeCreated !== undefined) {
+              try {
+                dateJoined = new Date(user.timeCreated).toLocaleDateString("en-GB", {
+                  hour12: false,
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                });
+              } catch (e) {
+                dateJoined = "Invalid Date";
+              }
+            }
+
+            // Get stat value (pumpbility or score)
+            let statValue = 0;
+            if (leaderboardType.value === "score") {
+              statValue = user.score || 0;
+            } else {
+              statValue = user.pumpbility || 0;
+            }
+
+            // Apply ranking colors
+            if (idx === 0) {
+              tr.style.backgroundColor = "#ffd700"; // gold
+            } else if (idx === 1) {
+              tr.style.backgroundColor = "#c0c0c0"; // silver
+            } else if (idx === 2) {
+              tr.style.backgroundColor = "#cd7f32"; // bronze
+            } else if (idx >= 3 && idx <= 9) {
+              tr.style.backgroundColor = "#ea8fff";
+            } else if (idx >= 10 && idx <= 49) {
+              tr.style.backgroundColor = "#63ffc6";
+            }
+
+            tr.innerHTML = `
+              <td style="text-align:center; padding: 12px; border: 1px solid #444; font-weight: bold;">${idx + 1}</td>
+              <td style="display:flex; align-items:center; gap:10px; padding: 12px">
+                <img src="${pfp}" alt="Profile Picture" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:1px solid #444;">
+                <a href="user.html?name=${encodeURIComponent(username)}" style="color:#fff;text-decoration:none;font-weight:500;">${username}</a>
+              </td>
+              <td style="text-align:center; padding: 12px; border: 1px solid #444;">${dateJoined}</td>
+              <td style="text-align:center; padding: 12px; border: 1px solid #444; font-weight: bold;">${statValue.toLocaleString()}</td>
+            `;
+            
+            tbody.appendChild(tr);
+          });
+
+          leaderboardDiv.appendChild(table);
+        }
+
+        // Initial render
+        renderLeaderboard();
+
+        // Re-render when leaderboard type changes
+        leaderboardType.addEventListener("change", renderLeaderboard);
+      });
+    </script>
+  </body>
+</html>

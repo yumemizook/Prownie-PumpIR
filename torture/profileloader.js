@@ -364,9 +364,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         await updateDoc(userDocRef, { role: "veteran" });
                         setRoleText(role, "veteran");
                     }
-                
-
-                await updateDoc(userDocRef, { pumpbility: pumpbilityTotal});
+                const score = await getTotalScore(user.uid);
+                await updateDoc(userDocRef, { pumpbility: pumpbilityTotal, score: score });
 
                 // Recent Plays: top 30 by timestamp (descending)
                 const recentPlays = scores

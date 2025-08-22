@@ -16,7 +16,7 @@ const pumpbilityColors = [
   { pumpbility: 20000, color: "rgb(179, 179, 179)" },
   { pumpbility: 24000, color: "rgb(255, 238, 0)" },
   { pumpbility: 26000, color: "rgb(143, 212, 203)" },
-  { pumpbility: 30000, color: "linear-gradient(90deg, rgb(255, 87, 87) 0%, rgb(255, 190, 92) 20%, rgba(208, 222, 33, 1) 40%, rgb(171, 255, 138) 60%, rgb(100, 255, 162) 80%, rgba(47, 201, 226, 1) 0%" },
+  { pumpbility: 30000, color: "linear-gradient(90deg, rgb(255, 87, 87) 0%, rgb(255, 190, 92) 20%, rgba(208, 222, 33, 1) 40%, rgb(171, 255, 138) 60%, rgb(100, 255, 162) 80%, rgba(47, 201, 226, 1) 100%" },
   { pumpbility: 35000, color: "linear-gradient(90deg,rgba(251, 255, 8, 1) 0%, rgba(255, 3, 255, 1) 25%, rgba(0, 38, 255, 1) 50%, rgba(0, 242, 255, 1) 75%, rgba(0, 255, 170, 1) 100%)" },
 ];
 
@@ -162,14 +162,27 @@ if (foundUser.role === "banned") {
     scores
       .filter(play => typeof play.pumpbility === "number")
       .forEach(play => {
-        const key = `${play.sn}__${play.lvl}`;
+        if (play.chartFail === true || play.chartFail === "true") return;
+        // Normalize rate
+        if (
+          play.rate === undefined ||
+          play.rate === null ||
+          play.rate === "" ||
+          play.rate === "undefined" ||
+          isNaN(Number(play.rate))
+        ) {
+          play.rate = 1;
+        }
+        const key = `${play.sn}__${play.lvl}__${play.rate}`;
+        const existing = bestPlaysMap.get(key);
         // Always prefer the play with the highest pumpbility for this song/level
         if (
-          !bestPlaysMap.has(key) ||
-          (play.pumpbility || 0) > (bestPlaysMap.get(key).pumpbility || 0) ||
+          !existing ||
+          (play.pumpbility || 0) > (existing.pumpbility || 0) ||
           (
-            play.score === 1000000 && play.isSuperbOn === true &&//if the player got a PG, prefer the play closest to the max and has a rainbow fast/slow
-            (Number(play.fa) + Number(play.sl) < (Number(bestPlaysMap.get(key).fa) + Number(bestPlaysMap.get(key).sl) || 0))
+            play.score === 1000000 &&
+            (play.isSuperbOn === true || play.isSuperbOn === "true") &&
+            (Number(play.fa) + Number(play.sl) < (Number(existing?.fa) + Number(existing?.sl) || 0))
           )
         ) {
           bestPlaysMap.set(key, play);
@@ -247,7 +260,17 @@ if (foundUser.role === "banned") {
         }
         return `<tr>
             <td><a style="text-decoration: none; color: white;" href="/score.html?user=${foundUser.username}&sn=${encodeURIComponent(play.sn || "")}&lvl=${encodeURIComponent(play.lvl || "")}&t=${encodeURIComponent(play.timestamp || "")}">${play.sn || ""}</a></td>
-            <td>${play.lvl || ""}</td>
+            <td>${play.lvl || ""} <span style="font-size: 0.8em; color: #f22;">
+                ${
+                    Number(play.rate) === 1 ||
+                    play.rate === undefined ||
+                    play.rate === "undefined" ||
+                    play.rate === "" ||
+                    play.rate === null
+                        ? ""
+                        : `(${play.rate}x)`
+                }
+            </span></td>
             <td>${scoreCell}</td>
             <td>${play.grade || ""}</td>
             <td>${play.cleartype || ""}</td>
