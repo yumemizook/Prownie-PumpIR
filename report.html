@@ -49,6 +49,8 @@
                 <button type="submit" style="margin-top: 12px; background-color: #303438; color: #fff; border: 1px solid #1d678a80; border-radius: 4px; padding: 10px; cursor: pointer;">Report</button>
             </form>
             <div class="info" style="margin-top: 12px;">
+                <span>All reports are anonymous. We won't let the targeted user know you reported them.</span>
+                <br>
                 <span>Depending on the severity of the infraction, the score may be edited to correct the issue or will be deleted. If the infraction is severe, the user statistics will be partially rolled back or be completely wiped.</span>
                 <br>
                 <span>Forementioned users might face a leaderboard ban or an account-wide ban.</span>
@@ -200,6 +202,7 @@
                         flagged: true,
                         reason: reason,
                         reportoption: reportoption,
+                        flaggedDate: new Date().toISOString(), // for the "first come, first serve" rule
                     });
                     showMessage("Report submitted successfully. Thank you!", "#090");
                     reportform.reset();
