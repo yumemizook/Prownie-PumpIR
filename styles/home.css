@@ -122,7 +122,7 @@ body {
 
 .profile {
   display: flex;
-  align-items: center;
+  align-items: top;
   margin-top: 70px;
   justify-content: left;
 }
@@ -340,4 +340,15 @@ textarea {
 
 .leaderboards h1 {
   font-size: 2rem;
+}
+
+.addtoLB {
+  background-color: rgb(72, 92, 103);
+  padding: 10px;
+  color: white;
+  text-decoration: none;
+}
+
+.addtoLB:hover {
+  background-color: rgb(150, 223, 255);
 }

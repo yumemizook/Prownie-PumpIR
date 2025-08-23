@@ -8,8 +8,30 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap" rel="stylesheet">
     <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
-</head>
-<body>
-    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="styles/home.css">
+    <link rel="stylesheet" href="styles/navbar.css">
+    <script>
+      $.get("navbar.html", function (data) {
+        $("#navbar").replaceWith(data);
+      });
+      $.get("/footer.html", function (data) {
+        $(".footer").replaceWith(data);
+      });
+    </script>
+  </head>
+  <body>
+    <div id="navbar"></div>
+    <div class="songcontainer" style="margin-top: 100px; text-align: center;">
+        <div class="songinfo">
+            <h1></h1>
+            <!-- <h4>Artist</h4>
+            <h5>Series</h5> -->
+        </div>
+        <div class="leaderboards">
+        </div>
+    </div>
+    <div class="footer"></div>
 </body>
+<script type="module" src="./torture/songlbloader.js"></script>
 </html>

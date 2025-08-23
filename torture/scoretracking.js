@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, db, getAuth, getDoc } from "./firebase.js";
+import { addDoc, collection, doc, db, getAuth, getDoc, setDoc } from "./firebase.js";
 
 const save = document.getElementById("save");
 const reset = document.getElementById("reset");
@@ -368,6 +368,7 @@ async function uploadScore() {
   };
 
   try {
+    const songKey = sn.toLowerCase().replace(/ /g, "");
     const user = auth.currentUser;
     if (!user) {
       alert("You must be logged in to upload a score.");
@@ -378,7 +379,11 @@ async function uploadScore() {
 
     // Add the score to the user's scores subcollection
     await addDoc(collection(db, "users", userKey, "scores"), scoreObj);
-    await addDoc(collection(db, "songs", sn, "scores"), scoreObj);
+    await setDoc(doc(db, "songs", songKey),{
+      name: sn,
+      // artist: scoreData.artist, //adding this later
+      // series: scoreData.series, //adding this later
+    }, { merge: true });
     alert("Score uploaded successfully");
     window.location.href = `/score.html?user=${user.displayName}&sn=${sn}&lvl=${scoreObj.lvl}&t=${scoreObj.timestamp}`;
   } catch (error) {

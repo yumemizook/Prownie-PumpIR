@@ -10,6 +10,8 @@ import {
   where,
   getDocs,
   getCountFromServer,
+  addDoc,
+  setDoc,
 } from "./firebase.js";
 let formatDistanceToNow;
 const playerName = document.querySelector("[playername]");
@@ -618,16 +620,93 @@ addtoLB.addEventListener("click", async () => {
   if (!user) {
     return;
   }
-  const songref = collection(db, "songs");
-  const songSnapshot = await getDocs(songref);
-  const userScores = await getDocs(collection(db, "users", user.uid, "scores"));
-  userScores.forEach(async (doc) => {
-    const score = doc.data();
-    const songref = collection(db, "songs", score.sn, "scores");
-    const songSnapshot = await getDocs(songref);
-    songSnapshot.forEach(async (doc) => {
-      const score = doc.data();
-      await addDoc(collection(db, "songs", score.sn, "scores"), score);
-    });
-  });
+  const overlay = document.querySelector("#addtoLBStatusOverlay");
+  overlay.style.display = "flex";
+  overlay.style.background = "rgba(0,0,0,0.8)";
+  overlay.style.width = "100vw";
+  overlay.style.height = "100vh";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.position = "fixed";
+  overlay.style.zIndex = "1000";
+  overlay.style.justifyContent = "center";
+  overlay.style.alignItems = "center";
+  overlay.style.fontSize = "2em";
+  overlay.style.textAlign = "center";
+  overlay.innerHTML = `
+    <div style="background: #222; padding: 40px 60px; border-radius: 16px; box-shadow: 0 4px 32px #000a; border: 2px solid #4ad;">
+      <div style="margin-bottom: 10px; font-weight: bold;">Uploading data...</div>
+      <div class="addtolb-status-message"></div>
+      <button id="closeAddtoLBOverlay" style="margin-top: 20px; padding: 8px 24px; border-radius: 8px; border: none; background: #4ad; color: #fff; font-size: 1em; cursor: pointer; display: none;">Close</button>
+    </div>
+  `;
+
+  const statusMsg = overlay.querySelector(".addtolb-status-message");
+  const closeBtn = overlay.querySelector("#closeAddtoLBOverlay");
+
+  function showCloseButton() {
+    closeBtn.style.display = "inline-block";
+    closeBtn.onclick = () => {
+      overlay.style.display = "none";
+      overlay.innerHTML = "";
+    };
+  }
+
+  try {
+    const userScoresSnapshot = await getDocs(collection(db, "users", user.uid, "scores"));
+    let addedCount = 0;
+    let removedCount = 0;
+
+    for (const docSnap of userScoresSnapshot.docs) {
+      const scoreData = docSnap.data();
+      if (!scoreData.sn) continue; // skip if no song name/id
+      const songKey = scoreData.sn.trim().toLowerCase().replace(/\s+/g, "");
+      const songScoresRef = collection(db, "songs", songKey, "scores");
+      // Ensure the song document exists and set its name (merge: true to avoid overwriting)
+      await setDoc(doc(db, "songs", songKey), {
+        name: scoreData.sn,
+        // artist: scoreData.artist, //adding this later
+        // series: scoreData.series, //adding this later
+      }, { merge: true });
+
+      // Check if this score already exists in leaderboard (by user id, level, and rate)
+      const q = query(
+        songScoresRef,
+        where("uid", "==", user.uid),
+        where("lvl", "==", scoreData.lvl),
+        where("rate", "==", Number(scoreData.rate))
+      );
+      let alreadyExists = false;
+      try {
+        const existing = await getDocs(q);
+        alreadyExists = !existing.empty;
+      } catch (err) {
+        console.error("Error checking existing leaderboard entry:", err);
+        // If error, skip this score
+        removedCount++;
+        continue;
+      }
+
+      if (!alreadyExists) {
+        try {
+          await addDoc(songScoresRef, {
+            ...scoreData,
+            uid: user.uid,
+          });
+          addedCount++;
+        } catch (err) {
+          console.error("Error adding score to leaderboard:", err);
+          removedCount++;
+        }
+      } else {
+        removedCount++;
+      }
+    }
+    statusMsg.innerHTML = `<span style="color:#7fffa7;">${addedCount} score(s) added to leaderboard</span>, <span style="color:#ffb347;">${removedCount} score(s) skipped</span>.`;
+    showCloseButton();
+  } catch (e) {
+    console.error("Error adding scores to leaderboard:", e);
+    statusMsg.innerHTML = `<span style="color:#ff6b6b;">Failed to add scores to leaderboard.</span>`;
+    showCloseButton();
+  }
 });
