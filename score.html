@@ -32,7 +32,8 @@
                 <div class="bd"></div>
                 <div class="ms"></div>
                 <div class="combo"></div>
-                <div class="fastslow" style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+                <div class="fastslow"
+                    style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
                     <div class="fast"></div>
                     <div class="slow"></div>
                 </div>
@@ -45,7 +46,11 @@
                 <div class="maxminus"></div>
                 <div class="exscore" style="font-size: 0.75em;"></div>
                 <br>
-                <div class="pumpbility"></div>
+                <div class="pumpbility">
+                </div>
+                <br>
+                <div class="yourrank" style="font-size: 1.8em; font-weight: bold; margin-top: 10px;">YOU AER</div> <!-- yes the typo is intentional-->
+                <div class="leaderboardrank" style="font-size: 1.25em; font-weight: bold; margin-top: 10px;"></div>
             </div>
         </div>
         <div class="buttons">
@@ -137,7 +142,10 @@
         userDisplay.innerHTML = `Played by ${userParam}`;
 
         // Set page title
-        document.querySelector("title").innerHTML = (playModeIndex === "C") ? `${sn} (${lvlnumerical}) - Played by ${userParam} at ${time.toLocaleString()}` : `${sn} (${playModeIndex}${lvlnumerical}) - Played by ${userParam} at ${time.toLocaleString()}`;
+        // Set page title
+        document.title = (playModeIndex === "C")
+            ? `${sn} (${lvlnumerical}) - Played by ${userParam} at ${time.toLocaleString()}`
+            : `${sn} (${playModeIndex}${lvlnumerical}) - Played by ${userParam} at ${time.toLocaleString()}`;
 
         onAuthStateChanged(auth, async (firebaseUser) => {
             title.innerHTML = `${sn}`;
@@ -191,6 +199,49 @@
                 const exscorehue = ((exscorePercentage) * 220) / 100;
                 const rateDisplay = document.querySelector("[rate]");
                 const rateValue = play.rate ?? "";
+                const rankDisplay = document.querySelector(".leaderboardrank");
+
+                try {
+                    const songscoresSnap = await getDocs(
+                        collection(db, "songs", sn.toLowerCase().replace(/ /g, ""), "scores")
+                    );
+                    const songScores = [];
+
+                    songscoresSnap.forEach(docSnap => {
+                        const data = docSnap.data();
+                        data.timestamp = Number(data.timestamp);
+                        data.pumpbility = Number(data.pumpbility) || 0;
+                        songScores.push(data);
+
+                    });
+
+                    // Sort scores by pumpbility descending, then by score descending, then by timestamp ascending
+                    // This matches the leaderboard sorting logic exactly
+                    songScores.sort((a, b) => {
+                        if ((b.pumpbility || 0) !== (a.pumpbility || 0)) {
+                            return (b.pumpbility || 0) - (a.pumpbility || 0);
+                        }
+                        if ((b.score || 0) !== (a.score || 0)) {
+                            return (b.score || 0) - (a.score || 0);
+                        }
+                        return (a.timestamp || 0) - (b.timestamp || 0);
+                    });
+                    // Find the play in the sorted list
+                    let playIndex = songScores.findIndex(score => score.timestamp === timestamp);
+
+                    rankDisplay.innerHTML = playIndex !== -1 ? ` <a href="./song.html?id=${sn.toLowerCase().replace(/ /g, "")}" style="text-decoration: none; color: #fff;"><span class="rank" style="font-size: 2.5em;">#${playIndex + 1 === 1 ? "1!" : playIndex + 1}</span> / ${songScores.length}</a>` : "-";
+                    if (playIndex === 0) {
+                        document.querySelector(".rank").style.color = "#ffd700";
+                    } else if (playIndex === 1) {
+                        document.querySelector(".rank").style.color = "#c0c0c0";
+                    } else if (playIndex === 2) {
+                        document.querySelector(".rank").style.color = "#cd7f32";
+                    }
+                } catch (e) {
+                    console.error("Error setting rank:", e);
+                    if (rankDisplay) rankDisplay.textContent = "-";
+                }
+
                 if (rateValue === "undefined" || rateValue === "undefined" || rateValue === "" || rateValue === null) {
                     rateDisplay.innerHTML = "";
                 } else if (Number(rateValue) === 1) {
@@ -283,4 +334,5 @@
     </script>
     <script type="module" src="./torture/navbar.js"></script>
 </body>
+
 </html>

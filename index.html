@@ -160,6 +160,7 @@
             latestPostsDiv.style.fontWeight = "bold";
             latestPostsDiv.style.fontSize = "1.3em";
             latestPostsDiv.style.marginBottom = "10px";
+            latestPostsDiv.style.marginLeft = "5px";
             newsContainer.appendChild(latestPostsDiv);
             newsContainer.dataset.latestPostsAdded = "true";
           }
@@ -174,9 +175,11 @@
             const postDiv = document.createElement("div");
             postDiv.className = "news-post";
             postDiv.innerHTML = `
-              <div data-title style="font-weight:bold;font-size:1.1em;">${post.title ? post.title : ""}</div>
+            <div class="news-post-container" style="display: flex; flex-direction: column; margin-bottom: 20px;">
+              <div data-title style="font-weight:bold;font-size:1.25em; color: #00E3FF;">${post.title ? post.title : ""}</div>
               <div data-time style="color:gray;font-size:0.9em;margin-bottom:4px;">${formattedTime}</div>
               <div data-text>${post.text ? post.text : ""}</div>
+            </div>
             `;
             newsContainer.appendChild(postDiv);
           });

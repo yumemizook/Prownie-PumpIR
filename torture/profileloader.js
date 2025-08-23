@@ -548,7 +548,7 @@ document.addEventListener("DOMContentLoaded", () => {
               }</a></td>
                             <td>
                                 ${play.lvl || ""}
-                                <span style="font-size: 0.8em; color: #f22;">
+                                <span class="rate" style="font-size: 0.8em; color: ${play.rate < 1 ? "rgb(98, 255, 93)" : "rgb(255, 82, 82)"};">
                                     ${
                                       Number(play.rate) === 1 ||
                                       play.rate === undefined ||
@@ -655,54 +655,85 @@ addtoLB.addEventListener("click", async () => {
   try {
     const userScoresSnapshot = await getDocs(collection(db, "users", user.uid, "scores"));
     let addedCount = 0;
-    let removedCount = 0;
+    let skippedCount = 0;
+
+    // Group user scores by songKey+lvl+rate for efficient filtering
+    const scoresToAdd = [];
+    const scoreKeySet = new Set();
 
     for (const docSnap of userScoresSnapshot.docs) {
       const scoreData = docSnap.data();
-      if (!scoreData.sn) continue; // skip if no song name/id
+      if (!scoreData.sn) {
+        skippedCount++;
+        continue; // skip if no song name/id
+      }
       const songKey = scoreData.sn.trim().toLowerCase().replace(/\s+/g, "");
+      const lvl = scoreData.lvl;
+      const rate = Number(scoreData.rate);
+      const uniqueKey = `${songKey}|||${lvl}|||${rate}`;
+      // Only keep one score per uniqueKey (if duplicates in user collection)
+      if (!scoreKeySet.has(uniqueKey)) {
+        scoresToAdd.push({ scoreData, songKey, lvl, rate, uniqueKey });
+        scoreKeySet.add(uniqueKey);
+      }
+    }
+
+    // For each unique (songKey, lvl, rate), check if already exists in leaderboard
+    // Batch queries by songKey for efficiency
+    const groupedBySong = {};
+    for (const entry of scoresToAdd) {
+      if (!groupedBySong[entry.songKey]) groupedBySong[entry.songKey] = [];
+      groupedBySong[entry.songKey].push(entry);
+    }
+
+    for (const songKey in groupedBySong) {
+      const entries = groupedBySong[songKey];
       const songScoresRef = collection(db, "songs", songKey, "scores");
       // Ensure the song document exists and set its name (merge: true to avoid overwriting)
       await setDoc(doc(db, "songs", songKey), {
-        name: scoreData.sn,
-        // artist: scoreData.artist, //adding this later
-        // series: scoreData.series, //adding this later
+        name: entries[0].scoreData.sn,
+        // artist: entries[0].scoreData.artist, //adding this later
+        // series: entries[0].scoreData.series, //adding this later
       }, { merge: true });
 
-      // Check if this score already exists in leaderboard (by user id, level, and rate)
-      const q = query(
-        songScoresRef,
-        where("uid", "==", user.uid),
-        where("lvl", "==", scoreData.lvl),
-        where("rate", "==", Number(scoreData.rate))
-      );
-      let alreadyExists = false;
+      // Get all leaderboard scores for this user for this song
+      let leaderboardScores = [];
       try {
-        const existing = await getDocs(q);
-        alreadyExists = !existing.empty;
+        const q = query(songScoresRef, where("player", "==", user.displayName));
+        const leaderboardSnapshot = await getDocs(q);
+        leaderboardScores = leaderboardSnapshot.docs.map(d => d.data());
       } catch (err) {
-        console.error("Error checking existing leaderboard entry:", err);
-        // If error, skip this score
-        removedCount++;
+        console.error("Error fetching leaderboard entries for song:", songKey, err);
+        // If we can't check, skip all for this song
+        skippedCount += entries.length;
         continue;
       }
 
-      if (!alreadyExists) {
+      // Build a set of existing (lvl, rate) for this user/song
+      const existingSet = new Set(
+        leaderboardScores.map(s => `${s.lvl}|||${Number(s.rate)}`)
+      );
+
+      for (const entry of entries) {
+        const key = `${entry.lvl}|||${entry.rate}`;
+        if (existingSet.has(key)) {
+          skippedCount++;
+          continue;
+        }
         try {
           await addDoc(songScoresRef, {
-            ...scoreData,
-            uid: user.uid,
+            ...entry.scoreData,
+            player: user.displayName,
           });
           addedCount++;
         } catch (err) {
           console.error("Error adding score to leaderboard:", err);
-          removedCount++;
+          skippedCount++;
         }
-      } else {
-        removedCount++;
       }
     }
-    statusMsg.innerHTML = `<span style="color:#7fffa7;">${addedCount} score(s) added to leaderboard</span>, <span style="color:#ffb347;">${removedCount} score(s) skipped</span>.`;
+
+    statusMsg.innerHTML = `<span style="color:#7fffa7;">${addedCount} score(s) added to leaderboard</span>, <span style="color:#ffb347;">${skippedCount} score(s) skipped</span>.`;
     showCloseButton();
   } catch (e) {
     console.error("Error adding scores to leaderboard:", e);

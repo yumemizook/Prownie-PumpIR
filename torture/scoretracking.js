@@ -359,10 +359,10 @@ async function uploadScore() {
     score: scoreValue,
     rate: rate.value ? rate.value : 1,
     grade: grade,
-    cleartype: cleartype,
+    cleartype: chartFail ? "" : cleartype,
     chartFail: chartFail,
     isSuperbOn: isSuperbOn,
-    pumpbility: pumpbility,
+    pumpbility: chartFail || playMode === "coop" ? 0 : pumpbility,
     timestamp: Date.now(),
     timeString: new Date().toLocaleString('en-GB', { hour12: false }),
   };
@@ -384,6 +384,7 @@ async function uploadScore() {
       // artist: scoreData.artist, //adding this later
       // series: scoreData.series, //adding this later
     }, { merge: true });
+    await addDoc(collection(db, "songs", songKey, "scores"), {...scoreObj, player: user.displayName});
     alert("Score uploaded successfully");
     window.location.href = `/score.html?user=${user.displayName}&sn=${sn}&lvl=${scoreObj.lvl}&t=${scoreObj.timestamp}`;
   } catch (error) {
