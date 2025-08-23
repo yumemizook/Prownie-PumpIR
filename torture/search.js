@@ -12,6 +12,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   await fetchUsers();
 });
 
+async function fetchSongs() {
+  const songsCol = collection(db, "songs");
+  const songsSnapshot = await getDocs(songsCol);
+  allSongs = songsSnapshot.docs.map((doc) => {
+    const song = doc.data();
+    song.id = doc.id;
+    return song;
+  });
+}
+
 // fetch all users and store in allUsers
 async function fetchUsers() {
   try {

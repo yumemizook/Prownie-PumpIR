@@ -60,12 +60,20 @@
         const reason = document.querySelector("#reasonchoice").value;
         const reasontext = document.querySelector("#reasontext").value;
         try {
+            if (reason === "0") {
+                showMessage("Please select a reason for reporting the user.", "#c00");
+                return;
+            }
+            if (reasontext === "" && reason === "6") {
+                showMessage("Please provide a detailed reason for reporting the user.", "#c00");
+                return;
+            }
             const reportdoc = doc(db, "users", useridParam);
             await updateDoc(reportdoc, {
                 reports: arrayUnion({
                     reason: reason,
                     reasontext: reasontext,
-                    timestamp: new Date().toISOString(),
+                    timestamp: Date.now(),
                 }),
             });
             showMessage("Report submitted successfully! Successive reports will increase priority.", "#0c0");
@@ -73,7 +81,6 @@
             console.error(error);
         }
     });
-        // Show a message to the user
             function showMessage(msg, color = "#333") {
             let msgDiv = document.getElementById("report-msg");
             if (!msgDiv) {
@@ -125,6 +132,25 @@ document.addEventListener("DOMContentLoaded", async () => {
             document.querySelector("#reasontext").style.display = "none";
             return;
         }
+        // Check if the user has submitted too many reports in the last 5 minutes, will fix this later
+        // function getRecentReportCount(reports) {
+        //     if (!Array.isArray(reports)) return 0;
+        //     const fiveMinutesAgo = Date.now() - 1000 * 60 * 5;
+        //     return reports.filter(r => r && r.timestamp > fiveMinutesAgo).length;
+        // }
+
+        // const recentReportCount = getRecentReportCount(userData.reports);
+
+        // if (recentReportCount >= 3) {
+        //     showMessage("You have submitted too many reports recently. Please wait a few minutes before submitting another.", "#c00");
+        //     document.querySelector("#report-username").style.display = "none";
+        //     document.querySelector("#report-userid").style.display = "none";
+        //     document.querySelector("#report-button").style.display = "none";
+        //     document.querySelector("#reasonchoice").style.display = "none";
+        //     document.querySelector("#reasontext").style.display = "none";
+        //     return;
+        // }
+        // getRecentReportCount(userData.reports);
     });
 });
 

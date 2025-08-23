@@ -24,7 +24,7 @@
     <div id="nav"></div>
     <div class="search-wrp">
       <div class="inputtext">
-        <h1>Search players...</h1>
+        <h1>Search...</h1>
         <form action="#">
           <div class="field">
             <span class="search-type-text"></span>
@@ -35,6 +35,10 @@
               autocomplete="off"
               placeholder=""
             />
+            <select name="search-type" id="search-type">
+              <option value="users">Users</option>
+              <option value="songs">Songs</option>
+            </select>
           </div>
           <div class="songcards" data-container></div>
           <template data-template>

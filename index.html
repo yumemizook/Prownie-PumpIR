@@ -138,7 +138,7 @@
               const ta = new Date(a.timestamp || 0).getTime();
               const tb = new Date(b.timestamp || 0).getTime();
               return tb - ta;
-            });
+            }).slice(0, 10);
 
           const newsContainer = document.querySelector(".news");
           if (!newsContainer) {

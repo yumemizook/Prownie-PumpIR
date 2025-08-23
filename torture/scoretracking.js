@@ -378,6 +378,7 @@ async function uploadScore() {
 
     // Add the score to the user's scores subcollection
     await addDoc(collection(db, "users", userKey, "scores"), scoreObj);
+    await addDoc(collection(db, "songs", sn, "scores"), scoreObj);
     alert("Score uploaded successfully");
     window.location.href = `/score.html?user=${user.displayName}&sn=${sn}&lvl=${scoreObj.lvl}&t=${scoreObj.timestamp}`;
   } catch (error) {

@@ -45,7 +45,6 @@
       const leaderboardType = document.querySelector("#leaderboard-type");
       
       document.addEventListener("DOMContentLoaded", async () => {
-        // Fetch users from database
         const usersCol = collection(db, "users");
         const usersSnapshot = await getDocs(usersCol);
         allUsers = usersSnapshot.docs.map((doc) => {
@@ -59,9 +58,7 @@
           (user) => !(user.role && user.role.includes("banned"))
         );
 
-        // Helper to sort and re-render leaderboard
         function renderLeaderboard() {
-          // Remove any previous leaderboard table if present
           const leaderboardDiv = document.querySelector(".leaderboards");
           const oldTable = leaderboardDiv.querySelector("table");
           if (oldTable) oldTable.remove();
@@ -99,7 +96,6 @@
             const tr = document.createElement("tr");
             tr.style.border = "1px solid #444";
 
-            // Get username (prefer username, then displayName, then name, then fallback)
             const username =
               typeof user.username === "string" && user.username.trim() !== ""
                 ? user.username
@@ -110,7 +106,6 @@
                 ? user.name
                 : "Unknown User";
 
-            // Get profile picture
             const pfp =
               user.profilePicture &&
               typeof user.profilePicture === "string" &&
