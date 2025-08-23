@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FAQ</title>
+    <title>Frequently Asked Questions - Pump It Up Score Tracker</title>
     <link rel="stylesheet" href="./styles/home.css" />
     <link rel="stylesheet" href="./styles/navbar.css" />
     <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
@@ -21,440 +21,275 @@
       });
     </script>
     <style>
-      .faq {
-        margin-top: 100px;
-        margin-bottom: 100px;
+      .faq-container {
+        margin: 60px auto 50px;
+        padding: 0 20px;
       }
 
-      .faq a {
+      .faq-header {
+        text-align: center;
+        margin-bottom: 50px;
+      }
+
+      .faq-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: #fff;
+      }
+
+      .faq-header p {
+        font-size: 1.1rem;
+        color: #ccc;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .faq-section {
+        margin-bottom: 40px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 25px;
+        border-left: 4px solid rgb(61, 255, 245);
+      }
+
+      .faq-section h2 {
+        color: rgb(61, 255, 245);
+        margin-bottom: 15px;
+        font-size: 1.4rem;
+      }
+
+      .faq-section h3 {
+        color: #fff;
+        margin: 20px 0 10px;
+        font-size: 1.2rem;
+      }
+
+      .faq-section p {
+        margin-bottom: 12px;
+        line-height: 1.6;
+        color: #e0e0e0;
+      }
+
+      .faq-section ul {
+        margin: 15px 0;
+        padding-left: 20px;
+      }
+
+      .faq-section li {
+        margin-bottom: 8px;
+        color: #e0e0e0;
+      }
+
+      .faq-section a {
         color: rgb(61, 255, 245);
         text-decoration: none;
+        transition: all 0.3s ease;
       }
 
-      .faq a:hover {
+      .faq-section a:hover {
         text-decoration: underline;
+        color: #fff;
+      }
+
+      .warning-text {
+        color: #ff6b6b;
+        font-weight: bold;
+      }
+
+      .important-note {
+        background: rgba(255, 107, 107, 0.1);
+        border-left: 4px solid #ff6b6b;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 5px;
+      }
+
+      .info-box {
+        background: rgba(61, 255, 245, 0.1);
+        border-left: 4px solid rgb(61, 255, 245);
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 5px;
+      }
+
+      .contact-info {
+        background: rgba(255, 193, 7, 0.1);
+        border-left: 4px solid #ffc107;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 5px;
+      }
+
+      @media (max-width: 768px) {
+        .faq-container {
+          margin: 100px auto 80px;
+          padding: 0 15px;
+        }
+        
+        .faq-section {
+          padding: 20px;
+        }
+        
+        .faq-header h1 {
+          font-size: 2rem;
+        }
       }
     </style>
   </head>
 
   <body>
     <div id="navbar"></div>
-    <div class="faq" style="margin-top: 100px">
-      <h1>FAQ</h1>
-      <h2>What is this site?</h2>
-      <p>
-        This is a website for tracking and sharing scores of the game "Pump It
-        Up", dedicated for home users.
-      </p>
-      <br />
-      <h3>
-        But wait, don't we have piugame.com a.k.a the official site already?
-      </h3>
-      <p>
-        Yes, we do. However, piugame.com is a website for arcade users, and is
-        not dedicated for home users (unless you happen to have a cabinet hooked
-        up to the Andamiro network).
-      </p>
-      <br />
-      <h2>How do I upload a score?</h2>
-      <p>
-        You can upload a score by going to the score page and clicking the
-        "Upload Score" button.
-      </p>
-      <br />
-      <h2>What is Pumpbility? How do I get it?</h2>
-      <p>Pumpbility is a measure of how good you are at Pump It Up.</p>
-      <p>
-        It is calculated based on your grade and the difficulty of the chart you
-        played.
-      </p>
-      <p>
-        Detailed Pumpbility data can be found at
-        <a
-          href="https://docs.google.com/spreadsheets/d/10yVx2mYzFwfyM-MWif_6E1gFRvV4oNGiJRero46Obf4/edit?gid=0#gid=0"
-          target="_blank"
-          style="color: rgb(61, 255, 245); text-decoration: none"
-          >this spreadsheet</a
-        >. We expanded the data for level 29 and beyond.
-      </p>
-      <p>You can also see your Pumpbility on your profile page.</p>
-      <p>
-        We are working on changing the calculator for this to more accurately
-        match the Pumpbility to each score.
-      </p>
-      <br />
-      <h2>
-        I play on StepF1/F2/P1/PumpSanity, why does this page uses the Phoenix
-        scoring system?
-      </h2>
-      <p>
-        This is intentional. Combo-based scoring is an outdated mess and the
-        score can't really be calculated without detailed input data, thus
-        requiring more user input.
-      </p>
-      <p>
-        We have instead opted in for a capped scoring system at 1,000,000 points
-        (1:1 Phoenix scoring system). This is to make it easier for users to
-        understand and compare scores.
-      </p>
-      <p>
-        Just input the judgement data, and the site will automatically calculate
-        the score for you.
-      </p>
-      <br />
-      <h2>I'm seeing ridiculous scores on the leaderboards. Are these real?</h2>
-      <p>Yes and no.</p>
-      <p>
-        Due to the nature of the current score submission system, it is possible
-        to submit scores that are not legitimate.
-      </p>
-      <p>
-        We are working on a more accurate score submission system, but until
-        then, please let us know by submitting a report on the score page.
-      </p>
-      <p>
-        As always, if you are caught submitting scores that are not legitimate,
-        your account will be banned for a really, really long time. Don't do it!
-      </p>
-      <h6 style="color: red; font-style: italic">
-        P.S. If you see someone getting a Perfect Game on 1948 D32 they are 100%
-        cheating
-      </h6>
-      <br />
-      <h2>I'm seeing a score that is not legitimate!</h2>
-      <p>
-        If you see a score that is not legitimate, please report it by going to
-        the score page > Report Score.
-      </p>
-      <p>
-        If we find that the score is not legitimate, we will remove it from the
-        leaderboards and your scores will be removed.
-      </p>
-      <br />
-      <h2>My data is not being updated!</h2>
-      <p>
-        Due to the current webpage structure, you have to go into your profile
-        page to update your data.
-      </p>
-      <p>
-        If you are seeing a score that is not being updated, it is because the
-        score isn't verified yet.
-      </p>
-      <p>Please contact an admin to let us know and correct the score.</p>
-      <br />
-      <h2>A user has inappropriate details on their profile!</h2>
-      <p>
-        If you see a user with inappropriate details on their profile, please
-        report them by going to their profile > Report User.
-      </p>
-      <p>
-        If we find that the user is breaking the rules, we will reset any
-        information that violates the rules.
-      </p>
-      <p>Repeated offenses will result in a ban.</p>
-      <p>
-        If such user happens to be an admin, a demotion will be carried out
-        immediately.
-      </p>
-      <br />
-      <h2>A user is harassing me or other users!</h2>
-      <p>
-        If you see a user harassing other users, please report them by going to
-        their profile > Report User.
-      </p>
-      <p>
-        (WIP) Additionally, immedieately block such user from contacting you.
-      </p>
-      <p>
-        If we find that the user is breaking the rules, we will issue a
-        restriction on their account.
-      </p>
-      <p>Repeated offenses will result in a ban.</p>
-      <p>
-        If such user happens to be an admin, a demotion will be carried out
-        immediately, along with additional restrictions.
-      </p>
-      <br />
-      <h2>Someone had access to my account and messed up my data...</h2>
-      <p>
-        If you think someone had access to your account and messed up your data,
-        please contact an admin to let us know. We will look through backups to
-        see if we can recover your data.
-      </p>
-      <p>
-        It is important that you contact us as soon as possible, as we can only
-        keep backups for a limited time.
-      </p>
-      <br />
-      <h2>My account's data has got randomly messed up!?</h2>
-      <p>
-        Yes, this happens to us too sometimes. We are working on a more stable
-        data uploading codebase.
-      </p>
-      <p>
-        For now, if you see your data getting messed up, please contact us to
-        let us know. We will look through the case and see if we can fix it.
-      </p>
-      <br />
-      <h2>I want to deactivate my account, but not deleting it completely</h2>
-      <p>
-        As of now, there is only an option to delete your account. We are
-        working on adding a deactivation option.
-      </p>
-      <p>
-        For now, please contact us and we will lock you out of your account.
-      </p>
-      <p>
-        When you want to regain access to your account, please contact us again
-        with the email and username you used to register.
-      </p>
-      <br />
-      <h2>I want to delete my account</h2>
-      <p>
-        If you want to delete your account, go to your profile > Settings >
-        Delete Account. We will delete your account and all your data.
-      </p>
-      <p>
-        You will not be able to register a new account again after deleting your
-        account for a really, really long time, so think twice before deleting
-        your account!
-      </p>
-      <p>
-        If you get caught creating an account after deleting your account, it
-        counts as multi-accounting and will be handled as such.
-      </p>
-      <br />
-      <h2>What happens if I get caught breaking the rules?</h2>
-      <p>
-        Depending on the severity of the offense, there are corresponding
-        punishments.
-      </p>
-      <p>For minor offenses, you will be given a warning.</p>
-      <p>
-        For larger-scale offenses, you will be excluded from the leaderboards
-        and your scores will be removed.
-      </p>
-      <p>For severe offenses, you will be banned from the site.</p>
-      <br />
-      <h3>What happens when you get banned?</h3>
-      <p>
-        You will be locked out of the features of this website, such as score
-        submission, profile editing, and more. Basically, the website becomes
-        read-only.
-      </p>
-      <p>
-        You can know that you got banned by trying to access the website, and
-        seeing a message in red saying "You have been banned from the site."
-      </p>
-      <p>
-        If you or someone tries to access the profile page, they will see that
-        the user is banned.
-      </p>
-      <p>
-        If you want to appeal your ban, please contact an admin to let us know.
-        We will look through the case and see if we can lift the ban.
-      </p>
-      <p>
-        During the meantime, <span style="color: red">DO NOT</span> create or
-        use other accounts to bypass the ban. We will ban each and every account
-        you create and use, even if you didn't create it yourself.
-      </p>
-      <br />
-      <h2>I did nothing and still got banned??? What gives???</h2>
-      <p>
-        If you did nothing and still got banned, it probably is because you are
-        a multi-accounting user.
-      </p>
-      <p>
-        Remember, if you are caught creating an account after deleting your
-        account, it counts as multi-accounting and will be handled as such.
-      </p>
-      <br />
-      <p>
-        If you aren't multi-accounting, it is possible that you are being
-        targeted by a multi-accounting user.
-      </p>
-      <p>
-        If this happens, please contact an admin to let us know. We will look
-        through the case and immedeately ban the malicious user and lift the ban
-        on your account.
-      </p>
-      <br />
-      <h2>I deleted my account, but I want to register again!</h2>
-      <p>
-        No, you cannot. You will not be able to register a new account again
-        after deleting your account for a really, really long time. This is to
-        prevent multi-accounting!
-      </p>
-      <p>
-        After at least 1 year, you can contact us to see if you can register a
-        new account again.
-      </p>
-      <br />
-      <h2>
-        What's the deal with multi-accounting anyways? I see it all the time in
-        other games...
-      </h2>
-      <p>
-        You're not wrong that it is a common practice in other games, but it is
-        still a serious issue that we are trying to prevent.
-      </p>
-      <p>
-        Multi-accounting happens when you create and use multiple accounts to
-        gain an unfair advantage.
-      </p>
-      <p>
-        If we let users create multiple accounts, the leaderboards would be
-        filled with unneccesary garbage and there would be no way to keep track
-        of who is actually good. Not to mention the website would be clogged
-        with unnecessary accounts.
-      </p>
-      <h6>
-        Just imagine this: A user who takes up the entire top 50 players of the
-        website, all made from multiple accounts. What will happen if we let
-        this happen? And no, don't pull the "This is good incentive to get
-        players to get better" card. It's not. I have heard of this and other
-        justifications before, and it's straight up bullshit.
-      </h6>
-      <p>
-        As of right now, there is little means to tell if a user is
-        multi-accounting. We are working on a more accurate system, but until
-        then, one person per account, one account per person. No exceptions.
-      </p>
-      <p>
-        Again, if you are caught creating an account after deleting your
-        account, it counts as multi-accounting and will be handled as such.
-      </p>
-      <p>If you're still not convinced, just click on one of these links:</p>
-      <ul>
-        <li>
-          <a
-            href="https://www.reddit.com/r/osugame/comments/1tcd4o/why_are_multiple_accounts_banned/"
-            target="_blank"
-            >here</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://osu.ppy.sh/community/forums/topics/43957?n=1"
-            target="_blank"
-            >or here</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://osu.ppy.sh/wiki/en/Help_centre/Account_restrictions#why"
-            target="_blank"
-            >or here</a
-          >
-        </li>
-      </ul>
-      <p>And if you still don't get it, then watch this video:</p>
-      <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank"
-        >this one.</a
-      >
-      <!-- Changing to an another vid soon. -->
-      <p>
-        And if you still, still don't get it, we are more than happy to ban each
-        and every fine account of yours. Keep that in mind.
-      </p>
-      <br />
-      <h2>
-        So what? I don't care about the rules! I'm just gonna create as many
-        accounts as I want!
-      </h2>
-      <p>
-        We won't let you succeed. We will ban each and every account you create
-        and use, even if you didn't create it yourself.
-      </p>
-      <br>
-      <p>
-        Quick tip: Evading bans by using multiple accounts is a very good reason
-        for us to place a block on your IP address.
-      </p>
-      <p>
-        And if you somehow manage to evade the IP block, we will place a block
-        on the entire ISP you are using.
-      </p>
-      <p>
-        We will also place a block on your IP address if you are caught using a VPN to evade the IP block.
-      </p>
-      <p>And as a last resort, we will place a block on the entire country you are in. You should get it now right? Riiiiight?</p>
-      <p>Don't let us use scorched earth tactics on you and the rest of the playerbase.</p>
-      <br />
-      <h2>What about the "Trust your fellow users" motto?</h2>
-      <p>
-        We do trust our users, but people are people sometimes, so we also have
-        to enforce the rules to keep the website running smoothly.
-      </p>
-      <p>
-        If you see someone breaking the rules, please report them by going to
-        their profile > Report User.
-      </p>
-      <br />
-      <h2>And what about the "No Revenge" motto?</h2>
-      <p>
-        We do not condone revenge. If you or a user is being targeted for
-        revenge, please contact an admin as soon as you see it happening. We
-        will take a look and put an end to it as soon as we can.
-      </p>
-      <p>
-        If you are the one targeting someone, please stop. We will seriously ban
-        you if you continue.
-      </p>
-      <br />
-      <h2>
-        What about the "No Hate Speech"/ "No Racism"/ "No Discrimination"/
-        whatever else motto?
-      </h2>
-      <p>
-        As mentioned before, we do not condone hate speech or racism or any
-        other form of discrimination. Always report such users to an admin.
-      </p>
-      <p>
-        We will delete offensive content from the user's profile and from the
-        site, and issue a restriction on their account.
-      </p>
-      <br />
-      <h2>Where can I contact the admins?</h2>
-      <p>
-        Look under. Find the footer of the page. There, you can find the contact
-        information of the admins (currently 1 person).
-      </p>
-      <p>We are working on adding more admins, so stay tuned!</p>
-      <br />
-      <h2>
-        I have made reports, but the user is still not banned/restricted/etc!
-      </h2>
-      <p>
-        Sorry for the inconvenience, but since the moderation team is only 1
-        person, it may take a while to review the reports. We handle reports on
-        a first-come, first-serve basis.
-      </p>
-      <p>We are working on adding more admins, so stay tuned!</p>
-      <br />
-      <h2>
-        I have made a mistake and want to change my username/profile details!
-      </h2>
-      <p>
-        Go to your profile > Settings > Edit Profile. You can change your
-        username and profile details there with ease.
-      </p>
-      <p>
-        While there is a 7-day cooldown on changing your username, you can
-        change your profile details as much as you want and if you want to
-        correct minor typos in your profile details, reach out to us and we will
-        fix it for you.
-      </p>
-      <br />
-      <h2>I have a suggestion for the website!</h2>
-      <p>
-        We are always looking for suggestions! Please contact us by going to the
-        contact page.
-      </p>
-      <p>We will look through the suggestion and see if we can implement it.</p>
-      <br />
+    
+    <div class="faq-container">
+      <div class="faq-header">
+        <h1>Frequently Asked Questions</h1>
+        <p>Find answers to common questions about our Pump It Up score tracking platform</p>
+      </div>
+
+      <!-- About the Site -->
+      <div class="faq-section">
+        <h2>About the Platform</h2>
+        <p>This is a dedicated score tracking website for Pump It Up home users, designed to provide an alternative to the official arcade-focused piugame.com platform.</p>
+        
+        <h3>Why not use piugame.com?</h3>
+        <p>While piugame.com exists, it's primarily designed for arcade users connected to the Andamiro network. Our platform serves home users who don't have access to arcade cabinets.</p>
+      </div>
+
+      <!-- Score Submission -->
+      <div class="faq-section">
+        <h2>Score Submission</h2>
+        <p>Submit your scores through the score page by clicking the "Upload Score" button. Our system automatically calculates scores using the Phoenix scoring system for consistency.</p>
+        
+        <h3>Why Phoenix scoring instead of combo-based?</h3>
+        <p>We use the Phoenix scoring system (capped at 1,000,000 points) because combo-based scoring is outdated and requires complex input data. Phoenix scoring makes it easier to compare scores and understand performance.</p>
+      </div>
+
+      <!-- Pumpbility System -->
+      <div class="faq-section">
+        <h2>Pumpbility System</h2>
+        <p>Pumpbility measures your skill level based on your grade and chart difficulty. View detailed calculations in our <a href="https://docs.google.com/spreadsheets/d/10yVx2mYzFwfyM-MWif_6E1gFRvV4oNGiJRero46Obf4/edit?gid=0#gid=0" target="_blank">comprehensive spreadsheet</a>.</p>
+        <p>Your Pumpbility is displayed on your profile page and we're continuously improving the calculation accuracy.</p>
+      </div>
+
+      <!-- Score Verification -->
+      <div class="faq-section">
+        <h2>Score Verification & Reporting</h2>
+        <p>We're committed to maintaining fair leaderboards. If you encounter suspicious scores:</p>
+        <ul>
+          <li>Report them through the score page's "Report Score" feature</li>
+          <li>Our moderation team will review and remove illegitimate scores</li>
+          <li>Cheating results in leaderboard exclusion and/or account bans</li>
+        </ul>
+        
+        <div class="warning-text">
+          <strong>Note:</strong> Ridiculous scores on extremely difficult charts (like a Perfect Game on 1948 D32) are prioritized for review.
+        </div>
+      </div>
+
+      <!-- Account Management -->
+      <div class="faq-section">
+        <h2>Account Management</h2>
+        
+        <h3>Profile Updates</h3>
+        <p>Visit your profile page to update your data. If scores aren't updating, they may be pending verification - contact an admin for assistance.</p>
+        
+        <h3>Username & Profile Changes</h3>
+        <p>Edit your profile through Settings > Edit Profile. Username changes have a 7-day cooldown, but other details can be modified freely.</p>
+        
+        <h3>Account Deactivation</h3>
+        <p>Currently, we only offer account deletion. Contact us to temporarily lock your account if you need a break.</p>
+        
+        <h3>Account Deletion</h3>
+        <p>Delete your account through Settings > Delete Account. This action is permanent and prevents re-registration for an extended period. (At least 1 year)</p>
+      </div>
+
+      <!-- Community Guidelines -->
+      <div class="faq-section">
+        <h2>Community Guidelines</h2>
+        
+        <h3>Prohibited Behavior</h3>
+        <ul>
+          <li>Hate speech, racism, or discrimination</li>
+          <li>Harassment of other users</li>
+          <li>Inappropriate profile content</li>
+          <li>Multi-accounting</li>
+        </ul>
+        
+        <h3>Reporting Users</h3>
+        <p>Report violations through the user's profile page > Report User. Our moderation team will investigate and take appropriate action.</p>
+        
+        <div class="info-box">
+          <strong>Our Motto:</strong> "Trust your fellow users" - We believe in our community but enforce rules to maintain a positive environment.
+        </div>
+      </div>
+
+      <!-- Multi-Accounting Policy -->
+      <div class="faq-section">
+        <h2>Multi-Accounting Policy</h2>
+        <p>We strictly prohibit creating multiple accounts. This policy ensures fair leaderboards and prevents abuse.</p>
+        
+        <div class="important-note">
+          <strong>Important:</strong> Creating an account after deleting a previous one counts as multi-accounting and results in a ban.
+        </div>
+        
+        <p>Multi-accounting creates unfair advantages and clogs our system. We actively detect and ban violators, including IP blocks for persistent offenders.</p>
+        
+        <p>For more information on why multi-accounting is harmful, see these resources:</p>
+        <ul>
+          <li><a href="https://www.reddit.com/r/osugame/comments/1tcd4o/why_are_multiple_accounts_banned/" target="_blank">Reddit Discussion on Multi-Accounting</a></li>
+          <li><a href="https://osu.ppy.sh/community/forums/topics/43957?n=1" target="_blank">Osu! Forum Discussion</a></li>
+          <li><a href="https://osu.ppy.sh/wiki/en/Help_centre/Account_restrictions#why" target="_blank">Osu! Wiki on Account Restrictions</a></li>
+        </ul>
+      </div>
+
+      <!-- Enforcement & Appeals -->
+      <div class="faq-section">
+        <h2>Enforcement & Appeals</h2>
+        
+        <h3>Punishment System</h3>
+        <ul>
+          <li><strong>Minor offenses:</strong> Warning</li>
+          <li><strong>Major offenses:</strong> Leaderboard exclusion and score removal</li>
+          <li><strong>Severe offenses:</strong> Site ban</li>
+        </ul>
+        
+        <h3>Ban Appeals</h3>
+        <p>If you believe you were banned unfairly, contact an admin to appeal. During appeals, do not create alternative accounts - this will result in additional bans.</p>
+        
+        <div class="warning-text">
+          <strong>Warning:</strong> Bypassing bans through multiple accounts leads to IP blocks and potentially ISP-level restrictions and/or country-wide restrictions.
+        </div>
+      </div>
+
+      <!-- Technical Support -->
+      <div class="faq-section">
+        <h2>Technical Support</h2>
+        
+        <h3>Data Issues</h3>
+        <p>If your data appears corrupted or randomly changes, contact an admin immediately. We maintain backups but can only restore data within a limited timeframe.</p>
+        
+        <h3>Score Update Problems</h3>
+        <p>Unverified scores won't appear in leaderboards. Contact us if you notice delays in score verification.</p>
+      </div>
+
+      <!-- Suggestions & Contact -->
+      <div class="faq-section">
+        <h2>Feedback & Contact</h2>
+        
+        <h3>Website Suggestions</h3>
+        <p>We welcome suggestions for improving the platform. Contact us through the contact page to share your ideas.</p>
+        
+        <h3>Admin Contact</h3>
+        <div class="contact-info">
+          <strong>Need help?</strong> Find admin contact information in the page footer. Our moderation team is currently small but growing - we handle reports on a first-come, first-served basis.
+        </div>
+      </div>
+      <div class="faq-section">
+        <h2>FAQ (legacy version)</h2>
+        <p>We have a legacy version of the FAQ for those who prefer the old format. <a href="faqlegacy.html" target="_blank">Click here to view the legacy version.</a></p>
+      </div>
     </div>
+
     <div class="footer"></div>
   </body>
 </html>
