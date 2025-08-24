@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +12,6 @@
     <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
-
 <body>
     <div id="navbar"></div>
     <div class="reportcontainer" style="margin-top:80px; align-items: center;">
@@ -25,8 +23,7 @@
             <br>
             <form id="reportform" style="display: flex; flex-direction: column; align-items: center;">
                 <label for="reason" style="margin-bottom: 8px; font-weight: bold;">Reason</label>
-                <div
-                    style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-bottom: 12px;">
+                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-bottom: 12px;">
                     <label>
                         <input type="radio" name="reportoption" id="reportoption1" value="nochart">
                         Chart doesn't exist
@@ -40,22 +37,21 @@
                         Falsified score / Cheating
                     </label>
                     <label>
-                        <input type="radio" name="reportoption" id="reportoption4" value="other">
+                        <input type="radio" name="reportoption" id="reportoption4" value="grief">
+                        Abusing features to harass other players
+                    </label>
+                    <label>
+                        <input type="radio" name="reportoption" id="reportoption5" value="other">
                         Other
                     </label>
                 </div>
-                <textarea name="reason" id="reason"
-                    placeholder="Please give us other information to assist us in investigating this report."
-                    style="width: 50%; min-width: 300px; min-height: 80px; margin-bottom: 12px;"></textarea>
-                <button type="submit"
-                    style="margin-top: 12px; background-color: #303438; color: #fff; border: 1px solid #1d678a80; border-radius: 4px; padding: 10px; cursor: pointer;">Report</button>
+                <textarea name="reason" id="reason" placeholder="Please give us other information to assist us in investigating this report." style="width: 50%; min-width: 300px; min-height: 80px; margin-bottom: 12px;"></textarea>
+                <button type="submit" style="margin-top: 12px; background-color: #303438; color: #fff; border: 1px solid #1d678a80; border-radius: 4px; padding: 10px; cursor: pointer;">Report</button>
             </form>
             <div class="info" style="margin-top: 12px;">
                 <span>All reports are anonymous. We won't let the targeted user know you reported them.</span>
                 <br>
-                <span>Depending on the severity of the infraction, the score may be edited to correct the issue or will
-                    be deleted. If the infraction is severe, the user statistics will be partially rolled back or be
-                    completely wiped.</span>
+                <span>Depending on the severity of the infraction, the score may be edited to correct the issue or will be deleted. If the infraction is severe, the user statistics will be partially rolled back or be completely wiped.</span>
                 <br>
                 <span>Forementioned users might face a leaderboard ban or an account-wide ban.</span>
                 <br><br>
@@ -76,9 +72,9 @@
         });
     </script>
     <script type="module">
-        import { db, updateDoc, setDoc, doc, getAuth, onAuthStateChanged, getDoc, collection, getDocs, query, where } from "./torture/firebase.js";
-
-
+        import { db, updateDoc, doc, getAuth, onAuthStateChanged, getDoc, collection, getDocs, query, where } from "./torture/firebase.js";
+        
+    
         const params = new URLSearchParams(window.location.search);
         const sn = params.get("sn");
         const lvl = params.get("lvl");
@@ -118,165 +114,107 @@
             const auth = getAuth();
             let user = auth.currentUser;
             onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                showMessage("You must be logged in to submit a report.", "#c00");
+                return;
+            }
+
+            let userUid = user.uid;
+            let userDocSnap;
+            try {
+                userDocSnap = await getDoc(doc(db, "users", userUid));
+            } catch (err) {
+                showMessage("Failed to fetch user data. Please try again later.", "#c00");
+                return;
+            }
+            const userData = userDocSnap.data();
+            if (userData && userData.role === "banned") {
+                showMessage("You are banned and cannot submit reports. Please contact an administrator if you believe this is an error.", "#c00");
+                document.querySelector("#reportform").style.display = "none";
+                document.querySelector(".info").style.display = "none";
+                document.querySelector(".selected").style.display = "none";
+                return;
+            }
+        });
+        reportform.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const reason = document.querySelector("#reason").value.trim();
+            const reportoptionInput = document.querySelector('input[name="reportoption"]:checked');
+            if (!reportoptionInput) {
+                showMessage("Please select a report reason.", "#c00");
+                return;
+            }
+            const reportoption = reportoptionInput.value;
+
+            // Optionally, require a reason for "other"
+            if (reportoption === "other" && reason.length < 5) {
+                showMessage("Please provide more details for 'Other'.", "#c00");
+                return;
+            }
+            // Get user info and submit report
+            const auth = getAuth();
+            onAuthStateChanged(auth, async (user) => {
                 if (!user) {
                     showMessage("You must be logged in to submit a report.", "#c00");
                     return;
                 }
-
-                let userUid = user.uid;
-                let userDocSnap;
-                try {
-                    userDocSnap = await getDoc(doc(db, "users", userUid));
-                } catch (err) {
-                    showMessage("Failed to fetch user data. Please try again later.", "#c00");
-                    return;
-                }
-                const userData = userDocSnap.data();
-                if (userData && userData.role === "banned") {
-                    showMessage("You are banned and cannot submit reports. Please contact an administrator if you believe this is an error.", "#c00");
-                    document.querySelector("#reportform").style.display = "none";
-                    const infoElem = document.querySelector(".info");
-                    if (infoElem) infoElem.style.display = "none";
-                    const selectedElem = document.querySelector(".selected");
-                    if (selectedElem) selectedElem.style.display = "none";
-                    return;
-                }
-            });
-
-            reportform.addEventListener("submit", async (e) => {
-                e.preventDefault();
-                const reason = document.querySelector("#reason").value.trim();
-                const reportoptionInput = document.querySelector('input[name="reportoption"]:checked');
-                if (!reportoptionInput) {
-                    showMessage("Please select a report reason.", "#c00");
-                    return;
-                }
-                const reportoption = reportoptionInput.value;
-
-                // Optionally, require a reason for "other"
-                if (reportoption === "other" && reason.length < 5) {
-                    showMessage("Please provide more details for 'Other'.", "#c00");
-                    return;
-                }
-
-                // Get user info and submit report
-                const auth = getAuth();
-                onAuthStateChanged(auth, async (user) => {
-                    if (!user) {
-                        showMessage("You must be logged in to submit a report.", "#c00");
-                        return;
+ 
+                if (userData.username !== userParam) {
+                // Find the user document by username (userParam)
+                const usersSnap = await getDocs(collection(db, "users"));
+                let userDoc = null;
+                usersSnap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if (
+                        (data.displayName && data.displayName === userParam) ||
+                        (data.username && data.username === userParam)
+                    ) {
+                        userDoc = docSnap;
                     }
-
-                    // Always look up the score owner by userParam, not by the current user's data
-                    let scoreOwnerDoc = null;
-                    const usersSnap = await getDocs(collection(db, "users"));
-                    usersSnap.forEach(docSnap => {
-                        const data = docSnap.data();
-                        if (
-                            (data.displayName && data.displayName === userParam) ||
-                            (data.username && data.username === userParam)
-                        ) {
-                            scoreOwnerDoc = docSnap;
-                        }
-                    });
-                    if (!scoreOwnerDoc) {
-                        showMessage("Score owner not found.", "#c00");
-                        return;
-                    }
-
-                    // Find the score document for this song/level/timestamp
-                    // Find the score document for this song/level/timestamp
-                    const scoresRef = collection(db, "users", scoreOwnerDoc.id, "scores");
-                    const q = query(
-                        scoresRef,
-                        where("sn", "==", sn),
-                        where("lvl", "==", lvl),
-                        where("timestamp", "==", Number(t))
-                    );
-                    const querySnapshot = await getDocs(q);
-                    if (querySnapshot.empty) {
-                        showMessage("Score not found.", "#c00");
-                        return;
-                    }
-                    let songKey = (sn || "").toString().toLowerCase().replace(/ /g, "");
-                    if (!songKey || songKey.trim() === "") {
-                        showMessage("Invalid song name. Cannot generate database key.", "#c00");
-                        return;
-                    }
-                    console.log("Song key for database:", songKey);
-
-                    // There should only be one matching document
-                    const scoreDoc = querySnapshot.docs[0];
-                    const scoreId = scoreDoc.id;
-                    console.log("Score ID in users/scores:", scoreId);
-                    // Check if the song document exists in the songs collection
-                    const songDoc = await getDoc(doc(db, "songs", songKey));
-                    if (!songDoc.exists()) {
-                        console.log("Song document doesn't exist in songs collection, will create if needed");
-                    } else {
-                        console.log("Song document found:", songDoc.data());
-                    }
-
-                    if (scoreDoc.data().flagged) {
-                        showMessage("Score already flagged. Please wait for the score to be reviewed.", "#ff0");
-                        return;
-                    }
-
-                    // Prepare report object
-                    try {
-                        // Update user score document
-                        await updateDoc(scoreDoc.ref, {
-                            flagged: true,
-                            reason: reason,
-                            reportoption: reportoption,
-                            flaggedDate: new Date().toISOString(),
-                        });
-
-
-                        // Attempt to update the song score document in the leaderboard collection
-                        try {
-                            const songScoreRef = doc(db, "songs", songKey, "scores", scoreId);
-                            const songScoreDoc = await getDoc(songScoreRef);
-
-                            if (songScoreDoc.exists()) {
-                                // Update existing song score document
-                                await updateDoc(songScoreRef, {
-                                    flagged: true,
-                                    reason: reason,
-                                    reportoption: reportoption,
-                                    flaggedDate: new Date().toISOString(),
-                                });
-                                console.log("Successfully updated song score document in leaderboard");
-                            } else {
-                                // Song score document doesn't exist in leaderboard, create it with flag info
-                                console.log("Song score not found in leaderboard");
-
-                            }
-                        } catch (err2) {
-                            // Log the error but don't fail the report submission
-                            console.warn("Could not update/create song score document in leaderboard:", err2);
-                            console.warn("This won't affect the report submission, but the leaderboard won't show the flag");
-                        }
-
-                        showMessage("Report submitted successfully. Thank you!", "#090");
-                        reportform.reset();
-                    } catch (err) {
-                        console.error("Report submission failed:", err);
-                        if (err.code === 'permission-denied') {
-                            showMessage("Permission denied. You may not have the right to submit reports.", "#c00");
-                        } else if (err.code === 'unavailable') {
-                            showMessage("Database temporarily unavailable. Please try again later.", "#c00");
-                        } else {
-                            showMessage("Failed to submit report. Please try again later.", "#c00");
-                        }
-                    }
-                    // End of inner onAuthStateChanged
                 });
+                if (!userDoc) {
+                    showMessage("Score owner not found.", "#c00");
+                    return;
+                }
+
+                // Find the score document for this song/level/timestamp
+                const scoresRef = collection(db, "users", userDoc.id, "scores");
+                const q = query(
+                    scoresRef,
+                    where("sn", "==", sn),
+                    where("lvl", "==", lvl),
+                    where("timestamp", "==", Number(t))
+                );
+                const querySnapshot = await getDocs(q);
+                if (querySnapshot.empty) {
+                    showMessage("Score not found.", "#c00");
+                    return;
+                }
+                // There should only be one matching document
+                const scoreDoc = querySnapshot.docs[0];
+                if (scoreDoc.data().flagged) {
+                    showMessage("Score already flagged. Please wait for the score to be reviewed.", "#ff0");
+                    return;
+                }
+                // Prepare report object
+                try {
+                    await updateDoc(scoreDoc.ref, {
+                        flagged: true,
+                        reason: reason,
+                        reportoption: reportoption,
+                        flaggedDate: new Date().toISOString(), // for the "first come, first serve" rule
+                    });
+                    showMessage("Report submitted successfully. Thank you!", "#090");
+                    reportform.reset();
+                } catch (err) {
+                    showMessage("Failed to submit report. Please try again later.", "#c00");
+                    console.error("Report error:", err);
+                }
+                }
             });
         });
-
+    });
     </script>
     <script type="module" src="./torture/navbar.js"></script>
 </body>
-
 </html>
