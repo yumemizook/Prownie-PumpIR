@@ -363,20 +363,18 @@ async function searchSongs(searchValue) {
       const titleLink = card.querySelector("[data-title]");
       titleLink.textContent = song.name || "Untitled Song";
       titleLink.href = `song.html?id=${song.id}`;
+      titleLink.style.fontSize = "1.2rem";
+      titleLink.style.fontWeight = "bold";
 
-      // For songs, we might want to show different info
+
       const pfp = card.querySelector("[data-pfp]");
-      // You can set a default song image or leave it empty
-      pfp.src = "img/default-avatar.png"; // or a song-specific image
-
+      pfp.style.display = "none"; // hide the avatar
       const artistDiv = card.querySelector("[data-artist]");
-      // Show song artist if available, otherwise show "Unknown Artist"
       artistDiv.textContent = song.artist || "Unknown Artist";
-
       const seriesDiv = card.querySelector("[data-series]");
-      // Show song series if available, otherwise leave empty
       seriesDiv.textContent = song.series || "";
-
+      artistDiv.style.fontSize = "0.8rem";
+      seriesDiv.style.fontSize = "0.8rem";
       searchContainer.appendChild(card);
     });
   } catch (err) {

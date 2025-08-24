@@ -219,7 +219,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         scores.forEach((score, idx) => {
             const tr = document.createElement("tr");
             leaderboardTable.appendChild(tr);
-            
+            if (score.pending) {
+                return;
+            }
             const playerName = score.player || score.displayName || score.user || score.name || "Unknown";
             
             const profilePic = getProfilePictureForScore(score);

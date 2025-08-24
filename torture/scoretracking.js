@@ -365,6 +365,7 @@ async function uploadScore() {
     pumpbility: chartFail || playMode === "coop" ? 0 : pumpbility,
     timestamp: Date.now(),
     timeString: new Date().toLocaleString('en-GB', { hour12: false }),
+    pending: true, // this is used to determine if the score is pending approval
   };
 
   try {

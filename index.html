@@ -1,129 +1,150 @@
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Prownie IR</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles/home.css" />
-    <link rel="stylesheet" href="./styles/navbar.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
-  </head>
-  <!-- <script src="./torture/navbar.js"></script> -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <body>
-    <script>
-      $.get("navbar.html", function (data) {
-        $("#navbar").replaceWith(data);
-      });
-      $.get("/footer.html", function (data) {
-        $(".footer").replaceWith(data);
-      });
-    </script>
-    <div id="navbar"></div>
-    <div class="intro"></div>
-    <div class="brownie">
-      Welcome! This website is created for the purpose of an IR site for home
-      Pump players.
-      <br />
-      Currently, the site is still a work in progress.
-      <br />
-      <br />
-      Breakages are really bound to occur here and there, so please report any
-      issues as you see. <br />
-      Also, please be patient as there is only one person working on this
-      project.
-      <h6>god i really should stop procastinating due is in 2 weeks-</h6>
-      <br />
-      <br />
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prownie IR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles/home.css" />
+  <link rel="stylesheet" href="./styles/navbar.css" />
+  <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
+</head>
+<!-- <script src="./torture/navbar.js"></script> -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<style>
+  .message-board-messages {
+    max-height: 800px;
+    overflow-y: auto;
+  }
+</style>
+<body>
+  <script>
+    $.get("navbar.html", function (data) {
+      $("#navbar").replaceWith(data);
+    });
+    $.get("/footer.html", function (data) {
+      $(".footer").replaceWith(data);
+    });
+  </script>
+  <div id="navbar"></div>
+  <div class="intro"></div>
+  <div class="brownie">
+    Welcome! This website is created for the purpose of an IR site for home
+    Pump players.
+    <br />
+    Currently, the site is still a work in progress.
+    <br />
+    <br />
+    Breakages are really bound to occur here and there, so please report any
+    issues as you see. <br />
+    Also, please be patient as there is only one person working on this
+    project.
+    <h6>god i really should stop procastinating due is in 2 weeks-</h6>
+    <br />
+    <br />
+  </div>
+  <button id="news-post-button"
+    style="background-color: #224a50; color: white;margin-left: 20px; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px;">Write
+    a post</button>
+  <div class="extra" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    <div class="news"
+      style="display: flex; flex-direction: column; gap: 20px; flex-wrap: wrap; justify-content: space-between; align-items: top; margin: 20px;">
+      <template id="news-post-template">
+        <div class="news-post">
+          <h4 data-title></h4>
+          <p data-text></p>
+          <p data-time></p>
+        </div>
+      </template>
     </div>
-    <button id="news-post-button" style="background-color: #224a50; color: white;margin-left: 20px; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px;">Write a post</button>
-      <div class="news" style="display: flex; flex-direction: column; gap: 20px; flex-wrap: wrap; justify-content: space-between; align-items: top; margin: 20px;">
-        <template id="news-post-template">
-          <div class="news-post">
-            <h4 data-title></h4>
-            <p data-text></p>
-            <p data-time></p>
-          </div>
-        </template>
+    <div class="message-board">
+      <h3>Message Board</h3>
+      <div class="message-board-input" style="display: flex; flex-direction: row; gap: 10px;">
+        <input type="text" id="message-board-input" placeholder="Enter your message" style="width: 100%;" autocomplete="off">
+        <button
+          style="background-color: #224a50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.2em;">Send</button>
       </div>
+      <div class="message-board-messages"></div>
+    </div>
+  </div>
 
 
-    <div class="footer"></div>
-    <script type="module" src="./torture/firebase.js"></script>
-    <script type="module" src="./torture/navbar.js"></script>
-    <script type="module">
-      import {
-        getFirestore,
-        addDoc,
-        collection,
-        getDocs,
-        setDoc,
-        doc,
-        getDoc,
-        db,
-        getAuth,
-      } from "./torture/firebase.js"; // last resort method to write users to firestore. fuck.
-      const auth = getAuth();
+  <div class="footer"></div>
+  <script type="module" src="./torture/firebase.js"></script>
+  <script type="module" src="./torture/navbar.js"></script>
+  <script type="module">
+    import {
+      getFirestore,
+      addDoc,
+      collection,
+      getDocs,
+      setDoc,
+      doc,
+      getDoc,
+      db,
+      getAuth,
+    } from "./torture/firebase.js"; // last resort method to write users to firestore. fuck.
+    const auth = getAuth();
+    
+    document.getElementById("news-post-button").addEventListener("click", () => {
+      window.location.href = "/newspost.html";
+    });
 
-      document.getElementById("news-post-button").addEventListener("click", () => {
-        window.location.href = "/newspost.html";
-      });
-
-      let formatDistanceToNow;
-      // Wait for auth state to be ready and user to be defined
-      auth.onAuthStateChanged(async (user) => {
-        if (!user) {
-          console.warn("No user is currently signed in.");
-          document.getElementById("news-post-button").style.display = "none";
-          return;
+    let formatDistanceToNow;
+    // Wait for auth state to be ready and user to be defined
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        console.warn("No user is currently signed in.");
+        document.getElementById("news-post-button").style.display = "none";
+        return;
+      }
+      // Force use uid
+      const userKey = user.uid;
+      const userDocRef = doc(db, "users", userKey);
+      let userDoc;
+      try {
+        userDoc = await getDoc(userDocRef);
+        if (!userDoc.exists()) {
+          await setDoc(userDocRef, {
+            username: user.displayName || "",
+            email: user.email || "",
+            profilePicture: user.photoURL || "/img/default-avatar.png",
+            timeCreated: new Date().getTime(),
+            pumpbility: 0,
+            role: "user",
+            lastNameChange: new Date().getTime(),
+          });
         }
-        // Force use uid
-        const userKey = user.uid;
-        const userDocRef = doc(db, "users", userKey);
-        let userDoc;
-        try {
-          userDoc = await getDoc(userDocRef);
-          if (!userDoc.exists()) {
-            await setDoc(userDocRef, {
-              username: user.displayName || "",
-              email: user.email || "",
-              profilePicture: user.photoURL || "/img/default-avatar.png",
-              timeCreated: new Date().getTime(),
-              pumpbility: 0,
-              role: "user",
-              lastNameChange: new Date().getTime(),
-            });
-          }
-          document.querySelector(".intro").innerHTML = "Welcome back, " + userDoc.data().username + "!";
-        } catch (firestoreReadError) {
-          console.error("Failed to read from Firestore:", firestoreReadError);
-        }
-        if (userDoc.data().role !== "sysop" && userDoc.data().role !== "owner") {
-          document.getElementById("news-post-button").style.display = "none";
-        }
-        if (userDoc.data().timeBanned && (Date.now() - userDoc.data().timeBanned < 1000 * 60 * 60 * 24 * 180)) { // if the user has been banned in the last 180 days
-          document.querySelector(".intro").innerHTML = `Welcome back, ${userDoc.data().username}! <br> We are still watching you. Don't break the rules again.`;
-        }
-        if (userDoc.data().role === "banned") {
-          const status = document.createElement("div");
-          status.innerHTML = "You have been banned from the site. <br> If you think this is a mistake, please contact an admin.";
-          status.style.color = "white";
-          status.style.textAlign = "center";
-          status.style.fontSize = "1.5em";
-          status.style.marginTop = "100px";
-          status.style.backgroundColor = "red";
-          status.style.padding = "10px";
-          status.style.borderRadius = "10px";
-          status.style.display = "flex";
-          status.style.flexDirection = "column";
-          status.style.justifyContent = "center";
-          document.querySelector(".intro").innerHTML = "";
-          document.querySelector(".intro").appendChild(status);
-        }
-      });
-      document.addEventListener("DOMContentLoaded", () => {
+        document.querySelector(".intro").innerHTML = "Welcome back, " + userDoc.data().username + "!";
+      } catch (firestoreReadError) {
+        console.error("Failed to read from Firestore:", firestoreReadError);
+      }
+      if (userDoc.data().role !== "sysop" && userDoc.data().role !== "owner") {
+        document.getElementById("news-post-button").style.display = "none";
+      }
+      if (userDoc.data().timeBanned && (Date.now() - userDoc.data().timeBanned < 1000 * 60 * 60 * 24 * 180)) { // if the user has been banned in the last 180 days
+        document.querySelector(".intro").innerHTML = `Welcome back, ${userDoc.data().username}! <br> We are still watching you. Don't break the rules again.`;
+      }
+      if (userDoc.data().role === "banned") {
+        const status = document.createElement("div");
+        status.innerHTML = "You have been banned from the site. <br> If you think this is a mistake, please contact an admin.";
+        status.style.color = "white";
+        status.style.textAlign = "center";
+        status.style.fontSize = "1.5em";
+        status.style.marginTop = "100px";
+        status.style.backgroundColor = "red";
+        status.style.padding = "10px";
+        status.style.borderRadius = "10px";
+        status.style.display = "flex";
+        status.style.flexDirection = "column";
+        status.style.justifyContent = "center";
+        document.querySelector(".intro").innerHTML = "";
+        document.querySelector(".intro").appendChild(status);
+      }
+    });
+    document.addEventListener("DOMContentLoaded", () => {
       // Get news posts and render them using innerHTML
       (async () => {
         try {
@@ -184,10 +205,93 @@
             newsContainer.appendChild(postDiv);
           });
         } catch (err) {
-            console.error("Failed to load news posts:", err);
-          }
-        })();
+          console.error("Failed to load news posts:", err);
+        }
+      })();
+    });
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (!formatDistanceToNow) {
+        ({ formatDistanceToNow } = await import("https://unpkg.com/date-fns@3.6.0/formatDistanceToNow.mjs"));
+      }
+      const messageBoard = document.querySelector(".message-board-messages");
+      const messagesDB = collection(db, "messages");
+      const messagesSnap = await getDocs(messagesDB);
+      const messagesData = messagesSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      if (messagesData.length === 0) {
+        messageBoard.innerHTML = "<div class='message-container'>No messages yet</div>";
+        return;
+      }
+      // Sort messages by timestamp  (newest first)
+      messagesData.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+      messagesData.forEach((message) => {
+        const messageDiv = document.createElement("div");
+        let formattedTime = "";
+        if (message.timestamp) {
+          formattedTime = formatDistanceToNow(message.timestamp, { addSuffix: true });
+        }
+        messageDiv.innerHTML = `
+          <div class="message-container">
+            <div class="message-content">
+              <img src="${message.profilePicture || ""}" alt="Profile Picture" style="width: 30px; height: 30px; border-radius: 50%;">
+              <span style="font-weight:bold;">${message.username || "Unknown"}:</span>
+              <span>${message.text || ""}</span>
+            </div>
+            <div class="timestamp" style="color:gray;font-size:0.85em;">${formattedTime}</div>
+          </div>
+        `;
+        messageBoard.appendChild(messageDiv);
       });
-    </script>
-  </body>
+    });
+    
+    document.querySelector('.message-board-input button').addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (!formatDistanceToNow) {
+            ({ formatDistanceToNow } = await import("https://unpkg.com/date-fns@3.6.0/formatDistanceToNow.mjs"));
+          }
+      const messageBoard = document.querySelector(".message-board-messages");
+      const messagesDB = collection(db, "messages");
+      const messagesSnap = await getDocs(messagesDB);
+      const messagesData = messagesSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      const input = document.querySelector("#message-board-input");
+      const message = input.value.trim();
+      if (!message) return;
+      try {
+        const messageDocRef = await addDoc(messagesDB, { text: message, timestamp: new Date().getTime(), username: auth.currentUser.displayName, profilePicture: auth.currentUser.photoURL });
+        const messageDoc = await getDoc(messageDocRef);
+        const messageData = messageDoc.data();
+        const messageDiv = document.createElement("div");
+        let formattedTime = "";
+        if (messageData.timestamp) {
+          formattedTime = formatDistanceToNow(messageData.timestamp, { addSuffix: true });
+        }
+        messagesData.unshift(messageData);
+        messagesData.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        messageBoard.innerHTML = "";
+            messagesData.forEach((msg) => {
+              let formattedTime = "";
+              if (msg.timestamp) {
+                formattedTime = formatDistanceToNow(msg.timestamp, { addSuffix: true });
+              }
+              const msgDiv = document.createElement("div");
+              msgDiv.innerHTML = `
+                <div class="message-container">
+                  <div class="message-content">
+                    <img src="${msg.profilePicture || ""}" alt="Profile Picture" style="width: 30px; height: 30px; border-radius: 50%;">
+                    <span style="font-weight:bold;">${msg.username || "Unknown"}:</span>
+                    <span>${msg.text || ""}</span>
+                  </div>
+                  <div class="timestamp" style="color:gray;font-size:0.85em;">${formattedTime}</div>
+                </div>
+              `;
+              messageBoard.appendChild(msgDiv);
+            });
+            input.value = "";
+      } catch (err) {
+        console.error("Failed to add message:", err);
+      }
+    });
+  </script>
+</body>
+
 </html>
