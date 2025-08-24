@@ -408,7 +408,7 @@ document.addEventListener("DOMContentLoaded", () => {
             (play.score === 1000000 &&
               play.isSuperbOn === true &&
               Number(play.fa) + Number(play.sl) <
-                (Number(existing?.fa) + Number(existing?.sl) || 0))
+              (Number(existing?.fa) + Number(existing?.sl) || 0))
           ) {
             bestPlaysMap.set(key, play);
           }
@@ -522,9 +522,9 @@ document.addEventListener("DOMContentLoaded", () => {
                   play.isSuperbOn === true || play.isSuperbOn === "true";
                 const isPerfect =
                   Number(play.gr) +
-                    Number(play.gd) +
-                    Number(play.bd) +
-                    Number(play.ms) ===
+                  Number(play.gd) +
+                  Number(play.bd) +
+                  Number(play.ms) ===
                   0;
 
                 if (minusMax === 0 && isSuperb) {
@@ -537,38 +537,30 @@ document.addEventListener("DOMContentLoaded", () => {
               } else {
                 scoreCell = play.score || "";
               }
-              if (play.timestamp < Date.now() - 1000 * 60 * 60 * 24 * 30) {
-                return `<tr>
-                                <td colspan="7" style="text-align:center; color:#aaa;">No recent plays</td>
-                            </tr>`;
-              }
               return `<tr>
-                            <td><a style="text-decoration: none; color: white;" href="${href}">${
-                play.sn || ""
-              }</a></td>
+                            <td><a style="text-decoration: none; color: white;" href="${href}">${play.sn || ""
+                }</a></td>
                             <td>
                                 ${play.lvl || ""}
                                 <span class="rate" style="font-size: 0.8em; color: ${play.rate < 1 ? "rgb(98, 255, 93)" : "rgb(255, 82, 82)"};">
-                                    ${
-                                      Number(play.rate) === 1 ||
-                                      play.rate === undefined ||
-                                      play.rate === "undefined" ||
-                                      play.rate === "" ||
-                                      play.rate === null
-                                        ? ""
-                                        : `(${play.rate}x)`
-                                    }
+                                    ${Number(play.rate) === 1 ||
+                  play.rate === undefined ||
+                  play.rate === "undefined" ||
+                  play.rate === "" ||
+                  play.rate === null
+                  ? ""
+                  : `(${play.rate}x)`
+                }
                                 </span>
                             </td>
                             <td>${scoreCell}</td>
                             <td>${play.grade || ""}</td>
                             <td>${play.cleartype || ""}</td>
-                            <td>${
-                              typeof play.pumpbility === "number" &&
-                              !isNaN(play.pumpbility)
-                                ? play.pumpbility
-                                : ""
-                            }</td>
+                            <td>${typeof play.pumpbility === "number" &&
+                  !isNaN(play.pumpbility)
+                  ? play.pumpbility
+                  : ""
+                }</td>
                             <td>${play.timeString || ""}</td>
                         </tr>`;
             })
@@ -670,7 +662,8 @@ addtoLB.addEventListener("click", async () => {
       const songKey = scoreData.sn.trim().toLowerCase().replace(/\s+/g, "");
       const lvl = scoreData.lvl;
       const rate = Number(scoreData.rate);
-      const uniqueKey = `${songKey}|||${lvl}|||${rate}`;
+      const score = Number(scoreData.score);
+      const uniqueKey = `${songKey}|||${lvl}|||${rate}|||${score}`;
       // Only keep one score per uniqueKey (if duplicates in user collection)
       if (!scoreKeySet.has(uniqueKey)) {
         scoresToAdd.push({ scoreData, songKey, lvl, rate, uniqueKey });
@@ -711,11 +704,11 @@ addtoLB.addEventListener("click", async () => {
 
       // Build a set of existing (lvl, rate) for this user/song
       const existingSet = new Set(
-        leaderboardScores.map(s => `${s.lvl}|||${Number(s.rate)}`)
+        leaderboardScores.map(s => `${s.lvl}|||${Number(s.rate)}|||${Number(s.score)}`)
       );
 
       for (const entry of entries) {
-        const key = `${entry.lvl}|||${entry.rate}`;
+        const key = `${entry.lvl}|||${entry.rate}|||${Number(entry.score)}`;
         if (existingSet.has(key)) {
           skippedCount++;
           continue;
