@@ -659,8 +659,9 @@ addtoLB.addEventListener("click", async () => {
 
     // Group user scores by songKey+lvl+rate for efficient filtering
     const scoresToAdd = [];
-    const scoreKeySet = new Set();
-
+    // get best score for each songKey+lvl+rate
+    const bestScores = new Map();
+    const bestScoresSet = new Set();
     for (const docSnap of userScoresSnapshot.docs) {
       const scoreData = docSnap.data();
       if (!scoreData.sn) {
@@ -672,9 +673,10 @@ addtoLB.addEventListener("click", async () => {
       const rate = Number(scoreData.rate);
       const uniqueKey = `${songKey}|||${lvl}|||${rate}`;
       // Only keep one score per uniqueKey (if duplicates in user collection)
-      if (!scoreKeySet.has(uniqueKey)) {
+      if (!bestScoresSet.has(uniqueKey) || scoreData.score > bestScores.get(uniqueKey).score) {
+        bestScores.set(uniqueKey, scoreData);
+        bestScoresSet.add(uniqueKey);
         scoresToAdd.push({ scoreData, songKey, lvl, rate, uniqueKey });
-        scoreKeySet.add(uniqueKey);
       }
     }
 
