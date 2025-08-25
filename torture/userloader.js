@@ -274,7 +274,7 @@ if (foundUser.timeBanned && (Date.now() - foundUser.timeBanned < 1000 * 60 * 60 
         }
         return `<tr>
             <td><a style="text-decoration: none; color: white;" href="/score.html?user=${foundUser.username}&sn=${encodeURIComponent(play.sn || "")}&lvl=${encodeURIComponent(play.lvl || "")}&t=${encodeURIComponent(play.timestamp || "")}">${play.sn || ""}</a></td>
-            <td>${play.lvl || ""} <span style="font-size: 0.8em; color: #f22;">
+            <td style="text-align: center;">${play.lvl || ""} <br><span class="rate" style="font-size: 0.8em; color: ${play.rate < 1 ? "rgb(98, 255, 93)" : "rgb(255, 82, 82)"};">
                 ${
                     Number(play.rate) === 1 ||
                     play.rate === undefined ||
@@ -285,11 +285,11 @@ if (foundUser.timeBanned && (Date.now() - foundUser.timeBanned < 1000 * 60 * 60 
                         : `(${play.rate}x)`
                 }
             </span></td>
-            <td>${scoreCell}</td>
-            <td>${play.grade || ""}</td>
-            <td>${play.cleartype || ""}</td>
-            <td>${play.pumpbility ?? ""}</td>
-            <td>${play.timeString || ""}</td>
+            <td style="text-align: center;">${scoreCell}</td>
+            <td style="text-align: center;">${play.grade || ""}</td>
+            <td style="text-align: center;">${play.cleartype || ""}</td>
+            <td style="text-align: center;">${play.pumpbility ?? ""}</td>
+            <td style="text-align: center;">${play.timeString || ""}</td>
         </tr>`;
       }).join("");
     }
@@ -298,12 +298,12 @@ if (foundUser.timeBanned && (Date.now() - foundUser.timeBanned < 1000 * 60 * 60 
       bestPlaysTable.innerHTML = `
         <tr>
           <th style="width: 25%;">Song</th>
-          <th style="width: 10%;">Difficulty</th>
+          <th style="width: 5%;">Difficulty</th>
           <th style="width: 10%;">Score</th>
           <th style="width: 10%;">Grade</th>
           <th style="width: 10%;">Clear Type</th>
           <th style="width: 10%;">Pumpbility</th>
-          <th style="width: 15%;">Time</th>
+          <th style="width: 20%;">Time</th>
         </tr>
         ${renderRows(bestPlays)}
       `;
@@ -314,12 +314,12 @@ if (foundUser.timeBanned && (Date.now() - foundUser.timeBanned < 1000 * 60 * 60 
       recentPlaysTable.innerHTML = `
         <tr>
           <th style="width: 25%;">Song</th>
-          <th style="width: 10%;">Difficulty</th>
+          <th style="width: 5%;">Difficulty</th>
           <th style="width: 10%;">Score</th>
           <th style="width: 10%;">Grade</th>
           <th style="width: 10%;">Clear Type</th>
           <th style="width: 10%;">Pumpbility</th>
-          <th style="width: 15%;">Time</th>
+          <th style="width: 20%;">Time</th>
         </tr>
         ${renderRows(recentPlays)}
       `;
