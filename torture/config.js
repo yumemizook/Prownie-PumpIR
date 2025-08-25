@@ -22,16 +22,7 @@ const confirmNewPasswordInput = document.querySelector("#confirmnewpw");
 
 
 const auth = getAuth();
-let user = auth.currentUser;
-const storage = getStorage();
-
-let lowerCaseLetters = /[a-z]/g;
-let upperCaseLetters = /[A-Z]/g;
-let numbers = /[0-9]/g;
-
-// coming back to this later
 saveChanges.addEventListener("click", saveData);
-// savePassword.addEventListener("click", changePassword);
 
 document.addEventListener("DOMContentLoaded", () => {
   fetchData();
@@ -64,11 +55,19 @@ async function saveData() {
   try {
     const docRef = doc(db, "users", user.uid);
     const docSnap = await getDoc(docRef);
-    const lastNameChange = docSnap.data().lastNameChange;
-    const timeCreated = docSnap.data().timeCreated;
-    const nameChangeDue = lastNameChange + 60000 * 60 * 24 * 7;
+    const userData = docSnap.data() || {};
+    const lastNameChange = userData.lastNameChange || userData.timeCreated || 0;
+    const lastUsernames = Array.isArray(userData.lastUsernames) ? userData.lastUsernames : [];
+    const timeCreated = userData.timeCreated || 0;
+    const nameChangeDue = lastNameChange + 1000 * 60 * 60 * 24 * 7; // 7 days in ms
     const formattedNameChangeDue = new Date(nameChangeDue).toLocaleDateString() + " " + new Date(nameChangeDue).toLocaleTimeString();
-    if (nameChangeDue > new Date().getTime() && lastNameChange !== timeCreated && updatedName !== user.displayName) { // if the user has changed their name in the last 7 days, they cannot change it again
+
+    // only 1 name change per 7 days
+    if (
+      updatedName !== user.displayName &&
+      lastNameChange !== timeCreated &&
+      nameChangeDue > Date.now()
+    ) {
       alert(
         `You have to wait until ${formattedNameChangeDue} before changing your name again.`
       );
@@ -81,7 +80,9 @@ async function saveData() {
       await updateDoc(docRef, {
         username: updatedName,
         profilePicture: photoURL,
+        lastUsernames: [...lastUsernames, user.displayName],
       });
+    }
       // Update email if changed
       if (updatedEmail !== user.email) {
         await updateEmail(user, updatedEmail);
@@ -91,7 +92,6 @@ async function saveData() {
       });
       alert("Changes saved");
       window.location.reload();
-    }
     // Update profile with new name and photoURL
   } catch (error) {
     alert("Error saving changes. Please try again.");

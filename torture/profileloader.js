@@ -308,11 +308,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Set avatar and name
     playerAvatar.src = user.photoURL || "img/default-avatar.png";
-    playerName.textContent = user.displayName || "undefined";
+
 
     try {
       const userDocRef = doc(db, "users", user.uid);
       const userDocSnap = await getDoc(userDocRef);
+      const lastUsernames = userDocSnap.data().lastUsernames;
+      if (lastUsernames.length > 0) {
+        playerName.innerHTML = user.displayName + `<span style='font-size: 0.4em; color: #aaa;'> Formerly known as: ${lastUsernames.join(", ")}</span>`;
+      } else {
+        playerName.textContent = user.displayName || "undefined";
+      }
 
       if (!userDocSnap.exists()) {
         pumpbility.innerHTML = "PUMBILITY: 0";
