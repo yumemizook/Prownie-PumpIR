@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const scoreSnapshot = await getDocs(scoreRef);
         let scores = scoreSnapshot.docs.map((doc) => doc.data());
 
+
         // Filter by chartFail if checkbox is unchecked
         // const chartFailButton = document.querySelector("#chartFail");
         // let showFailedScores = true;
@@ -133,6 +134,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         // });
         // Format rate for display
         scores.forEach((score) => {
+            // Skip pending scores
+            if (score.pending === true || score.pending === "true") {
+                return;
+            }
             if (typeof score.rate === "number") {
                 if (score.rate < 1) {
                     score.rate = score.rate.toFixed(2);

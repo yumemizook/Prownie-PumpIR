@@ -482,13 +482,13 @@ document.addEventListener("DOMContentLoaded", () => {
           recentPlays[0].timestamp < Date.now() - 1000 * 60 * 60 * 24 * 30
         ) {
           const recentPlaysTable = document.querySelector(".rp .play-table");
-          if (recentPlaysTable) {
-            recentPlaysTable.innerHTML = `
-                            <tr>
-                                <td colspan="7" style="text-align:center; color:#aaa;">No recent plays</td>
-                            </tr>
-                        `;
-          }
+          // if (recentPlaysTable) {
+          //   recentPlaysTable.innerHTML = `
+          //                   <tr>
+          //                       <td colspan="7" style="text-align:center; color:#aaa;">No recent plays</td>
+          //                   </tr>
+          //               `;
+          // }
         }
         // Find the tables
         const bestPlaysTable = document.querySelector(".bp .play-table");

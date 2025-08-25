@@ -135,8 +135,22 @@ wipeScores.addEventListener("click", async () => {
     alert("You are not logged in.");
     return;
   }
-  const scoresSnap = await getDocs(collection(db, "users", user.uid, "scores"));
-  if (scoresSnap.empty) {
+  // Find and delete scores in "songs" subcollections based on player name
+  const scoresSnap = await getDocs(collection(db, "users", user.uid, "scores")); // delete from player's own scores
+  const songSnap = await getDocs(collection(db, "songs")); // delete from all songs
+  const scoresToDelete = [];
+
+  for (const songDoc of songSnap.docs) {
+    const songId = songDoc.id;
+    const songScoresSnap = await getDocs(collection(db, "songs", songId, "scores"));
+    songScoresSnap.forEach((scoreDoc) => {
+      const scoreData = scoreDoc.data();
+      if (scoreData.player === user.displayName) {
+        scoresToDelete.push(scoreDoc.ref);
+      }
+    });
+  }
+  if (scoresToDelete.length === 0) {
     alert("You don't have any scores to wipe.");
     return;
   }
@@ -175,6 +189,9 @@ wipeScores.addEventListener("click", async () => {
     const deletePromises = [];
     scoresSnap.forEach((scoreDoc) => {
       deletePromises.push(deleteDoc(scoreDoc.ref));
+    });
+    scoresToDelete.forEach((scoreDoc) => {
+      deletePromises.push(deleteDoc(scoreDoc));
     });
     await Promise.all(deletePromises);
     timer.innerHTML = "Scores wiped!";
