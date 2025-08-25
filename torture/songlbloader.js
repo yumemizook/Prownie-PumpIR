@@ -1,5 +1,35 @@
 import { collection, getDocs, doc, getDoc, db } from "./firebase.js";
 
+const colorTable = [
+    { grade: "SSS+", color: "#00E3FF" },
+    { grade: "SSS", color: "#00E3FF" },
+    { grade: "SS+", color: "#FFC900" },
+    { grade: "SS", color: "#FFC900" },
+    { grade: "S+", color: "#FFC900" },
+    { grade: "S", color: "#FFC900" },
+    { grade: "AAA+", color: "#AFAFAF" },
+    { grade: "AAA", color: "#AFAFAF" },
+    { grade: "AA+", color: "#844400" },
+    { grade: "AA", color: "#844400" },
+    { grade: "A+", color: "#844400" },
+    { grade: "A", color: "#844400" },
+    { grade: "B", color: "#00FF90" },
+    { grade: "C", color: "#00FF90" },
+    { grade: "D", color: "#00FF90" },
+    { grade: "F", color: "#00FF90" },
+  ];
+  
+  const clearTypeTable = [
+    { clearType: "Perfect Game", color: "#00E3FF" },
+    { clearType: "Ultimate Game", color: "#00E3FF" },
+    { clearType: "Extreme Game", color: "#FFC900" },
+    { clearType: "Superb Game", color: "#FFC900" },
+    { clearType: "Marvelous Game", color: "#AFAFAF" },
+    { clearType: "Talented Game", color: "#AFAFAF" },
+    { clearType: "Fair Game", color: "#844400" },
+    { clearType: "Rough Game", color: "#844400" },
+  ];
+  
 const nameElem = document.querySelector(".songinfo h1");
 // const artistElem = document.querySelector(".songinfo h4");
 // const seriesElem = document.querySelector(".songinfo h5");
@@ -27,31 +57,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const scoreRef = collection(db, "songs", id, "scores");
         const scoreSnapshot = await getDocs(scoreRef);
         let scores = scoreSnapshot.docs.map((doc) => doc.data());
-
-
-        // Filter by chartFail if checkbox is unchecked
-        // const chartFailButton = document.querySelector("#chartFail");
-        // let showFailedScores = true;
-
-        // chartFailButton.addEventListener("click", () => {
-        //     showFailedScores = !showFailedScores;
-        //     if (showFailedScores) {
-        //         chartFailButton.textContent = "Hide failed scores";
-        //         const newparams = new URLSearchParams(window.location.search);
-        //         newparams.set("hideChartFail", "1");
-        //         window.location.href = `${window.location.pathname}?${newparams.toString()}`;
-        //     } else {
-        //         chartFailButton.textContent = "Show failed scores";
-        //         const newparams = new URLSearchParams(window.location.search);
-        //         newparams.delete("hideChartFail");
-        //         window.location.href = `${window.location.pathname}?${newparams.toString()}`;
-        //     }
-        // });
-        
+        let filteredScores = [];
         // Populate chart difficulty options
         const chartSelect = document.querySelector("#chart");
         if (chartSelect) {
-            const uniqueDifficulties = [...new Set(scores.map(score => score.lvl).filter(Boolean))];
+            const uniqueDifficulties = [...new Set(filteredScores.map(score => score.lvl).filter(Boolean))];
             uniqueDifficulties.sort((a, b) => {
                 // Extract numeric part for sorting
                 const aNum = parseInt(a.toString().match(/\d+/)?.[0] || "0");
@@ -75,7 +85,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const rateSelect = document.querySelector("#rate");
         if (rateSelect) {
             // Format rates first, then get unique values
-            const formattedRates = scores.map(score => {
+            const formattedRates = filteredScores.map(score => {
                 let rate = score.rate;
                 if (typeof rate === "number") {
                     if (rate < 1) {
@@ -105,8 +115,32 @@ document.addEventListener("DOMContentLoaded", async () => {
                 rateSelect.appendChild(option);
             });
         }
+        
+        // Defensive filtering and mapping
+        filteredScores = scores
+            .filter(score => !score.pending)
+            .map(score => {
+
+                if (typeof score.pumpbility !== "number" || isNaN(score.pumpbility)) {
+                    score.pumpbility = 0;
+                }
+
+                if (score.chartFail === "true" || score.cleartype === "" || score.chartFail === true) {
+                    score.pumpbility = 0;
+                }
+ 
+                if (typeof score.score !== "number" || isNaN(score.score)) {
+                    score.score = 0;
+                }
+
+                if (typeof score.timestamp !== "number" || isNaN(score.timestamp)) {
+                    score.timestamp = 0;
+                }
+                return score;
+            });
+
         // Sort by pumpbility descending, then by score descending, then by timestamp ascending
-        scores.sort((a, b) => {
+        filteredScores.sort((a, b) => {
             if ((b.pumpbility || 0) !== (a.pumpbility || 0)) {
                 return (b.pumpbility || 0) - (a.pumpbility || 0);
             }
@@ -116,28 +150,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             return (a.timestamp || 0) - (b.timestamp || 0);
         });
 
-        // // Remove duplicate users (keep best score per user)
-        // // Improved duplicate user checking: prefer 'user' or 'displayName' for user identity, fallback to 'name' only if no user field
-        // const seenUsers = new Set();
-        // scores = scores.filter(score => {
-        //     // Prefer user/displayName for user identity, fallback to name if no user field
-        //     let user =
-        //         (score.user || score.displayName || "").toString().trim().toLowerCase();
-        //     if (!user) {
-        //         // Only fallback to name if no user/displayName field
-        //         user = (score.name || "").toString().trim().toLowerCase();
-        //     }
-        //     if (!user) return false;
-        //     if (seenUsers.has(user)) return false;
-        //     seenUsers.add(user);
-        //     return true;
-        // });
         // Format rate for display
-        scores.forEach((score) => {
-            // Skip pending scores
-            if (score.pending === true || score.pending === "true") {
-                return;
-            }
+        filteredScores.forEach((score) => {
             if (typeof score.rate === "number") {
                 if (score.rate < 1) {
                     score.rate = score.rate.toFixed(2);
@@ -148,10 +162,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 score.rate = String(score.rate);
             } else {
                 score.rate = "1.0";
-            }
-            if (score.chartFail === "true" || score.cleartype === "" || score.chartFail === true) {
-                score.pumpbility = 0;
-
             }
         });
 
@@ -211,7 +221,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             leaderboardTable.deleteRow(1);
         }
 
-        if (scores.length === 0) {
+        if (filteredScores.length === 0) {
             const row = leaderboardTable.insertRow();
             const cell = row.insertCell();
             cell.colSpan = 9;
@@ -220,17 +230,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             cell.textContent = "No scores yet";
             return;
         }
-
-        scores.forEach((score, idx) => {
+        let gradeColor = "";
+        let clearTypeColor = "";
+        filteredScores.forEach((score, idx) => {
             const tr = document.createElement("tr");
             leaderboardTable.appendChild(tr);
-            if (score.pending) {
-                return;
-            }
             const playerName = score.player || score.displayName || score.user || score.name || "Unknown";
-            
+            gradeColor = colorTable.find(grade => grade.grade === score.grade)?.color || "";
+            clearTypeColor = clearTypeTable.find(clearType => clearType.clearType === score.cleartype)?.color || "";
             const profilePic = getProfilePictureForScore(score);
-            
             tr.innerHTML = `
                 <td style="text-align: center; padding: 12px;">${idx + 1}</td>
                 <td style="text-align: left; padding: 12px;">
@@ -246,8 +254,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <td style="text-align: center; padding: 12px;">${score.lvl || ""}</td>
                 <td style="text-align: center; padding: 12px;" class="rate-cell">${score.rate || ""}</td>
                 <td style="text-align: center; padding: 12px;">${score.score || ""}</td>
-                <td style="text-align: center; padding: 12px;">${score.grade || ""}</td>
-                <td style="text-align: center; padding: 12px;">${score.cleartype || ""}</td>
+                <td style="text-align: center; padding: 12px; color: ${gradeColor};">${score.grade || ""}</td>
+                <td style="text-align: center; padding: 12px; color: ${clearTypeColor};">${score.cleartype || ""}</td>
                 <td style="text-align: center; padding: 12px;">${score.pumpbility || ""}</td>
                 <td style="text-align: center; padding: 12px;">${score.timeString || ""}</td>
             `;

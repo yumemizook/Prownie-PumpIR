@@ -214,22 +214,41 @@
                         songScores.push(data);
 
                     });
+                    // Only include scores that are not pending (pending === false or missing/undefined)
+                    const songScoresWithoutPending = songScores.filter(score => score.pending === false || score.pending === undefined);
 
                     // Sort scores by pumpbility descending, then by score descending, then by timestamp ascending
-                    // This matches the leaderboard sorting logic exactly
-                    songScores.sort((a, b) => {
-                        if ((b.pumpbility || 0) !== (a.pumpbility || 0)) {
-                            return (b.pumpbility || 0) - (a.pumpbility || 0);
-                        }
-                        if ((b.score || 0) !== (a.score || 0)) {
-                            return (b.score || 0) - (a.score || 0);
-                        }
-                        return (a.timestamp || 0) - (b.timestamp || 0);
+                    songScoresWithoutPending.sort((a, b) => {
+                        // Sort by pumpbility (descending)
+                        const pumpA = Number(a.pumpbility) || 0;
+                        const pumpB = Number(b.pumpbility) || 0;
+                        if (pumpB !== pumpA) return pumpB - pumpA;
+                        // Then by score (descending)
+                        const scoreA = Number(a.score) || 0;
+                        const scoreB = Number(b.score) || 0;
+                        if (scoreB !== scoreA) return scoreB - scoreA;
+                        // Then by timestamp (ascending)
+                        const tsA = Number(a.timestamp) || 0;
+                        const tsB = Number(b.timestamp) || 0;
+                        return tsA - tsB;
                     });
-                    // Find the play in the sorted list
-                    let playIndex = songScores.findIndex(score => score.timestamp === timestamp);
 
-                    rankDisplay.innerHTML = playIndex !== -1 ? ` <a href="./song.html?id=${sn.toLowerCase().replace(/ /g, "")}" style="text-decoration: none; color: #fff;"><span class="rank" style="font-size: 2.5em;">#${playIndex + 1 === 1 ? "1!" : playIndex + 1}</span> / ${songScores.length}</a>` : "-";
+                    // Find the play in the sorted list
+                    let playIndex = songScoresWithoutPending.findIndex(score => Number(score.timestamp) === Number(timestamp));
+
+                    if (rankDisplay) {
+                        if (playIndex !== -1) {
+                            const rankNum = playIndex + 1;
+                            const rankText = rankNum === 1 ? "1!" : rankNum;
+                            rankDisplay.innerHTML = ` <a href="./song.html?id=${sn.toLowerCase().replace(/ /g, "")}" style="text-decoration: none; color: #fff;"><span class="rank" style="font-size: 2.5em;">#${rankText}</span> / ${songScoresWithoutPending.length}</a>`;
+                        } else {
+                            rankDisplay.innerHTML = "-";
+                        }
+                    }
+                    if (play.pending === true) {
+                        document.querySelector(".yourrank").innerHTML = "";
+                        rankDisplay.innerHTML = "Score pending approval";
+                    }
                     if (playIndex === 0) {
                         document.querySelector(".rank").style.color = "#ffd700";
                     } else if (playIndex === 1) {

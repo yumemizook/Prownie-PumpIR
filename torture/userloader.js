@@ -297,13 +297,13 @@ if (foundUser.timeBanned && (Date.now() - foundUser.timeBanned < 1000 * 60 * 60 
     if (bestPlaysTable) {
       bestPlaysTable.innerHTML = `
         <tr>
-          <th>Song</th>
-          <th>Difficulty</th>
-          <th>Score</th>
-          <th>Grade</th>
-          <th>Clear Type</th>
-          <th>Pumpbility</th>
-          <th>Time</th>
+          <th style="width: 25%;">Song</th>
+          <th style="width: 10%;">Difficulty</th>
+          <th style="width: 10%;">Score</th>
+          <th style="width: 10%;">Grade</th>
+          <th style="width: 10%;">Clear Type</th>
+          <th style="width: 10%;">Pumpbility</th>
+          <th style="width: 15%;">Time</th>
         </tr>
         ${renderRows(bestPlays)}
       `;
@@ -313,13 +313,13 @@ if (foundUser.timeBanned && (Date.now() - foundUser.timeBanned < 1000 * 60 * 60 
     if (recentPlaysTable) {
       recentPlaysTable.innerHTML = `
         <tr>
-          <th>Song</th>
-          <th>Difficulty</th>
-          <th>Score</th>
-          <th>Grade</th>
-          <th>Clear Type</th>
-          <th>Pumpbility</th>
-          <th>Time</th>
+          <th style="width: 25%;">Song</th>
+          <th style="width: 10%;">Difficulty</th>
+          <th style="width: 10%;">Score</th>
+          <th style="width: 10%;">Grade</th>
+          <th style="width: 10%;">Clear Type</th>
+          <th style="width: 10%;">Pumpbility</th>
+          <th style="width: 15%;">Time</th>
         </tr>
         ${renderRows(recentPlays)}
       `;

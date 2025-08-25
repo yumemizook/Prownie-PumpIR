@@ -422,13 +422,13 @@ document.addEventListener("DOMContentLoaded", () => {
             // Remove all rows except the header
             bestPlaysTable.innerHTML = `
                             <tr>
-                                <th>Song</th>
-                                <th>Difficulty</th>
-                                <th>Score</th>
-                                <th>Grade</th>
-                                <th>Clear Type</th>
-                                <th>Pumpbility</th>
-                                <th>Time</th>
+                                <th style="width: 25%;">Song</th>
+                                <th style="width: 10%;">Difficulty</th>
+                                <th style="width: 10%;">Score</th>
+                                <th style="width: 10%;">Grade</th>
+                                <th style="width: 10%;">Clear Type</th>
+                                <th style="width: 10%;">Pumpbility</th>
+                                <th style="width: 15%;">Time</th>
                             </tr>
                             <tr>
                                 <td colspan="7" style="text-align:center; color:#aaa;">No best plays</td>
@@ -436,7 +436,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         `;
           }
         }
-        const pumpbilityTotal = bestPlays.reduce(
+        const pumpbilitywithoutpending = bestPlays.filter(
+          (play) => play.pending !== true
+        );
+        const pumpbilityTotal = pumpbilitywithoutpending.reduce(
           (acc, play) => acc + (play.pumpbility || 0),
           0
         );
@@ -506,7 +509,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 play.lvl || ""
               )}&t=${encodeURIComponent(play.timestamp || "")}`;
               let scoreCell = "";
-
+              if (play.pending === true) {
+                play.score = "Pending";
+                play.grade = "Pending";
+                play.cleartype = "Pending";
+                play.pumpbility = 0;
+              }
               // Normalize chartFail
               const chartFail =
                 play.chartFail === true || play.chartFail === "true";
@@ -578,13 +586,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (bestPlaysTable) {
           bestPlaysTable.innerHTML = `
                         <tr>
-                          <th>Song</th>
-                          <th>Difficulty</th>
-                          <th>Score</th>
-                          <th>Grade</th>
-                          <th>Clear Type</th>
-                          <th>Pumpbility</th>
-                          <th>Time</th>
+                          <th style="width: 25%;">Song</th>
+                          <th style="width: 10%;">Difficulty</th>
+                          <th style="width: 10%;">Score</th>
+                          <th style="width: 10%;">Grade</th>
+                          <th style="width: 10%;">Clear Type</th>
+                          <th style="width: 10%;">Pumpbility</th>
+                          <th style="width: 15%;">Time</th>
                         </tr>
                         ${renderRows(bestPlays)}
                     `;
@@ -594,13 +602,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (recentPlaysTable) {
           recentPlaysTable.innerHTML = `
                         <tr>
-                          <th>Song</th>
-                          <th>Difficulty</th>
-                          <th>Score</th>
-                          <th>Grade</th>
-                          <th>Clear Type</th>
-                          <th>Pumpbility</th>
-                          <th>Time</th>
+                          <th style="width: 25%;">Song</th>
+                          <th style="width: 10%;">Difficulty</th>
+                          <th style="width: 10%; text-align: center;">Score</th>
+                          <th style="width: 10%; text-align: center;">Grade</th>
+                          <th style="width: 10%;">Clear Type</th>
+                          <th style="width: 10%;">Pumpbility</th>
+                          <th style="width: 15%;">Time</th>
                         </tr>
                         ${renderRows(recentPlays)}
                     `;
@@ -615,131 +623,132 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-addtoLB.addEventListener("click", async () => {
-  const user = getAuth().currentUser;
-  if (!user) {
-    return;
-  }
-  const overlay = document.querySelector("#addtoLBStatusOverlay");
-  overlay.style.display = "flex";
-  overlay.style.background = "rgba(0,0,0,0.8)";
-  overlay.style.width = "100vw";
-  overlay.style.height = "100vh";
-  overlay.style.top = "0";
-  overlay.style.left = "0";
-  overlay.style.position = "fixed";
-  overlay.style.zIndex = "1000";
-  overlay.style.justifyContent = "center";
-  overlay.style.alignItems = "center";
-  overlay.style.fontSize = "2em";
-  overlay.style.textAlign = "center";
-  overlay.innerHTML = `
-    <div style="background: #222; padding: 40px 60px; border-radius: 16px; box-shadow: 0 4px 32px #000a; border: 2px solid #4ad;">
-      <div style="margin-bottom: 10px; font-weight: bold;">Uploading data...</div>
-      <div class="addtolb-status-message"></div>
-      <button id="closeAddtoLBOverlay" style="margin-top: 20px; padding: 8px 24px; border-radius: 8px; border: none; background: #4ad; color: #fff; font-size: 1em; cursor: pointer; display: none;">Close</button>
-    </div>
-  `;
+  // the scores are now automatically generated on upload, no need for this anymore
+  // addtoLB.addEventListener("click", async () => {
+  //   const user = getAuth().currentUser;
+  //   if (!user) {
+  //     return;
+  //   }
+  //   const overlay = document.querySelector("#addtoLBStatusOverlay");
+  //   overlay.style.display = "flex";
+  //   overlay.style.background = "rgba(0,0,0,0.8)";
+  //   overlay.style.width = "100vw";
+  //   overlay.style.height = "100vh";
+  //   overlay.style.top = "0";
+  //   overlay.style.left = "0";
+  //   overlay.style.position = "fixed";
+  //   overlay.style.zIndex = "1000";
+  //   overlay.style.justifyContent = "center";
+  //   overlay.style.alignItems = "center";
+  //   overlay.style.fontSize = "2em";
+  //   overlay.style.textAlign = "center";
+  //   overlay.innerHTML = `
+  //     <div style="background: #222; padding: 40px 60px; border-radius: 16px; box-shadow: 0 4px 32px #000a; border: 2px solid #4ad;">
+  //       <div style="margin-bottom: 10px; font-weight: bold;">Uploading data...</div>
+  //       <div class="addtolb-status-message"></div>
+  //       <button id="closeAddtoLBOverlay" style="margin-top: 20px; padding: 8px 24px; border-radius: 8px; border: none; background: #4ad; color: #fff; font-size: 1em; cursor: pointer; display: none;">Close</button>
+  //     </div>
+  //   `;
 
-  const statusMsg = overlay.querySelector(".addtolb-status-message");
-  const closeBtn = overlay.querySelector("#closeAddtoLBOverlay");
+  //   const statusMsg = overlay.querySelector(".addtolb-status-message");
+  //   const closeBtn = overlay.querySelector("#closeAddtoLBOverlay");
 
-  function showCloseButton() {
-    closeBtn.style.display = "inline-block";
-    closeBtn.onclick = () => {
-      overlay.style.display = "none";
-      overlay.innerHTML = "";
-    };
-  }
+  //   function showCloseButton() {
+  //     closeBtn.style.display = "inline-block";
+  //     closeBtn.onclick = () => {
+  //       overlay.style.display = "none";
+  //       overlay.innerHTML = "";
+  //     };
+  //   }
 
-  try {
-    const userScoresSnapshot = await getDocs(collection(db, "users", user.uid, "scores"));
-    let addedCount = 0;
-    let skippedCount = 0;
+  //   try {
+  //     const userScoresSnapshot = await getDocs(collection(db, "users", user.uid, "scores"));
+  //     let addedCount = 0;
+  //     let skippedCount = 0;
 
-    // Group user scores by songKey+lvl+rate for efficient filtering
-    const scoresToAdd = [];
-    // get best score for each songKey+lvl+rate
-    const bestScores = new Map();
-    const bestScoresSet = new Set();
-    for (const docSnap of userScoresSnapshot.docs) {
-      const scoreData = docSnap.data();
-      if (!scoreData.sn) {
-        skippedCount++;
-        continue; // skip if no song name/id
-      }
-      const songKey = scoreData.sn.trim().toLowerCase().replace(/\s+/g, "");
-      const lvl = scoreData.lvl;
-      const rate = Number(scoreData.rate);
-      const uniqueKey = `${songKey}|||${lvl}|||${rate}`;
-      // Only keep one score per uniqueKey (if duplicates in user collection)
-      if (!bestScoresSet.has(uniqueKey) || scoreData.score > bestScores.get(uniqueKey).score) {
-        bestScores.set(uniqueKey, scoreData);
-        bestScoresSet.add(uniqueKey);
-        scoresToAdd.push({ scoreData, songKey, lvl, rate, uniqueKey });
-      }
-    }
+  //     // Group user scores by songKey+lvl+rate for efficient filtering
+  //     const scoresToAdd = [];
+  //     // get best score for each songKey+lvl+rate
+  //     const bestScores = new Map();
+  //     const bestScoresSet = new Set();
+  //     for (const docSnap of userScoresSnapshot.docs) {
+  //       const scoreData = docSnap.data();
+  //       if (!scoreData.sn) {
+  //         skippedCount++;
+  //         continue; // skip if no song name/id
+  //       }
+  //       const songKey = scoreData.sn.trim().toLowerCase().replace(/\s+/g, "");
+  //       const lvl = scoreData.lvl;
+  //       const rate = Number(scoreData.rate);
+  //       const uniqueKey = `${songKey}|||${lvl}|||${rate}`;
+  //       // Only keep one score per uniqueKey (if duplicates in user collection)
+  //       if (!bestScoresSet.has(uniqueKey) || scoreData.score > bestScores.get(uniqueKey).score) {
+  //         bestScores.set(uniqueKey, scoreData);
+  //         bestScoresSet.add(uniqueKey);
+  //         scoresToAdd.push({ scoreData, songKey, lvl, rate, uniqueKey });
+  //       }
+  //     }
 
-    // For each unique (songKey, lvl, rate), check if already exists in leaderboard
-    // Batch queries by songKey for efficiency
-    const groupedBySong = {};
-    for (const entry of scoresToAdd) {
-      if (!groupedBySong[entry.songKey]) groupedBySong[entry.songKey] = [];
-      groupedBySong[entry.songKey].push(entry);
-    }
+  //     // For each unique (songKey, lvl, rate), check if already exists in leaderboard
+  //     // Batch queries by songKey for efficiency
+  //     const groupedBySong = {};
+  //     for (const entry of scoresToAdd) {
+  //       if (!groupedBySong[entry.songKey]) groupedBySong[entry.songKey] = [];
+  //       groupedBySong[entry.songKey].push(entry);
+  //     }
 
-    for (const songKey in groupedBySong) {
-      const entries = groupedBySong[songKey];
-      const songScoresRef = collection(db, "songs", songKey, "scores");
-      // Ensure the song document exists and set its name (merge: true to avoid overwriting)
-      await setDoc(doc(db, "songs", songKey), {
-        name: entries[0].scoreData.sn,
-        // artist: entries[0].scoreData.artist, //adding this later
-        // series: entries[0].scoreData.series, //adding this later
-      }, { merge: true });
+  //     for (const songKey in groupedBySong) {
+  //       const entries = groupedBySong[songKey];
+  //       const songScoresRef = collection(db, "songs", songKey, "scores");
+  //       // Ensure the song document exists and set its name (merge: true to avoid overwriting)
+  //       await setDoc(doc(db, "songs", songKey), {
+  //         name: entries[0].scoreData.sn,
+  //         // artist: entries[0].scoreData.artist, //adding this later
+  //         // series: entries[0].scoreData.series, //adding this later
+  //       }, { merge: true });
 
-      // Get all leaderboard scores for this user for this song
-      let leaderboardScores = [];
-      try {
-        const q = query(songScoresRef, where("player", "==", user.displayName));
-        const leaderboardSnapshot = await getDocs(q);
-        leaderboardScores = leaderboardSnapshot.docs.map(d => d.data());
-      } catch (err) {
-        console.error("Error fetching leaderboard entries for song:", songKey, err);
-        // If we can't check, skip all for this song
-        skippedCount += entries.length;
-        continue;
-      }
+  //       // Get all leaderboard scores for this user for this song
+  //       let leaderboardScores = [];
+  //       try {
+  //         const q = query(songScoresRef, where("player", "==", user.displayName));
+  //         const leaderboardSnapshot = await getDocs(q);
+  //         leaderboardScores = leaderboardSnapshot.docs.map(d => d.data());
+  //       } catch (err) {
+  //         console.error("Error fetching leaderboard entries for song:", songKey, err);
+  //         // If we can't check, skip all for this song
+  //         skippedCount += entries.length;
+  //         continue;
+  //       }
 
-      // Build a set of existing (lvl, rate) for this user/song
-      const existingSet = new Set(
-        leaderboardScores.map(s => `${s.lvl}|||${Number(s.rate)}`)
-      );
+  //       // Build a set of existing (lvl, rate) for this user/song
+  //       const existingSet = new Set(
+  //         leaderboardScores.map(s => `${s.lvl}|||${Number(s.rate)}`)
+  //       );
 
-      for (const entry of entries) {
-        const key = `${entry.lvl}|||${entry.rate}`;
-        if (existingSet.has(key)) {
-          skippedCount++;
-          continue;
-        }
-        try {
-          await addDoc(songScoresRef, {
-            ...entry.scoreData,
-            player: user.displayName,
-          });
-          addedCount++;
-        } catch (err) {
-          console.error("Error adding score to leaderboard:", err);
-          skippedCount++;
-        }
-      }
-    }
+  //       for (const entry of entries) {
+  //         const key = `${entry.lvl}|||${entry.rate}`;
+  //         if (existingSet.has(key)) {
+  //           skippedCount++;
+  //           continue;
+  //         }
+  //         try {
+  //           await addDoc(songScoresRef, {
+  //             ...entry.scoreData,
+  //             player: user.displayName,
+  //           });
+  //           addedCount++;
+  //         } catch (err) {
+  //           console.error("Error adding score to leaderboard:", err);
+  //           skippedCount++;
+  //         }
+  //       }
+  //     }
 
-    statusMsg.innerHTML = `<span style="color:#7fffa7;">${addedCount} score(s) added to leaderboard</span>, <span style="color:#ffb347;">${skippedCount} score(s) skipped</span>.`;
-    showCloseButton();
-  } catch (e) {
-    console.error("Error adding scores to leaderboard:", e);
-    statusMsg.innerHTML = `<span style="color:#ff6b6b;">Failed to add scores to leaderboard.</span>`;
-    showCloseButton();
-  }
-});
+  //     statusMsg.innerHTML = `<span style="color:#7fffa7;">${addedCount} score(s) added to leaderboard</span>, <span style="color:#ffb347;">${skippedCount} score(s) skipped</span>.`;
+  //     showCloseButton();
+  //   } catch (e) {
+  //     console.error("Error adding scores to leaderboard:", e);
+  //     statusMsg.innerHTML = `<span style="color:#ff6b6b;">Failed to add scores to leaderboard.</span>`;
+  //     showCloseButton();
+  //   }
+

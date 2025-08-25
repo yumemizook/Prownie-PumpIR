@@ -29,21 +29,21 @@
     });
   </script>
   <div id="navbar"></div>
-  <div class="intro"></div>
+  <div class="intro">
+    <div class="banner-container">
+      <img src="./img/banner.jpg" alt="Banner">
+      <div class="welcome"></div>
+    </div>
+  </div>
   <div class="brownie">
-    Welcome! This website is created for the purpose of an IR site for home
-    Pump players.
-    <br />
-    Currently, the site is still a work in progress.
-    <br />
-    <br />
-    Breakages are really bound to occur here and there, so please report any
-    issues as you see. <br />
-    Also, please be patient as there is only one person working on this
-    project.
-    <h6>god i really should stop procastinating due is in 2 weeks-</h6>
-    <br />
-    <br />
+    <h1>Prownie Internet Ranking</h1>
+    <span style="font-size: 0.6em;">-- Fanmade IR site for home Pump It Up players --</span>
+    <br>
+    <span style="font-size: 0.9em;">Built by the community with countless sleepless nights, for the community.</span>
+    <br>
+    <span style="font-size: 0.9em;">Currently, the site is still a work in progress. Please report any issues as you see.</span>
+    <br>
+    <span style="font-size: 0.75em;">Confused? Check out the <a href="/faq.html" style="color: #00E3FF; text-decoration: none;">the FAQ</a> for more information.</span>
   </div>
   <button id="news-post-button"
     style="background-color: #224a50; color: white;margin-left: 20px; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px;">Write
@@ -64,7 +64,7 @@
       <div class="message-board-input" style="display: flex; flex-direction: row; gap: 10px;">
         <input type="text" id="message-board-input" placeholder="Enter your message" style="width: 100%;" autocomplete="off">
         <button
-          style="background-color: #224a50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.2em;">Send</button>
+          style="background-color: #224a50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.2em;" id="message-board-send-button">Send</button>
       </div>
       <div class="message-board-messages"></div>
     </div>
@@ -117,7 +117,7 @@
             lastNameChange: new Date().getTime(),
           });
         }
-        document.querySelector(".intro").innerHTML = "Welcome back, " + userDoc.data().username + "!";
+        document.querySelector(".welcome").innerHTML = "Welcome back, " + userDoc.data().username + "!";
       } catch (firestoreReadError) {
         console.error("Failed to read from Firestore:", firestoreReadError);
       }
@@ -125,7 +125,7 @@
         document.getElementById("news-post-button").style.display = "none";
       }
       if (userDoc.data().timeBanned && (Date.now() - userDoc.data().timeBanned < 1000 * 60 * 60 * 24 * 180)) { // if the user has been banned in the last 180 days
-        document.querySelector(".intro").innerHTML = `Welcome back, ${userDoc.data().username}! <br> We are still watching you. Don't break the rules again.`;
+        document.querySelector(".welcome").innerHTML = `Welcome back, ${userDoc.data().username}! <br> We are still watching you. Don't break the rules again.`;
       }
       if (userDoc.data().role === "banned") {
         const status = document.createElement("div");
@@ -140,8 +140,8 @@
         status.style.display = "flex";
         status.style.flexDirection = "column";
         status.style.justifyContent = "center";
-        document.querySelector(".intro").innerHTML = "";
-        document.querySelector(".intro").appendChild(status);
+        document.querySelector(".welcome").innerHTML = "";
+        document.querySelector(".welcome").appendChild(status);
       }
     });
     document.addEventListener("DOMContentLoaded", () => {
@@ -213,6 +213,12 @@
       if (!formatDistanceToNow) {
         ({ formatDistanceToNow } = await import("https://unpkg.com/date-fns@3.6.0/formatDistanceToNow.mjs"));
       }
+      auth.onAuthStateChanged((user) => {
+        if (!user) {
+          document.querySelector("#message-board-send-button").style.display = "none";
+          document.querySelector("#message-board-input").style.display = "none";
+        }
+      });
       const messageBoard = document.querySelector(".message-board-messages");
       const messagesDB = collection(db, "messages");
       const messagesSnap = await getDocs(messagesDB);
@@ -244,7 +250,7 @@
       });
     });
     
-    document.querySelector('.message-board-input button').addEventListener('click', async (e) => {
+    document.querySelector('#message-board-send-button').addEventListener('click', async (e) => {
       e.preventDefault();
       if (!formatDistanceToNow) {
             ({ formatDistanceToNow } = await import("https://unpkg.com/date-fns@3.6.0/formatDistanceToNow.mjs"));
