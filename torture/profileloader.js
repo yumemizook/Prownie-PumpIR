@@ -542,9 +542,9 @@ document.addEventListener("DOMContentLoaded", () => {
                   0;
 
                 if (minusMax === 0 && isSuperb) {
-                  scoreCell = `1000000 <span style='color:rgb(174, 255, 248); font-size: 0.6em;'>(MAX)</span>`;
+                  scoreCell = `1000000 <br><span style='color:rgb(174, 255, 248); font-size: 0.6em;'>(MAX)</span>`;
                 } else if (isPerfect && isSuperb) {
-                  scoreCell = `1000000 <span style='color:rgb(174, 255, 248); font-size: 0.6em;'>(MAX-${minusMax})</span>`;
+                  scoreCell = `1000000 <br><span style='color:rgb(174, 255, 248); font-size: 0.6em;'>(MAX-${minusMax})</span>`;
                 } else {
                   scoreCell = `1000000`;
                 }
