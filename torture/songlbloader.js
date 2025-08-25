@@ -57,7 +57,30 @@ document.addEventListener("DOMContentLoaded", async () => {
         const scoreRef = collection(db, "songs", id, "scores");
         const scoreSnapshot = await getDocs(scoreRef);
         let scores = scoreSnapshot.docs.map((doc) => doc.data());
-        let filteredScores = [];
+        
+        // Defensive filtering and mapping
+        let filteredScores = scores
+            .filter(score => !score.pending)
+            .map(score => {
+
+                if (typeof score.pumpbility !== "number" || isNaN(score.pumpbility)) {
+                    score.pumpbility = 0;
+                }
+
+                if (score.chartFail === "true" || score.cleartype === "" || score.chartFail === true) {
+                    score.pumpbility = 0;
+                }
+ 
+                if (typeof score.score !== "number" || isNaN(score.score)) {
+                    score.score = 0;
+                }
+
+                if (typeof score.timestamp !== "number" || isNaN(score.timestamp)) {
+                    score.timestamp = 0;
+                }
+                return score;
+            });
+
         // Populate chart difficulty options
         const chartSelect = document.querySelector("#chart");
         if (chartSelect) {
@@ -116,29 +139,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
         }
         
-        // Defensive filtering and mapping
-        filteredScores = scores
-            .filter(score => !score.pending)
-            .map(score => {
-
-                if (typeof score.pumpbility !== "number" || isNaN(score.pumpbility)) {
-                    score.pumpbility = 0;
-                }
-
-                if (score.chartFail === "true" || score.cleartype === "" || score.chartFail === true) {
-                    score.pumpbility = 0;
-                }
- 
-                if (typeof score.score !== "number" || isNaN(score.score)) {
-                    score.score = 0;
-                }
-
-                if (typeof score.timestamp !== "number" || isNaN(score.timestamp)) {
-                    score.timestamp = 0;
-                }
-                return score;
-            });
-
         // Sort by pumpbility descending, then by score descending, then by timestamp ascending
         filteredScores.sort((a, b) => {
             if ((b.pumpbility || 0) !== (a.pumpbility || 0)) {
@@ -321,12 +321,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         const rateSelect = document.querySelector("#rate");
         const chartSelect = document.querySelector("#chart");
         
-        if (!rateSelect || !chartSelect) return;
+        if (!rateSelect || !chartSelect) {
+            console.warn("Filter elements not found, skipping filter application");
+            return;
+        }
         
         const selectedRate = rateSelect.value;
         const selectedChart = chartSelect.value;
-        
-        
         
         const rows = document.querySelectorAll(".leaderboard tr");
         let visibleCount = 0;
@@ -334,11 +335,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (idx === 0) return; // skip header
 
             const cells = row.querySelectorAll("td");
-            if (cells.length < 4) return;
+            if (cells.length < 9) return; // Need at least 9 columns for all data
             
-            // Check rate filter
+            // Check rate filter (column 3 - rate)
             let rateText = cells[3].textContent.trim();
             if (!rateText || rateText === "") rateText = "1.0";
+            
+            // Check chart filter (column 2 - difficulty level)
+            const difficultyText = cells[2].textContent.trim();
             
             // Normalize rate comparison (handle both string and number formats)
             const rateMatch = selectedRate === "all" || 
@@ -346,8 +350,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                              rateText === selectedRate || 
                              Number(rateText) === Number(selectedRate);
             
-            // Check chart filter
-            const difficultyText = cells[2].textContent.trim();
             const chartMatch = selectedChart === "all" || selectedChart === "" || difficultyText === selectedChart;
             
             // Show row only if both filters match
@@ -358,7 +360,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 row.style.display = "none";
             }
         });
-        
         
         updateRanks();
     }
