@@ -314,7 +314,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const userDocRef = doc(db, "users", user.uid);
       const userDocSnap = await getDoc(userDocRef);
       const lastUsernames = userDocSnap.data().lastUsernames;
-      if (lastUsernames.length > 0) {
+      if (lastUsernames) {
         playerName.innerHTML = user.displayName + `<span style='font-size: 0.4em; color: #aaa;'> Formerly known as: ${lastUsernames.join(", ")}</span>`;
       } else {
         playerName.textContent = user.displayName || "undefined";
