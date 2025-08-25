@@ -556,7 +556,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <td colspan="7" style="text-align:center; color:#aaa;">No recent plays</td>
                             </tr>`;
               }
-              return `<tr>
+              return `<tr style="height: 55px;">
                             <td><a style="text-decoration: none; color: white;" href="${href}">${play.sn || ""
                 }</a></td>
                             <td style="text-align: center;">

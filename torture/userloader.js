@@ -272,7 +272,7 @@ if (foundUser.timeBanned && (Date.now() - foundUser.timeBanned < 1000 * 60 * 60 
             scoreCell = `1000000`;
           }
         }
-        return `<tr>
+        return `<tr style="height: 55px;">
             <td><a style="text-decoration: none; color: white;" href="/score.html?user=${foundUser.username}&sn=${encodeURIComponent(play.sn || "")}&lvl=${encodeURIComponent(play.lvl || "")}&t=${encodeURIComponent(play.timestamp || "")}">${play.sn || ""}</a></td>
             <td style="text-align: center;">${play.lvl || ""} <br><span class="rate" style="font-size: 0.8em; color: ${play.rate < 1 ? "rgb(98, 255, 93)" : "rgb(255, 82, 82)"};">
                 ${
