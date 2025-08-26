@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         
         // Defensive filtering and mapping
         let filteredScores = scores
-            .filter(score => !score.pending)
+            .filter(score => !score.pending && score.nolb !== true)
             .map(score => {
 
                 if (typeof score.pumpbility !== "number" || isNaN(score.pumpbility)) {
@@ -235,7 +235,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         filteredScores.forEach((score, idx) => {
             const tr = document.createElement("tr");
             leaderboardTable.appendChild(tr);
-            const playerName = score.player || score.displayName || score.user || score.name || "Unknown";
+            const playerName = score.player || "Unknown";
             gradeColor = colorTable.find(grade => grade.grade === score.grade)?.color || "";
             clearTypeColor = clearTypeTable.find(clearType => clearType.clearType === score.cleartype)?.color || "";
             const profilePic = getProfilePictureForScore(score);

@@ -216,9 +216,13 @@ if (foundUser.timeBanned && (Date.now() - foundUser.timeBanned < 1000 * 60 * 60 
         `;
       }
     }
-    const pumpbilityTotal = bestPlays.reduce((acc, play) => acc + (play.pumpbility || 0), 0);
-    pumpbility.innerHTML = `PUMBILITY: ${pumpbilityTotal}`;
-
+    const pumpbilityWithoutPending = bestPlays.filter(play => play.pending !== true);
+    const pumpbilityTotal = pumpbilityWithoutPending.reduce((acc, play) => acc + (play.pumpbility || 0), 0);
+    if (foundUser.excludedfromleaderboards === true || foundUser.excludedfromleaderboards === "true") {
+      pumpbility.innerHTML = `PUMBILITY: ${(pumpbilityTotal * 0.01).toFixed(0)} <br><span style="font-size: 0.8em; color: #aaa;">Excluded from leaderboards</span>`;
+    } else {
+      pumpbility.innerHTML = `PUMBILITY: ${pumpbilityTotal}`;
+    
     const color = getPumpbilityColor(pumpbilityTotal);
     if (color.startsWith("linear-gradient")) {
       pumpbility.style.color = "transparent";
@@ -229,7 +233,7 @@ if (foundUser.timeBanned && (Date.now() - foundUser.timeBanned < 1000 * 60 * 60 
     } else {
       pumpbility.style.color = color;
     }
-
+  }
     // Recent Plays: top 30 by timestamp (descending)
     const recentPlays = scores
       .filter(play => typeof play.timestamp === "number" && play.timestamp > Date.now() - 1000 * 60 * 60 * 24 * 7) //only show plays from the last 7 days

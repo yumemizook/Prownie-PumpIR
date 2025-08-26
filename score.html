@@ -215,7 +215,7 @@
 
                     });
                     // Only include scores that are not pending (pending === false or missing/undefined)
-                    const songScoresWithoutPending = songScores.filter(score => score.pending === false || score.pending === undefined);
+                    const songScoresWithoutPending = songScores.filter(score => score.pending === false || score.pending === undefined && score.nolb !== true);
 
                     // Sort scores by pumpbility descending, then by score descending, then by timestamp ascending
                     songScoresWithoutPending.sort((a, b) => {
@@ -236,26 +236,44 @@
                     // Find the play in the sorted list
                     let playIndex = songScoresWithoutPending.findIndex(score => Number(score.timestamp) === Number(timestamp));
 
-                    if (rankDisplay) {
+                    // Clear previous rank color if any
+                    const rankElem = document.querySelector(".rank");
+                    if (rankElem) {
+                        rankElem.style.color = "";
+                    }
+
+                    // Handle leaderboard restrictions first
+                    console.log(play.nolb, play.pending);
+                    if (play.nolb === true) {
+                        const yourRankElem = document.querySelector(".yourrank");
+                        if (yourRankElem) yourRankElem.innerHTML = "";
+                        if (rankDisplay) rankDisplay.innerHTML = "Score excluded from leaderboard";
+                        rankDisplay.style.color = "#ff0000";
+                    } else if (play.pending === true) {
+                        const yourRankElem = document.querySelector(".yourrank");
+                        if (yourRankElem) yourRankElem.innerHTML = "";
+                        if (rankDisplay) rankDisplay.innerHTML = "Score pending approval";
+                    } else if (rankDisplay) {
                         if (playIndex !== -1) {
                             const rankNum = playIndex + 1;
                             const rankText = rankNum === 1 ? "1!" : rankNum;
                             rankDisplay.innerHTML = ` <a href="./song.html?id=${sn.toLowerCase().replace(/ /g, "")}" style="text-decoration: none; color: #fff;"><span class="rank" style="font-size: 2.5em;">#${rankText}</span> / ${songScoresWithoutPending.length}</a>`;
+                            // Set color for top 3 ranks
+                            const newRankElem = rankDisplay.querySelector(".rank");
+                            if (newRankElem) {
+                                if (playIndex === 0) {
+                                    newRankElem.style.color = "#ffd700";
+                                } else if (playIndex === 1) {
+                                    newRankElem.style.color = "#c0c0c0";
+                                } else if (playIndex === 2) {
+                                    newRankElem.style.color = "#cd7f32";
+                                }
+                            }
                         } else {
                             rankDisplay.innerHTML = "-";
                         }
                     }
-                    if (play.pending === true) {
-                        document.querySelector(".yourrank").innerHTML = "";
-                        rankDisplay.innerHTML = "Score pending approval";
-                    }
-                    if (playIndex === 0) {
-                        document.querySelector(".rank").style.color = "#ffd700";
-                    } else if (playIndex === 1) {
-                        document.querySelector(".rank").style.color = "#c0c0c0";
-                    } else if (playIndex === 2) {
-                        document.querySelector(".rank").style.color = "#cd7f32";
-                    }
+
                 } catch (e) {
                     console.error("Error setting rank:", e);
                     if (rankDisplay) rankDisplay.textContent = "-";
