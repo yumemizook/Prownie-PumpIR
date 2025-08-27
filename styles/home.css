@@ -323,3 +323,26 @@ textarea {
 .addtoLB:hover {
   background-color: rgb(150, 223, 255);
 }
+
+.addProof {
+  margin: 5px;
+  background-color: rgb(72, 92, 103);
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid #1d678a80;
+  background-color: #303438;
+  color: #fff;
+}
+
+.removeProof {
+  margin: 5px;
+  background-color: rgb(72, 92, 103);
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid #1d678a80;
+  background-color: #303438;
+}

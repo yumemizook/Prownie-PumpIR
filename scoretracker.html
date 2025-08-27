@@ -29,7 +29,7 @@
   </h1>
   <div class="scorecontainer">
     <div class="datacontainer">
-      Enter the judgement details here
+      <span style="font-size: 1.2em; margin-left: 10px;">Enter the judgement details here</span>
       <div class="numbers">
         <div class="songinfo" oninput="calcScore()">
           <input type="text" placeholder="Song Name" id="sn" autocomplete="off" />
@@ -65,6 +65,23 @@
         <input type="button" value="Save score" id="save">
         <input type="button" value="Reset fields" id="reset">
       </div>
+      <br>
+      <span style="font-size: 1.2em; margin-left: 10px;">Proof of score</span>
+      <br>
+      <span style="font-size: 0.75em; margin-left: 10px;  color: #aaa;">Show us your moves. Handcam / bodycam included footage is preferred.</span>
+      <br>
+      <div class="proofcontainer">
+        <div class="proof">
+      <select name="proof" id="proof1" style="width: 100px;">
+        <option value="none">Select...</option>
+        <option value="video">Video</option>
+        <option value="screenshot">Screenshot</option> <!-- screenshot of the score screen -->
+        <option value="other">Other</option> <!-- other proof of score -->
+      </select>
+      <input type="text" placeholder="Link to proof" id="proofLink1" autocomplete="off" />
+      <button class="addProof" type="button" onclick="addProof()">Add proof</button>
+    </div>
+      </div>
     </div>
     <div class="gradeandsave" style="text-align: center;">
       <div class="grade" style="font-size: 5em;"></div>
@@ -83,6 +100,8 @@
   // Make calcScore globally accessible for inline event handlers
   import('./torture/scoretracking.js').then(module => {
     window.calcScore = module.calcScore || window.calcScore;
+    window.addProof = module.addProof || window.addProof;
+    window.removeProof = module.removeProof || window.removeProof;
   });
 </script>
 </html>

@@ -309,6 +309,21 @@ async function uploadScore() {
   const chartFail = document.querySelector("#chartFail").checked;
   const auth = getAuth();
 
+  const proofListings = document.querySelectorAll(".proof");
+  const proofListingsObj = [];
+  proofListings.forEach(proof => {
+    if (proof.querySelector("select").value === "none") {
+      alert("Please select a proof type.");
+      return;
+    }
+    const proofType = proof.querySelector("select").value;
+    const proofLink = proof.querySelector('input[type="text"]').value;
+    const proofObj = {
+      proof: proofType,
+      link: proofLink,
+    };
+    proofListingsObj.push(proofObj);
+  });
 
   const playMode = document.getElementById("gamemode").value;
   const players = document.getElementById("players").value;
@@ -367,6 +382,7 @@ async function uploadScore() {
     timeString: new Date().toLocaleString('en-GB', { hour12: false }),
     pending: true, // this is used to determine if the score is pending approval
     nolb: user.excludedfromleaderboards === true ? true : false, // this is used to determine if the score is not allowed to be shown on the leaderboard
+    proof: proofListingsObj,
   };
 
   try {
@@ -395,4 +411,40 @@ async function uploadScore() {
   }
 }
 
-export { calcScore }
+function addProof() {
+  // Find the proofcontainer (the div with class "proofcontainer")
+  const proofContainer = document.querySelector(".proofcontainer");
+  if (!proofContainer) return;
+
+  // Count current .proof instances to generate unique IDs
+  const proofInstanceCount = proofContainer.querySelectorAll(".proof").length;
+  const proofDiv = document.createElement("div");
+  proofDiv.className = "proof";
+
+  // Build the inner HTML for the new proof entry
+  proofDiv.innerHTML = `
+    <select name="proof" id="proof${proofInstanceCount + 1}" style="width: 100px;">
+      <option value="none">Select...</option>
+      <option value="video">Video</option>
+      <option value="screenshot">Screenshot</option>
+      <option value="other">Other</option>
+    </select>
+    <input type="text" placeholder="Link to proof" id="proofLink${proofInstanceCount + 1}" autocomplete="off" />
+    <button class="removeProof" type="button">Remove proof</button>
+  `;
+
+  // Add event listener for the remove button only (no addProof button in dynamic proofDiv)
+  proofDiv.querySelector(".removeProof").addEventListener("click", function () {
+    removeProof(proofDiv);
+  });
+
+  proofContainer.appendChild(proofDiv);
+}
+
+function removeProof(proofElement) {
+  if (proofElement && proofElement.parentNode) {
+    proofElement.parentNode.removeChild(proofElement);
+  }
+}
+
+export { calcScore, addProof, removeProof }

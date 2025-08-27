@@ -57,6 +57,9 @@
             <button class="report">Report</button>
             <button class="delete">Delete</button>
         </div>
+        <div class="proof">
+
+        </div>
     </div>
     <div class="footer"></div>
     <script>
@@ -200,6 +203,28 @@
                 const rateDisplay = document.querySelector("[rate]");
                 const rateValue = play.rate ?? "";
                 const rankDisplay = document.querySelector(".leaderboardrank");
+                const proofDisplay = document.querySelector(".proof");
+                const proofArray = play.proof ?? [];
+                proofDisplay.innerHTML = "";
+                if (proofArray.length > 0) {
+                    proofArray.forEach(proof => {
+                        if (proof.proof === "screenshot") {
+                            proofDisplay.innerHTML += `<div class="proof" style="margin-left: 12px;">${proof.proof.slice(0, 1).toUpperCase() + proof.proof.slice(1)}<br><img src="${proof.link}" style="width: 50%; height: auto;"></div>`;
+                        }
+                        else if (proof.proof === "video") {
+                            // If the link is a YouTube URL, embed using the YouTube embed format
+                            let embedLink = proof.link;
+                            const ytMatch = proof.link.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+                            if (ytMatch) {
+                                embedLink = `https://www.youtube.com/embed/${ytMatch[1]}`;
+                            }
+                            proofDisplay.innerHTML += `<div class="proof" style="margin-left: 12px;">${proof.proof.slice(0, 1).toUpperCase() + proof.proof.slice(1)}<br><iframe src="${embedLink}" style="width: 50vw; height: 50vh;" allowfullscreen></iframe></div>`;
+                        }
+                        else if (proof.proof === "other") {
+                            proofDisplay.innerHTML += `<div class="proof" style="margin-left: 12px;">${proof.proof.slice(0, 1).toUpperCase() + proof.proof.slice(1)}<br><a href="${proof.link}" target="_blank">${proof.link}</a></div>`;
+                        }
+                    });
+                }
 
                 try {
                     const songscoresSnap = await getDocs(
@@ -243,7 +268,6 @@
                     }
 
                     // Handle leaderboard restrictions first
-                    console.log(play.nolb, play.pending);
                     if (play.nolb === true) {
                         const yourRankElem = document.querySelector(".yourrank");
                         if (yourRankElem) yourRankElem.innerHTML = "";
@@ -297,6 +321,7 @@
                 document.querySelector(".fast").innerHTML = playModeIndex === "C" ? "" : `Fast <br> <span style="color: #00E3FF; font-size: 1.25em;">${parseInt(play.fa) ?? ""}</span>`;
                 document.querySelector(".slow").innerHTML = playModeIndex === "C" ? "" : `Slow <br> <span style="color: #FF0000; font-size: 1.25em;">${parseInt(play.sl) ?? ""}</span>`;
                 document.querySelector(".exscore").innerHTML = `Ex Score <br> <span style="color: #FFFF55;">${exscore.toFixed(2)}</span> <span style="color: hsl(${exscorehue}, 100%, 50%);">(${exscorePercentage.toFixed(4)}%)</span>`;
+                
 
                 // Max/Minus display logic
                 if (Number(play.fa) + Number(play.sl) === 0 && play.isSuperbOn === true && playModeIndex !== "C") {
