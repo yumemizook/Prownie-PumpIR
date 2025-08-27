@@ -263,6 +263,12 @@ if (foundUser.timeBanned && (Date.now() - foundUser.timeBanned < 1000 * 60 * 60 
           play.cleartype = "";
           play.pumpbility = 0;
         }
+        if (play.pending === true) {
+          play.score = "Pending";
+          play.grade = "Pending";
+          play.cleartype = "Pending";
+          play.pumpbility = 0;
+        }
         // Special formatting for perfect scores
         if (play.score === 1000000) {
           const minusMax = Number(play.fa) + Number(play.sl);
