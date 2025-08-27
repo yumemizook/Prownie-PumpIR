@@ -34,14 +34,14 @@ const pumpbilityColors = [
   { pumpbility: 15000, color: "rgb(133, 102, 0)" },
   { pumpbility: 20000, color: "rgb(179, 179, 179)" },
   { pumpbility: 24000, color: "rgb(255, 238, 0)" },
-  { pumpbility: 26000, color: "rgb(143, 212, 203)" },
+  { pumpbility: 30000, color: "rgb(143, 212, 203)" },
   {
-    pumpbility: 30000,
+    pumpbility: 36000,
     color:
       "linear-gradient(90deg, rgb(255, 87, 87) 0%, rgb(255, 190, 92) 20%, rgba(208, 222, 33, 1) 40%, rgb(171, 255, 138) 60%, rgb(100, 255, 162) 80%, rgba(47, 201, 226, 1) 100%",
   },
   {
-    pumpbility: 35000,
+    pumpbility: 42000,
     color:
       "linear-gradient(90deg,rgba(251, 255, 8, 1) 0%, rgba(255, 3, 255, 1) 25%, rgba(0, 38, 255, 1) 50%, rgba(0, 242, 255, 1) 75%, rgba(0, 255, 170, 1) 100%)",
   },
@@ -363,7 +363,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelector("#statistics").style.display = "none";
         document.querySelector("#pbility").style.display = "none";
         document.querySelector(".timecreated").style.display = "none";
-        document.querySelector(".avatar img").src = "img/default-avatar.png";
+        document.querySelector(".avatar img").src = "img/banned.jpg";
         return;
       }
       if (
@@ -473,7 +473,7 @@ document.addEventListener("DOMContentLoaded", () => {
           userData.role !== "sysop" &&
           userData.role !== "admin" &&
           userData.role !== "moderator" &&
-          user.pumpbility > 30000
+          user.pumpbility > 42000
         ) {
           await updateDoc(userDocRef, { role: "veteran" });
           setRoleText(role, "veteran");
