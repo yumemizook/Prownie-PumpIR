@@ -377,14 +377,27 @@
                         where("lvl", "==", lvl),
                         where("timestamp", "==", timestamp)
                     );
+                    const q2 = query(
+                        collection(db, "songs", sn.toLowerCase().replace(/ /g, ""), "scores"),
+                        where("sn", "==", sn),
+                        where("lvl", "==", lvl),
+                        where("timestamp", "==", timestamp)
+                    );
                     const querySnapshot = await getDocs(q);
+                    const querySnapshot2 = await getDocs(q2);
                     if (!querySnapshot || querySnapshot.empty) {
+                        alert("Score not found or already deleted.");
+                        return;
+                    }
+                    if (!querySnapshot2 || querySnapshot2.empty) {
                         alert("Score not found or already deleted.");
                         return;
                     }
                     // There should only be one matching document
                     const docRef = querySnapshot.docs[0].ref;
+                    const docRef2 = querySnapshot2.docs[0].ref;
                     await deleteDoc(docRef);
+                    await deleteDoc(docRef2);
                     alert("Score deleted successfully.");
                     window.location.href = "./profile.html?user=" + encodeURIComponent(userParam);
                 } catch (error) {
