@@ -311,6 +311,7 @@
                     rateDisplay.innerHTML = `${rateValue}x Rate`;
                 }
                 // Fill in the judgements
+
                 timeDisplay.innerHTML = `Uploaded at <br> ${play.timeString ?? ""}`;
                 document.querySelector(".pf").innerHTML = `Perfect <br> <span style="color: #00E3FF; font-size: 2em;">${parseInt(play.pf) ?? ""}</span> (${pfPercentage.toFixed(2)}%)`;
                 document.querySelector(".gr").innerHTML = `Great <br> <span style="color: #00FF2F; font-size: 2em;">${parseInt(play.gr) ?? ""}</span> (${grPercentage.toFixed(2)}%)`;
@@ -321,9 +322,7 @@
                 document.querySelector(".fast").innerHTML = playModeIndex === "C" ? "" : `Fast <br> <span style="color: #00E3FF; font-size: 1.25em;">${parseInt(play.fa) ?? ""}</span>`;
                 document.querySelector(".slow").innerHTML = playModeIndex === "C" ? "" : `Slow <br> <span style="color: #FF0000; font-size: 1.25em;">${parseInt(play.sl) ?? ""}</span>`;
                 document.querySelector(".exscore").innerHTML = `Ex Score <br> <span style="color: #FFFF55;">${exscore.toFixed(2)}</span> <span style="color: hsl(${exscorehue}, 100%, 50%);">(${exscorePercentage.toFixed(4)}%)</span>`;
-                
-
-                // Max/Minus display logic
+                // Max-Minus display logic
                 if (Number(play.fa) + Number(play.sl) === 0 && play.isSuperbOn === true && playModeIndex !== "C") {
                     document.querySelector(".maxminus").innerHTML = `MAX!!!`;
                 }

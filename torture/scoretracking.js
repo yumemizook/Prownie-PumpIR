@@ -312,7 +312,7 @@ async function uploadScore() {
   const proofListings = document.querySelectorAll(".proof");
   const proofListingsObj = [];
   proofListings.forEach(proof => {
-    if (proof.querySelector("select").value === "none") {
+    if (proof.querySelector("select").value === "none" && proof.querySelector('input[type="text"]').value !== "") {
       alert("Please select a proof type.");
       return;
     }
