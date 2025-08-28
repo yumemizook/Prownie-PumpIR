@@ -122,7 +122,17 @@ body {
 .footer-item a:hover {
   background-color: rgb(150, 223, 255);
 }
-
+.avatarandinfo{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.rank{
+  text-align: center;
+ margin-top: 100px;
+ font-size: xx-large;
+}
 .profile {
   display: flex;
   align-items: top;

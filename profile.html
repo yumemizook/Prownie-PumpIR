@@ -1,39 +1,43 @@
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My profile</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles/home.css" />
-    <link rel="stylesheet" href="./styles/navbar.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script
-      src="https://kit.fontawesome.com/7263e3a28f.js"
-      crossorigin="anonymous"
-    ></script>
-    <script>
-      $.get("navbar.html", function (data) {
-        $("#navbar").replaceWith(data);
-      });
-      $.get("/footer.html", function (data) {
-        $(".footer").replaceWith(data);
-      });
-    </script>
-  </head>
-  <body>
-    <div id="navbar"></div>
-    <div id="addtoLBStatusOverlay"></div>
-    <div class="profilecontainer">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles/home.css" />
+  <link rel="stylesheet" href="./styles/navbar.css" />
+  <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://kit.fontawesome.com/7263e3a28f.js" crossorigin="anonymous"></script>
+  <script>
+    $.get("navbar.html", function (data) {
+      $("#navbar").replaceWith(data);
+    });
+    $.get("/footer.html", function (data) {
+      $(".footer").replaceWith(data);
+    });
+  </script>
+</head>
+
+<body>
+  <div id="navbar"></div>
+  <div id="addtoLBStatusOverlay"></div>
+  <div class="profilecontainer">
+    <div class="avatarandinfo">
       <div class="profile">
         <div class="avatar" style="margin-top: 10px;">
           <img src="./img/default-avatar.png" alt="" id="playerpfp" />
         </div>
         <div class="info">
-          <div class="name"><h1 playername>Default User</h1></div>
-          <div class="name"><h2 id="pbility">PUMBILITY: 0</h2></div>
+          <div class="name">
+            <h1 playername>Default User</h1>
+          </div>
+          <div class="name">
+            <h2 id="pbility">PUMBILITY: 0</h2>
+          </div>
           <div class="changeset">
             <a href="./settings.html" class="profilesettings" id="settings">Change Settings</a>
             <a href="#" class="profilesettings" id="statistics">Statistics</a>
@@ -41,47 +45,51 @@
           <div class="timecreated" style="margin-top: 10px; font-size: smaller"></div>
         </div>
       </div>
-      <div class="role" style="text-align: center; margin: 10px; font-size: xx-large;"></div>
-      <div class="stats"></div>
-      <div class="badstanding hide" style="text-align: center; margin: 10px; font-size:1em; color: rgb(121, 121, 121);">
-        <h2>Bad Standing</h2>
-        <p>You have one or more recent bans on record. <br> You will be placed on higher priority for reports. <br> You will be banned again if you continue to break the rules.</p>
+      <div class="rank" style="text-align: center"></div>
+    </div>
+    <div class="role" style="text-align: center; margin: 10px; font-size: xx-large;"></div>
+    <div class="stats"></div>
+    <div class="badstanding hide" style="text-align: center; margin: 10px; font-size:1em; color: rgb(121, 121, 121);">
+      <h2>Bad Standing</h2>
+      <p>You have one or more recent bans on record. <br> You will be placed on higher priority for reports. <br> You
+        will be banned again if you continue to break the rules.</p>
+    </div>
+    <div class="plays">
+      <div class="bp">
+        <h2>Best Plays</h2>
+        <table class="play-table">
+          <tr>
+            <th style="width: 25%;">Song</th>
+            <th style="width: 5%;">Difficulty</th>
+            <th style="width: 10%;">Score</th>
+            <th style="width: 10%;">Grade</th>
+            <th style="width: 10%;">Clear Type</th>
+            <th style="width: 10%;">Pumpbility</th>
+            <th style="width: 20%;">Time</th>
+          </tr>
+        </table>
       </div>
-      <div class="plays">
-        <div class="bp">
-          <h2>Best Plays</h2>
-          <table class="play-table">
-            <tr>
-              <th style="width: 25%;">Song</th>
-              <th style="width: 5%;">Difficulty</th>
-              <th style="width: 10%;">Score</th>
-              <th style="width: 10%;">Grade</th>
-              <th style="width: 10%;">Clear Type</th>
-              <th style="width: 10%;">Pumpbility</th>
-              <th style="width: 20%;">Time</th>
-            </tr>
-          </table>
-        </div>
-        <div class="rp">
-          <h2>Recent Plays</h2>
-          <table class="play-table">
-            <tr>
-              <th style="width: 25%;">Song</th>
-              <th style="width: 5%;">Difficulty</th>
-              <th style="width: 10%;">Score</th>
-              <th style="width: 10%;">Grade</th>
-              <th style="width: 10%;">Clear Type</th>
-              <th style="width: 10%;">Pumpbility</th>
-              <th style="width: 20%;">Time</th>
-            </tr>
-          </table>
-        </div>
+      <div class="rp">
+        <h2>Recent Plays</h2>
+        <table class="play-table">
+          <tr>
+            <th style="width: 25%;">Song</th>
+            <th style="width: 5%;">Difficulty</th>
+            <th style="width: 10%;">Score</th>
+            <th style="width: 10%;">Grade</th>
+            <th style="width: 10%;">Clear Type</th>
+            <th style="width: 10%;">Pumpbility</th>
+            <th style="width: 20%;">Time</th>
+          </tr>
+        </table>
       </div>
     </div>
+  </div>
 
-    <div class="footer"></div>
-    <script type="module" src="./torture/firebase.js"></script>
-    <script type="module" src="/torture/profileloader.js"></script>
-    <script type="module" src="./torture/navbar.js"></script>
-  </body>
+  <div class="footer"></div>
+  <script type="module" src="./torture/firebase.js"></script>
+  <script type="module" src="/torture/profileloader.js"></script>
+  <script type="module" src="./torture/navbar.js"></script>
+</body>
+
 </html>
