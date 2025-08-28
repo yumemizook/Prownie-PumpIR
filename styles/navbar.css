@@ -162,6 +162,45 @@ body {
   background-color: #ddd;
 }
 
+.hiddenmenu {
+  display: none;
+}
+
 .hide {
   display: none;
 }
+
+.dropdown-items {
+display: flex;
+}
+
+
+
+@media screen and (max-width: 550px) {
+  #avatar {
+    display: none;
+  }
+  .navbar .item a {
+    font-size: 16px;
+  }
+  .account a {
+    font-size: 16px;
+  }
+  .dropdown-items {
+    display: none;
+  }
+  .hiddenmenu {
+    display: block;
+  }
+  #openmenu {
+    display: block;
+    font-size: 16px;
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+  }
+  .hiddenmenu:hover {
+    background-color: rgb(150, 223, 255);
+    transition: background-color 0.5s, color 0.5s;
+  }
+} 

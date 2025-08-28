@@ -346,3 +346,28 @@ textarea {
   border: 1px solid #1d678a80;
   background-color: #303438;
 }
+.extra {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media screen and (max-width: 550px) {
+  .extra {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .news {
+    width: 100%;
+  }
+  .message-board {
+    width: 100%;
+  }
+  .message-board-input {
+    width: 100%;
+  }
+  .message-board-send-button {
+    width: 100%;
+  }
+}

@@ -146,3 +146,10 @@ form .remember-pw input {
 h1{
   text-align: center;
 }
+
+@media screen and (max-width: 500px) {
+  .inputtext {
+    width: 400px;
+    font-size: 0.75rem;
+  }
+}

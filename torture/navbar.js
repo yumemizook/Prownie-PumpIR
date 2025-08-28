@@ -192,3 +192,36 @@ onAuthStateChanged(auth, async (user) => {
     setPumpbilityColor(0);
   }
 });
+
+function setupMobileMenu() {
+  const accountDisplay = document.querySelector(".account");
+  const openmenu = document.querySelector("#openmenu");
+  const dropdownitems = document.querySelector(".dropdown-items");
+  if (!openmenu || !dropdownitems) return;
+
+  function showMenu() {
+    dropdownitems.style.display = "block";
+    document.addEventListener("click", hideMenuOnClickOutside);
+    openmenu.style.display = "none";
+    accountDisplay.style.display = "flex";
+    accountDisplay.style.flexDirection = "column";
+  }
+
+  function hideMenuOnClickOutside(e) {
+    if (!dropdownitems.contains(e.target) && e.target !== openmenu) {
+      dropdownitems.style.display = "none";
+      document.removeEventListener("click", hideMenuOnClickOutside);
+      openmenu.style.display = "block";
+      accountDisplay.style.flexDirection = "row";
+    }
+  }
+
+  openmenu.addEventListener("click", (e) => {
+    e.stopPropagation();
+    showMenu();
+  });
+}
+
+if (window.innerWidth < 550) {
+  setupMobileMenu();
+}
