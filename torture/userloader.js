@@ -79,7 +79,29 @@ document.addEventListener("DOMContentLoaded", async () => {
   pumpbility.innerHTML = `PUMBILITY: ${foundUser.pumpbility}`;
   if (!formatDistanceToNow) {
     ({ formatDistanceToNow } = await import("https://unpkg.com/date-fns@3.6.0/formatDistanceToNow.mjs"));
-}
+  }
+        // Calculate the user's rank by sorting all users by pumpbility and finding the current user's position
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        const usersArray = [];
+        usersSnapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          usersArray.push({
+            uid: docSnap.id,
+            pumpbility: typeof data.pumpbility === "number" ? data.pumpbility : 0
+          });
+        });
+        // Sort descending by pumpbility
+        usersArray.sort((a, b) => b.pumpbility - a.pumpbility);
+        // Find current user's rank (1-based)
+        const userRank = usersArray.findIndex(u => u.uid === foundUserDocId) + 1;
+        const rankDisplay = document.querySelector(".rank");
+        if (userRank > 0) {
+          rankDisplay.innerHTML = `<span style="font-size: 0.6em;">Player Rank:</span> <br> <span style="font-size: 1.6em; font-weight: bold; color: #00ffff;">#${userRank}</span>`;
+        } else {
+          rankDisplay.innerHTML = `<span style="font-size: 0.6em;">Player Rank:</span> <br> <span style="font-size: 1.6em; font-weight: bold; color: #00ffff;">Unranked</span>`;
+        }
+
+
 
 reportButton.addEventListener("click", (e) => {
   e.preventDefault();
