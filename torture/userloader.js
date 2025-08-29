@@ -85,6 +85,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const usersArray = [];
         usersSnapshot.forEach(docSnap => {
           const data = docSnap.data();
+          
           usersArray.push({
             uid: docSnap.id,
             pumpbility: typeof data.pumpbility === "number" ? data.pumpbility : 0
