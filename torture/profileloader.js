@@ -385,6 +385,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelector("#pbility").style.display = "none";
         document.querySelector(".timecreated").style.display = "none";
         document.querySelector(".avatar img").src = "img/banned.jpg";
+        document.querySelector(".rank").style.display = "none";
         return;
       }
       if (

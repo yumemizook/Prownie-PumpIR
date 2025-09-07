@@ -192,6 +192,12 @@ display: flex;
   .hiddenmenu {
     display: block;
   }
+  #search {
+    display: none;
+  }
+  #logger {
+    display: none;
+  }
   #openmenu {
     display: block;
     font-size: 16px;

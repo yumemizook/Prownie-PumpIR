@@ -98,6 +98,7 @@
       if (!user) {
         console.warn("No user is currently signed in.");
         document.getElementById("news-post-button").style.display = "none";
+        document.querySelector(".welcome").innerHTML = "Welcome!";
         return;
       }
       // Force use uid

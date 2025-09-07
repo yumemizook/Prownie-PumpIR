@@ -150,8 +150,12 @@
         document.title = (playModeIndex === "C")
             ? `${sn} (${lvlnumerical}) - Played by ${userParam} at ${time.toLocaleString()}`
             : `${sn} (${playModeIndex}${lvlnumerical}) - Played by ${userParam} at ${time.toLocaleString()}`;
-
+        
         onAuthStateChanged(auth, async (firebaseUser) => {
+            if (!firebaseUser) {
+                document.querySelector(".scorecontainer2").innerHTML = "You must be logged in to view this score.";
+                return;
+            }
             title.innerHTML = `${sn}`;
             if (playModeIndex === "C") {
                 playModeDisplay.innerHTML = `${playMode} ${lvlnumerical}`;
@@ -173,7 +177,14 @@
                 }
             });
             if (!userDoc) {
-                document.querySelector(".scorecontainer2").innerHTML = "User not found.";
+                document.querySelector(".scorecontainer2").innerHTML = "User not found or the score belongs to a deleted account.";
+                document.querySelector(".scorecontainer2").style.textAlign = "center";
+                document.querySelector(".scorecontainer2").style.fontSize = "1.5em";
+                document.querySelector(".scorecontainer2").style.marginTop = "100px";
+                document.querySelector(".scorecontainer2").style.display = "flex";
+                document.querySelector(".scorecontainer2").style.flexDirection = "column";
+                document.querySelector(".scorecontainer2").style.justifyContent = "center";
+                document.querySelector(".scorecontainer2").style.alignItems = "center";
                 return;
             }
 
@@ -290,7 +301,7 @@
                     if (play.nolb === true) {
                         const yourRankElem = document.querySelector(".yourrank");
                         if (yourRankElem) yourRankElem.innerHTML = "";
-                        if (rankDisplay) rankDisplay.innerHTML = "Score excluded from leaderboard";
+                        if (rankDisplay) rankDisplay.innerHTML = "Score excluded from leaderboards";
                         rankDisplay.style.color = "#ff0000";
                     } else if (play.pending === true) {
                         const yourRankElem = document.querySelector(".yourrank");

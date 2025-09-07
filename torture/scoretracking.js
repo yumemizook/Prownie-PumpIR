@@ -359,7 +359,8 @@ async function uploadScore() {
   const grade = getGradeFromScore(scoreValue);
   const cleartype = getClearTypeFromJudgement(p, g, go, b, m);
   const pumpbility = chartFail || playMode === "coop" ? 0 : getPumpbilityFromLevel({ value: lvl }, scoreValue); // pumpbility is 0 if the chart fails or is coop
-  const user = doc(db, "users", auth.currentUser.uid);
+  const userDocSnap = await getDoc(doc(db, "users", auth.currentUser.uid));
+  const noLeaderboards = userDocSnap.data().excludedfromleaderboards === true ? true : false;
   const scoreObj = {
     sn: sn,
     lvl: playMode === "coop" ? `Co-op x${players}` : playModeLetter + lvl, //ensure the correct level display notation
@@ -381,7 +382,7 @@ async function uploadScore() {
     timestamp: Date.now(),
     timeString: new Date().toLocaleString('en-GB', { hour12: false }),
     pending: true, // this is used to determine if the score is pending approval
-    nolb: user.excludedfromleaderboards === true ? true : false, // this is used to determine if the score is not allowed to be shown on the leaderboard
+    nolb: noLeaderboards, // this is used to determine if the score is not allowed to be shown on the leaderboard
     proof: proofListingsObj,
   };
 
@@ -402,7 +403,11 @@ async function uploadScore() {
       // artist: scoreData.artist, //adding this later
       // series: scoreData.series, //adding this later
     }, { merge: true });
-    await addDoc(collection(db, "songs", songKey, "scores"), {...scoreObj, player: user.displayName});
+    if (noLeaderboards) {
+      await addDoc(collection(db, "songs", songKey, "scores"), {...scoreObj, player: user.displayName, nolb: true});
+    } else {
+      await addDoc(collection(db, "songs", songKey, "scores"), {...scoreObj, player: user.displayName});
+    }
     alert("Score uploaded successfully");
     window.location.href = `/score.html?user=${user.displayName}&sn=${sn}&lvl=${scoreObj.lvl}&t=${scoreObj.timestamp}`;
   } catch (error) {

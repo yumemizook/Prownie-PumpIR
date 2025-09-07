@@ -380,4 +380,20 @@ textarea {
   .message-board-send-button {
     width: 100%;
   }
+  .artist {
+    font-size: 0.75em;
+  }
+  .series {
+    font-size: 0.75em;
+  }
+  .plays {
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+  }
+  .changeset {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+  }
 }
