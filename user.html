@@ -15,6 +15,25 @@
       src="https://kit.fontawesome.com/7263e3a28f.js"
       crossorigin="anonymous"
     ></script>
+    <style>
+      .avatarandinfo::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #00000088;
+        z-index: 0;
+        pointer-events: none;
+      }
+    </style>
+    <style>
+      .avatarandinfo > * {
+        position: relative;
+        z-index: 1;
+      }
+    </style>
     <script>
       $.get("navbar.html", function (data) {
         $("#navbar").replaceWith(data);

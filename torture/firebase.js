@@ -11,6 +11,8 @@ import {
   updatePassword,
   updateEmail,
   deleteUser,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 import {
   getStorage,
@@ -81,6 +83,8 @@ export {
   orderBy,
   limit,
   arrayUnion,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
 };
 export default app;
 export { firebaseConfig };

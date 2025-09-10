@@ -9,6 +9,7 @@ body {
   padding-right: 10px;
   box-sizing: border-box;
   color: white;
+
 }
 
 /* Navbar link hover effects */
@@ -23,6 +24,7 @@ body {
   position: fixed;
   top: 0px;
   left: 0px;
+  z-index: 10;
 }
 
 .items {

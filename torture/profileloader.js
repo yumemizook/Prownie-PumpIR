@@ -311,6 +311,7 @@ document.addEventListener("DOMContentLoaded", () => {
     playerAvatar.src = user.photoURL || "img/default-avatar.png";
 
 
+
     try {
       const userDocRef = doc(db, "users", user.uid);
       const userDocSnap = await getDoc(userDocRef);
@@ -342,20 +343,45 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = docSnap.data();
         usersArray.push({
           uid: docSnap.id,
-          pumpbility: typeof data.pumpbility === "number" ? data.pumpbility : 0
+          pumpbility: typeof data.pumpbility === "number" ? data.pumpbility : 0,
+          excludedfromleaderboards: data.excludedfromleaderboards,
+          role: data.role
         });
       });
-      // Sort descending by pumpbility
       usersArray.sort((a, b) => b.pumpbility - a.pumpbility);
-      // Find current user's rank (1-based)
-      const userRank = usersArray.findIndex(u => u.uid === user.uid) + 1;
+      const eligibleUsers = usersArray.filter(
+        u => u.excludedfromleaderboards !== true &&
+             u.excludedfromleaderboards !== "true" &&
+             u.role !== "banned"
+      );
+      console.log(eligibleUsers);
+      const userRank = eligibleUsers.findIndex(u => u.uid === user.uid) + 1;
       const rankDisplay = document.querySelector(".rank");
-      if (userRank > 0) {
-        rankDisplay.innerHTML = `<span style="font-size: 0.6em;">Player Rank:</span> <br> <span style="font-size: 1.6em; font-weight: bold; color: #00ffff;">#${userRank}</span>`;
-      } else {
-        rankDisplay.innerHTML = `<span style="font-size: 0.6em;">Player Rank:</span> <br> <span style="font-size: 1.6em; font-weight: bold; color: #00ffff;">Unranked</span>`;
+      if (userRank === 1) {
+        rankDisplay.innerHTML = `<span style="font-size: 0.6em;">Player Rank:</span> <br> <span style="font-size: 1.6em; font-weight: bold; color: #ffd700;">#${userRank}!</span>`;
       }
+      else if (userRank === 2) {
+        rankDisplay.innerHTML = `<span style="font-size: 0.6em;">Player Rank:</span> <br> <span style="font-size: 1.6em; font-weight: bold; color: #c0c0c0;">#${userRank}</span>`;
+      }
+      else if (userRank === 3) {
+        rankDisplay.innerHTML = `<span style="font-size: 0.6em;">Player Rank:</span> <br> <span style="font-size: 1.6em; font-weight: bold; color: #cd7f32;">#${userRank}</span>`;
+      }
+      else if (userRank > 3 && userRank <= 10) {
+        rankDisplay.innerHTML = `<span style="font-size: 0.6em;">Player Rank:</span> <br> <span style="font-size: 1.6em; font-weight: bold; color: #ea8fff;">#${userRank}</span>`;
+      }
+      else if (userRank > 10 && userRank <= 25) {
+        rankDisplay.innerHTML = `<span style="font-size: 0.6em;">Player Rank:</span> <br> <span style="font-size: 1.6em; font-weight: bold; color: #63ffc6;">#${userRank}</span>`;
+      }
+      else {
+        rankDisplay.innerHTML = `<span style="font-size: 0.6em;">Player Rank:</span> <br> <span style="font-size: 1.6em; font-weight: bold; color: #ffffff;">Unranked</span>`;
+      }
+
       const userData = userDocSnap.data();
+      document.querySelector(".avatarandinfo").style.backgroundImage = `url(${userData.banner || ""})`;
+      document.querySelector(".avatarandinfo").style.backgroundSize = "cover";
+      document.querySelector(".avatarandinfo").style.backgroundPosition = "center";
+      document.querySelector(".avatarandinfo").style.backgroundRepeat = "no-repeat";
+
       const timeCreated = userData.timeCreated;
       let timeCreatedFormatted = "";
       if (typeof timeCreated === "number" || typeof timeCreated === "string") {

@@ -3,21 +3,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Change profile settings...</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./styles/home.css" />
     <link rel="stylesheet" href="./styles/navbar.css" />
     <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
   </head>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
-      $.get("navbar.html", function (data) {
-        $("#navbar").replaceWith(data);
-      });
-      $.get("/footer.html", function (data) {
-        $(".footer").replaceWith(data);
-      });
+    $.get("navbar.html", function (data) {
+      $("#navbar").replaceWith(data);
+    });
+    $.get("/footer.html", function (data) {
+      $(".footer").replaceWith(data);
+    });
   </script>
   <style>
     .dangerzone h2 {
@@ -43,49 +46,104 @@
   <body>
     <div id="navbar"></div>
     <div class="settings" style="margin-top: 80px">
+      <div class="banner-container">
+      <img src="" id="banner-display">
+      </div>
       <h1
         style="
           color: white;
           font-size: 40px;
           text-align: center;
           margin-top: 50px;
+          z-index: 1000;
         "
       >
         Change profile settings
       </h1>
-      More configuration options coming soon!
       <div class="notlabel">
-
         <div class="labelscontainer">
           <div class="input">
-            Avatar link (paste to change):
-
-          <input id="file-upload-link" type="text"/>
-        
-          </div>
-          <div class="input">
-            <span style="margin-bottom: 10px" current-player-name>Current player name: </span>
-            New player name:
-            <input type="text" name="" id="namechange" autocomplete="off"/>
-          </div>
-          <div class="input">
-            <span style="margin-bottom: 10px" current-email>Current email: </span>
-            New email account:
-            <input type="text" name="" id="emailchange" autocomplete="off"> 
-            <input type="button" value="Save changes" save-modified-changes>
-          </div>
-          <div class="input">
-            <span style="margin-top: 20px; margin-bottom: 20px; font-weight:700; font-size:x-large">Change password</span>
-            Old password:
-            <input type="password" name="" id="oldpw" autocomplete="off">
-            <br>New Password:
-            <input type="password" name="" id="newpw" autocomplete="off">
-            <div id="strength" style="width: 250px;">
-              <span style="color: rgba(255,255,255,0.4); font-size: smaller;">Password must have at least one uppercase, lowercase charcter and a number and at least 8 characters. </span>
+            Avatar:
+            <input
+              id="file-upload-link"
+              type="file"
+              accept="image/*"
+              style="display: none"
+            /><button
+              class="custom-file-upload"
+              type="button"
+              onclick="document.getElementById('file-upload-link').click()"
+              style="
+                margin-top: 10px;
+                background-color: #303438;
+                color: #fff;
+                border: 1px solid #1d678a80;
+                border-radius: 4px;
+                padding: 10px;
+                cursor: pointer;
+              "
+            >
+              <i class="fa-solid fa-file-arrow-up"></i>
+              Choose file
+            </button>
+            <div class="banner">
+Banner:<br>
+<input type="file" name="" id="banner" autocomplete="off" accept="image/*" style="display: none" />
+<button class="custom-file-upload" type="button" onclick="document.getElementById('banner').click()" style="margin-top: 10px; background-color: #303438; color: #fff; border: 1px solid #1d678a80; border-radius: 4px; padding: 10px; cursor: pointer;">
+  <i class="fa-solid fa-file-arrow-up"></i>
+  Choose file
+</button>
             </div>
-            <br>Repeat New Password:
-            <input type="password" name="" id="confirmnewpw" autocomplete="off">
-            <input type="button" value="Change password" confirm-new-pw>
+          </div>
+          <div class="input">
+            <span style="margin-bottom: 10px" current-player-name
+              >Current player name:
+            </span>
+            New player name:
+            <input
+              type="text"
+              name=""
+              id="namechange"
+              autocomplete="off"
+              maxlength="32"
+            />
+          </div>
+          <div class="input">
+            <span style="margin-bottom: 10px" current-email
+              >Current email:
+            </span>
+            New email account:
+            <input type="text" name="" id="emailchange" autocomplete="off" />
+            <input type="button" value="Save changes" save-modified-changes />
+          </div>
+          <div class="input">
+            <span
+              style="
+                margin-top: 20px;
+                margin-bottom: 20px;
+                font-weight: 700;
+                font-size: x-large;
+              "
+              >Change password</span
+            >
+            Old password:
+            <input type="password" name="" id="oldpw" autocomplete="off" />
+            <br />New Password:
+            <input type="password" name="" id="newpw" autocomplete="off" />
+            <div id="strength" style="width: 250px">
+              <span style="color: rgba(255, 255, 255, 0.4); font-size: smaller"
+                >Password must have at least one uppercase, lowercase charcter
+                and a number and at least 8 characters.
+              </span>
+            </div>
+            <br />Repeat New Password:
+            <input
+              type="password"
+              name=""
+              id="confirmnewpw"
+              autocomplete="off"
+            />
+            <input type="button" value="Change password" confirm-new-pw />
           </div>
         </div>
 
@@ -103,26 +161,56 @@
       <div class="dangerzone">
         <h2>!! DANGER ZONE !!</h2>
         <div class="delete-account">
-        <p>
-          <b>Delete account</b>
-          <br>
-          <span id="delete-account-warning">This will delete your account and all of your data. This action is irreversible and you won't be allowed to re-register.</span>
-        </p>
-        <button id="delete-account" style="background-color: #383030; color: #fff; border: 1px solid #8a1d1d80; border-radius: 4px; padding: 10px; cursor: pointer;">Delete account</button>
+          <p>
+            <b>Delete account</b>
+            <br />
+            <span id="delete-account-warning"
+              >This will delete your account and all of your data. This action
+              is irreversible and you won't be allowed to re-register.</span
+            >
+          </p>
+          <button
+            id="delete-account"
+            style="
+              background-color: #383030;
+              color: #fff;
+              border: 1px solid #8a1d1d80;
+              border-radius: 4px;
+              padding: 10px;
+              cursor: pointer;
+            "
+          >
+            Delete account
+          </button>
         </div>
         <div class="scorewipe">
           <p>
             <b>Wipe all scores</b>
-            <br>
-            <span id="wipe-scores-warning">This will delete all of your scores. This action is irreversible.</span>
+            <br />
+            <span id="wipe-scores-warning"
+              >This will delete all of your scores. This action is
+              irreversible.</span
+            >
           </p>
-          <button id="wipe-scores" style="background-color: #383030; color: #fff; border: 1px solid #8a1d1d80; border-radius: 4px; padding: 10px; cursor: pointer;">Wipe all scores</button>
+          <button
+            id="wipe-scores"
+            style="
+              background-color: #383030;
+              color: #fff;
+              border: 1px solid #8a1d1d80;
+              border-radius: 4px;
+              padding: 10px;
+              cursor: pointer;
+            "
+          >
+            Wipe all scores
+          </button>
         </div>
       </div>
     </div>
     <div class="footer"></div>
   </body>
   <script type="module" src="./torture/config.js"></script>
-<script type="module" src="./torture/firebase.js"></script>
-<script type="module" src="./torture/navbar.js"></script>
+  <script type="module" src="./torture/firebase.js"></script>
+  <script type="module" src="./torture/navbar.js"></script>
 </html>
