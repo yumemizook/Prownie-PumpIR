@@ -117,7 +117,12 @@ async function fetchSongs() {
       titleLink.href = `song.html?id=${song.id}`;
       artist.textContent = song.artist || "Unknown Artist";
       series.textContent = song.series || "Unknown Series";
-
+      if (song.banner) {
+        card.querySelector(".songcard").style.backgroundImage = `url(${song.banner})`;
+        card.querySelector(".songcard").style.backgroundSize = "cover";
+        card.querySelector(".songcard").style.backgroundPosition = "center";
+        card.querySelector(".songcard").style.backgroundRepeat = "no-repeat";
+      }
       searchContainer.appendChild(card);
     });
   } catch (err) {
@@ -183,7 +188,6 @@ async function fetchUsers() {
       titleLink.textContent = username;
       // Link to user.html?name=... for consistency
       titleLink.href = `user.html?name=${encodeURIComponent(username)}`;
-
       const pfp = card.querySelector("[data-pfp]");
       pfp.src =
         user.profilePicture &&
@@ -191,7 +195,13 @@ async function fetchUsers() {
         user.profilePicture.trim() !== ""
           ? user.profilePicture
           : "img/default-avatar.png";
-
+      const banner = user.banner;
+      if (banner && typeof banner === "string" && banner.trim() !== "") {
+        card.querySelector(".songcard").style.backgroundImage = `url(${banner})`;
+        card.querySelector(".songcard").style.backgroundSize = "cover";
+        card.querySelector(".songcard").style.backgroundPosition = "center";
+        card.querySelector(".songcard").style.backgroundRepeat = "no-repeat";
+      }
       const pumpbillDiv = card.querySelector("[data-artist]");
       // Show "Pumpbility: <value>" if available, otherwise 0
       let pumpbilityValue = "0";

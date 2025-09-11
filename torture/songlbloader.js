@@ -30,9 +30,10 @@ const colorTable = [
     { clearType: "Rough Game", color: "#844400" },
   ];
   
-const nameElem = document.querySelector(".songinfo h1");
-// const artistElem = document.querySelector(".songinfo h4");
-// const seriesElem = document.querySelector(".songinfo h5");
+const nameElem = document.querySelector("[data-name]");
+const artistElem = document.querySelector("[data-artist]");
+const seriesElem = document.querySelector("[data-series]");
+const bannerElem = document.querySelector(".songinfo");
 
 document.addEventListener("DOMContentLoaded", async () => {
     try {
@@ -49,8 +50,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (songDoc.exists()) {
             const songData = songDoc.data();
             if (nameElem) nameElem.textContent = songData.name || id;
-            // if (artistElem) artistElem.textContent = songData.artist || "";
-            // if (seriesElem) artistElem.textContent = songData.series || "";
+            if (artistElem) artistElem.textContent = songData.artist || "";
+            if (seriesElem) seriesElem.textContent = songData.series || "";
+            if (bannerElem) {
+                bannerElem.style.backgroundImage = `url(${songData.banner})`;
+                bannerElem.style.backgroundSize = "cover";
+                bannerElem.style.backgroundPosition = "center";
+                bannerElem.style.backgroundRepeat = "no-repeat";
+            }
         }
 
         // Load scores
