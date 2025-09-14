@@ -68,9 +68,9 @@
             src="./img/default-avatar.png"
             alt=""
             id="image-display"
-            style="max-width: 250px; max-height: 250px"
+            style="max-width: 150px; max-height: 150px; margin-left:20%;"
           />
-          <div class="input">
+          <div class="input" style="position: absolute; right: 20%;">
             Avatar:
             <input
               id="file-upload-link"
@@ -126,6 +126,15 @@
         </div>
         <div class="labelscontainer">
           <div class="input">
+                        <span
+              style="
+                margin-top: 20px;
+                margin-bottom: 20px;
+                font-weight: 700;
+                font-size: x-large;
+              "
+              >Change user data</span
+            >
             <span style="margin-bottom: 10px" current-player-name
               >Current player name:
             </span>
@@ -137,16 +146,14 @@
               autocomplete="off"
               maxlength="32"
             />
-          </div>
-          <div class="input">
-            <span style="margin-bottom: 10px" current-email
+                        <span style="margin-bottom: 10px" current-email
               >Current email:
             </span>
             New email account:
             <input type="text" name="" id="emailchange" autocomplete="off" />
             <input type="button" value="Save changes" save-modified-changes />
           </div>
-          <div class="input">
+          <div class="input" style="justify-content: flex-end;position: absolute; right: 5px; margin-right: 20px;">
             <span
               style="
                 margin-top: 20px;

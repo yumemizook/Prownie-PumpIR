@@ -230,8 +230,10 @@ iframe {
 }
 
 .avatarpreview {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .avatarpreview img {
@@ -248,11 +250,26 @@ iframe {
 .input input {
   max-width: 200px;
 }
+
+.labelscontainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 90%;
+  margin-top: 20px;
+}
 .notlabel {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   width: 90%;
+}
+.dangerzone{
+  margin-top: 150px;
+  background-color: #450f0f80;
+  border-color: #1d678a80;
+  border-radius: 10px;
+  padding: 3px 10px 10px 10px;
 }
 input[type="file"] {
   display: none;
@@ -403,7 +420,10 @@ textarea {
     margin-bottom: 10px;
   }
 }
-
+.songinfos {
+  display: flex;
+  flex-direction: row;
+}
 .songinfo::before {
   content: "";
   position: absolute;
