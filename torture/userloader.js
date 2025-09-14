@@ -2,6 +2,14 @@ import {
   db,
   collection,
   getDocs,
+  getAuth,
+  updateDoc,
+  doc,
+  getDoc,
+  arrayUnion,
+  arrayRemove,
+  onAuthStateChanged,
+  setDoc,
 } from "./firebase.js";
 
 const pumpbilityColors = [
@@ -39,8 +47,112 @@ const pumpbility = document.querySelector("#pbility");
 const role = document.querySelector(".role");
 const timecreated = document.querySelector(".timecreated");
 const reportButton = document.querySelector("#report-user");
+let rivalToggle = document.querySelector("#add-rival");
+const rivalscontainer = document.querySelector(".rival-list");
 
-  
+const auth = getAuth();
+onAuthStateChanged(auth, async (user) => {
+  // Always hide the rival button by default
+  if (rivalToggle) rivalToggle.style.display = "none";
+
+  if (!user) return;
+
+  // Get the username from the URL, not from the logged-in user
+  const playerNameParam = new URLSearchParams(window.location.search).get("name");
+  if (!playerNameParam) return;
+
+  // Find the user being viewed
+  const usersRef = collection(db, "users");
+  let viewedUser = null;
+  let viewedUserDocId = null;
+  const querySnapshot = await getDocs(usersRef);
+  for (const docSnap of querySnapshot.docs) {
+    const data = docSnap.data();
+    if (
+      typeof data.username === "string" &&
+      typeof playerNameParam === "string" &&
+      data.username.toLowerCase() === playerNameParam.toLowerCase()
+    ) {
+      viewedUser = data;
+      viewedUserDocId = docSnap.id;
+      break;
+    }
+  }
+
+  // If not found or viewing own profile, do not show rival button
+  if (!viewedUser || viewedUser.uid === user.uid) {
+    return;
+  }
+
+  // Check if the viewed user is already a rival
+  const rivalDocRef = doc(db, "users", user.uid);
+  let isRival = false;
+  try {
+  const rivalData = (await getDoc(rivalDocRef)).data()
+  const rivalList = rivalData.rivals || [];
+    isRival = rivalList.length > 0 && rivalList.some(rival => rival.user === viewedUser.username)
+     ? true : false;
+  } catch (e) {
+    isRival = false;
+  }
+
+  // Remove all previous event listeners (by replacing the node)
+  if (rivalToggle) {
+    const rivalToggleClone = rivalToggle.cloneNode(true);
+    rivalToggle.parentNode.replaceChild(rivalToggleClone, rivalToggle);
+    rivalToggle = rivalToggleClone;
+  }
+
+  function updateRivalButtonState() {
+    if (!rivalToggle) return;
+    if (isRival) {
+      rivalToggle.innerHTML = "Remove Rival";
+    } else {
+      rivalToggle.innerHTML = "Add Rival";
+    }
+    rivalToggle.style.display = "flex";
+  }
+
+  updateRivalButtonState();
+
+  if (rivalToggle) {
+    rivalToggle.addEventListener("click", async (e) => {
+      e.preventDefault();
+      if (!isRival) {
+        // Add rival
+        try {
+          const rivalObj = {
+            user: viewedUser.username,
+            pumpbility: viewedUser.pumpbility || 0
+          };
+          await updateDoc(doc(db, "users", user.uid), {
+            rivals: arrayUnion(rivalObj)
+          })
+          isRival = true;
+          updateRivalButtonState();
+        } catch (err) {
+          alert("Error adding rival: " + err);
+          console.error(err);
+        }
+      } else {
+        // Remove rival
+        try {
+          const rivalObj = {
+            user: viewedUser.username,
+            pumpbility: viewedUser.pumpbility || 0
+          };
+          await updateDoc(doc(db, "users", user.uid), {
+            rivals: arrayRemove(rivalObj)
+          });
+          isRival = false;
+          updateRivalButtonState();
+        } catch (err) {
+          alert("Error removing rival: " + err);
+        }
+      }
+    });
+  }
+});
 document.addEventListener("DOMContentLoaded", async () => {
   const playerNameParam = new URLSearchParams(window.location.search).get(
     "name"
@@ -99,7 +211,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                u.excludedfromleaderboards !== "true" &&
                u.role !== "banned"
         );
-        console.log(eligibleUsers);
         const userRank = eligibleUsers.findIndex(u => u.uid === foundUserDocId) + 1;
         const rankDisplay = document.querySelector(".rank");
         if (userRank === 1) {
@@ -384,6 +495,12 @@ if (foundUser.timeBanned && (Date.now() - foundUser.timeBanned < 1000 * 60 * 60 
           <th style="width: 20%;">Time</th>
         </tr>
         ${renderRows(recentPlays)}
+      `;
+    }
+    // Render Rivals
+    if (rivalscontainer) {
+      rivalscontainer.innerHTML = `
+        <div class="rival-list"></div>
       `;
     }
   } catch (e) {

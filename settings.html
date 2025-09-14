@@ -47,7 +47,7 @@
     <div id="navbar"></div>
     <div class="settings" style="margin-top: 80px">
       <div class="banner-container">
-      <img src="" id="banner-display">
+        <img src="" id="banner-display" />
       </div>
       <h1
         style="
@@ -61,7 +61,15 @@
         Change profile settings
       </h1>
       <div class="notlabel">
-        <div class="labelscontainer">
+        <div class="avatarpreview">
+          <!-- what do you know, im having a headache from this -->
+
+          <img
+            src="./img/default-avatar.png"
+            alt=""
+            id="image-display"
+            style="max-width: 250px; max-height: 250px"
+          />
           <div class="input">
             Avatar:
             <input
@@ -87,14 +95,36 @@
               Choose file
             </button>
             <div class="banner">
-Banner:<br>
-<input type="file" name="" id="banner" autocomplete="off" accept="image/*" style="display: none" />
-<button class="custom-file-upload" type="button" onclick="document.getElementById('banner').click()" style="margin-top: 10px; background-color: #303438; color: #fff; border: 1px solid #1d678a80; border-radius: 4px; padding: 10px; cursor: pointer;">
-  <i class="fa-solid fa-file-arrow-up"></i>
-  Choose file
-</button>
+              Banner:<br />
+              <input
+                type="file"
+                name=""
+                id="banner"
+                autocomplete="off"
+                accept="image/*"
+                style="display: none"
+              />
+              <button
+                class="custom-file-upload"
+                type="button"
+                onclick="document.getElementById('banner').click()"
+                style="
+                  margin-top: 10px;
+                  background-color: #303438;
+                  color: #fff;
+                  border: 1px solid #1d678a80;
+                  border-radius: 4px;
+                  padding: 10px;
+                  cursor: pointer;
+                "
+              >
+                <i class="fa-solid fa-file-arrow-up"></i>
+                Choose file
+              </button>
             </div>
           </div>
+        </div>
+        <div class="labelscontainer">
           <div class="input">
             <span style="margin-bottom: 10px" current-player-name
               >Current player name:
@@ -145,17 +175,6 @@ Banner:<br>
             />
             <input type="button" value="Change password" confirm-new-pw />
           </div>
-        </div>
-
-        <div class="avatarpreview">
-          <!-- what do you know, im having a headache from this -->
-
-          <img
-            src="./img/default-avatar.png"
-            alt=""
-            id="image-display"
-            style="max-width: 150px; max-height: 150px"
-          />
         </div>
       </div>
       <div class="dangerzone">

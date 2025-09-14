@@ -122,7 +122,7 @@ body {
 .footer-item a:hover {
   background-color: rgb(150, 223, 255);
 }
-.avatarandinfo{
+.avatarandinfo {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -132,10 +132,10 @@ body {
   margin-top: 80px;
   align-items: center;
 }
-.rank{
+.rank {
   text-align: center;
   margin-right: 10px;
- font-size: xx-large;
+  font-size: xx-large;
 }
 .profile {
   display: flex;
@@ -154,10 +154,10 @@ body {
 }
 
 .plays {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 15px;
-width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  width: 100%;
 }
 .play-table {
   margin-top: 50px;
@@ -231,8 +231,7 @@ iframe {
 
 .avatarpreview {
   display: flex;
-  justify-content: space-between;
-
+  flex-direction: row;
 }
 
 .avatarpreview img {
@@ -243,14 +242,15 @@ iframe {
 .input {
   display: flex;
   flex-direction: column;
-  margin:10px;
+  margin: 10px;
 }
 
 .input input {
-max-width: 200px;
+  max-width: 200px;
 }
-.notlabel{
+.notlabel {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   width: 90%;
 }
@@ -262,11 +262,11 @@ input[type="file"] {
   display: inline-block;
   padding: 6px 12px;
   cursor: pointer;
-  width:150px;
+  width: 150px;
   font-size: 14px;
 }
 
-input{
+input {
   padding: 10px;
   margin: 5px;
   border: 1px solid #1d678a80;
@@ -275,15 +275,15 @@ input{
   color: #fff;
 }
 
-button{
+button {
   cursor: pointer;
 }
-.scorecontainer{
-  display:grid;
+.scorecontainer {
+  display: grid;
   grid-template-columns: 1fr 1fr;
 }
 
-select{
+select {
   padding: 10px;
   margin: 5px;
   border: 1px solid #1d678a80;
@@ -393,9 +393,9 @@ textarea {
     font-size: 0.75em;
   }
   .plays {
-  display:flex;
-  flex-direction: column;
-  gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
   .changeset {
     display: flex;
@@ -436,3 +436,16 @@ textarea {
   position: relative;
   z-index: 2;
 }
+.rivalcontainer {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  padding: 10px;
+  border: 2px solid white;
+  border-radius: 10px;
+  z-index: -1;
+}
+

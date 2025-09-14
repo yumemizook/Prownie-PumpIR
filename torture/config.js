@@ -50,8 +50,8 @@ async function fetchData() {
         currentName.innerHTML = `Current player name: ${user.displayName || userData.username || ""}`;    
         currentEmail.innerHTML = `Current email: ${user.email || userData.email || ""}`;
         currentAvatar.src = user.photoURL || userData.profilePicture || "img/default-avatar.png";
+        if (!userData.banner) {currentBanner.style.display = "none";}
         currentBanner.src = userData.banner || "";
-        console.log(userData.banner);
     }
   });
 }

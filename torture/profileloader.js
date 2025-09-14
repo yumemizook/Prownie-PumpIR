@@ -23,6 +23,7 @@ const timecreated = document.querySelector(".timecreated");
 const stats = document.querySelector(".stats");
 const statsbutton = document.querySelector("#statistics");
 const addtoLB = document.querySelector(".addtoLB");
+const rivalscontainer = document.querySelector(".rival-list");
 
 const pumpbilityColors = [
   { pumpbility: 0, color: "rgb(183, 250, 255)" },
@@ -310,14 +311,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // Set avatar and name
     playerAvatar.src = user.photoURL || "img/default-avatar.png";
 
-
-
     try {
       const userDocRef = doc(db, "users", user.uid);
       const userDocSnap = await getDoc(userDocRef);
       const lastUsernames = userDocSnap.data().lastUsernames;
       if (lastUsernames) {
-        playerName.innerHTML = user.displayName + `<span style='font-size: 0.4em; color: #aaa;'> Formerly known as: ${lastUsernames.join(", ")}</span>`;
+        playerName.innerHTML =
+          user.displayName +
+          `<span style='font-size: 0.4em; color: #aaa;'> Formerly known as: ${lastUsernames.join(
+            ", "
+          )}</span>`;
       } else {
         playerName.textContent = user.displayName || "undefined";
       }
@@ -339,48 +342,47 @@ document.addEventListener("DOMContentLoaded", () => {
       const usersRef = collection(db, "users");
       const usersSnapshot = await getDocs(usersRef);
       const usersArray = [];
-      usersSnapshot.forEach(docSnap => {
+      usersSnapshot.forEach((docSnap) => {
         const data = docSnap.data();
         usersArray.push({
           uid: docSnap.id,
           pumpbility: typeof data.pumpbility === "number" ? data.pumpbility : 0,
           excludedfromleaderboards: data.excludedfromleaderboards,
-          role: data.role
+          role: data.role,
         });
       });
       usersArray.sort((a, b) => b.pumpbility - a.pumpbility);
       const eligibleUsers = usersArray.filter(
-        u => u.excludedfromleaderboards !== true &&
-             u.excludedfromleaderboards !== "true" &&
-             u.role !== "banned"
+        (u) =>
+          u.excludedfromleaderboards !== true &&
+          u.excludedfromleaderboards !== "true" &&
+          u.role !== "banned"
       );
-      console.log(eligibleUsers);
-      const userRank = eligibleUsers.findIndex(u => u.uid === user.uid) + 1;
+      const userRank = eligibleUsers.findIndex((u) => u.uid === user.uid) + 1;
       const rankDisplay = document.querySelector(".rank");
       if (userRank === 1) {
         rankDisplay.innerHTML = `<span style="font-size: 0.6em;">Player Rank:</span> <br> <span style="font-size: 1.6em; font-weight: bold; color: #ffd700;">#${userRank}!</span>`;
-      }
-      else if (userRank === 2) {
+      } else if (userRank === 2) {
         rankDisplay.innerHTML = `<span style="font-size: 0.6em;">Player Rank:</span> <br> <span style="font-size: 1.6em; font-weight: bold; color: #c0c0c0;">#${userRank}</span>`;
-      }
-      else if (userRank === 3) {
+      } else if (userRank === 3) {
         rankDisplay.innerHTML = `<span style="font-size: 0.6em;">Player Rank:</span> <br> <span style="font-size: 1.6em; font-weight: bold; color: #cd7f32;">#${userRank}</span>`;
-      }
-      else if (userRank > 3 && userRank <= 10) {
+      } else if (userRank > 3 && userRank <= 10) {
         rankDisplay.innerHTML = `<span style="font-size: 0.6em;">Player Rank:</span> <br> <span style="font-size: 1.6em; font-weight: bold; color: #ea8fff;">#${userRank}</span>`;
-      }
-      else if (userRank > 10 && userRank <= 25) {
+      } else if (userRank > 10 && userRank <= 25) {
         rankDisplay.innerHTML = `<span style="font-size: 0.6em;">Player Rank:</span> <br> <span style="font-size: 1.6em; font-weight: bold; color: #63ffc6;">#${userRank}</span>`;
-      }
-      else {
+      } else {
         rankDisplay.innerHTML = `<span style="font-size: 0.6em;">Player Rank:</span> <br> <span style="font-size: 1.6em; font-weight: bold; color: #ffffff;">Unranked</span>`;
       }
 
       const userData = userDocSnap.data();
-      document.querySelector(".avatarandinfo").style.backgroundImage = `url(${userData.banner || ""})`;
+      document.querySelector(".avatarandinfo").style.backgroundImage = `url(${
+        userData.banner || ""
+      })`;
       document.querySelector(".avatarandinfo").style.backgroundSize = "cover";
-      document.querySelector(".avatarandinfo").style.backgroundPosition = "center";
-      document.querySelector(".avatarandinfo").style.backgroundRepeat = "no-repeat";
+      document.querySelector(".avatarandinfo").style.backgroundPosition =
+        "center";
+      document.querySelector(".avatarandinfo").style.backgroundRepeat =
+        "no-repeat";
 
       const timeCreated = userData.timeCreated;
       let timeCreatedFormatted = "";
@@ -462,7 +464,7 @@ document.addEventListener("DOMContentLoaded", () => {
             (play.score === 1000000 &&
               play.isSuperbOn === true &&
               Number(play.fa) + Number(play.sl) <
-              (Number(existing?.fa) + Number(existing?.sl) || 0))
+                (Number(existing?.fa) + Number(existing?.sl) || 0))
           ) {
             bestPlaysMap.set(key, play);
           }
@@ -494,24 +496,31 @@ document.addEventListener("DOMContentLoaded", () => {
           (play) => play.pending !== true
         );
         const pumpbilityTotal = pumpbilityWithoutPending.reduce(
-          (acc, play) => acc + (typeof play.pumpbility === "number" ? play.pumpbility : 0),
+          (acc, play) =>
+            acc + (typeof play.pumpbility === "number" ? play.pumpbility : 0),
           0
         );
-        if (userData.excludedfromleaderboards === true || userData.excludedfromleaderboards === "true") {
-          pumpbility.innerHTML = `PUMPBILITY: ${(pumpbilityTotal * 0.01).toFixed(0)} <br><span style="font-size: 0.8em; color: #aaa;">Excluded from leaderboards</span>`; // 1% of the pumpbility
+        if (
+          userData.excludedfromleaderboards === true ||
+          userData.excludedfromleaderboards === "true"
+        ) {
+          pumpbility.innerHTML = `PUMPBILITY: ${(
+            pumpbilityTotal * 0.01
+          ).toFixed(
+            0
+          )} <br><span style="font-size: 0.8em; color: #aaa;">Excluded from leaderboards</span>`; // 1% of the pumpbility
           await updateDoc(userDocRef, { pumpbility: pumpbilityTotal * 0.01 });
         } else {
           pumpbility.innerHTML = `PUMPBILITY: ${pumpbilityTotal}`;
           await updateDoc(userDocRef, { pumpbility: pumpbilityTotal });
-        
-        
-        const color = getPumpbilityColor(pumpbilityTotal);
-        if (color.startsWith("linear-gradient")) {
-          pumpbility.style.background = color;
-          pumpbility.style.webkitTextFillColor = "transparent";
-          pumpbility.style.color = "transparent";
-          pumpbility.style.webkitBackgroundClip = "text";
-          pumpbility.style.backgroundClip = "text";
+
+          const color = getPumpbilityColor(pumpbilityTotal);
+          if (color.startsWith("linear-gradient")) {
+            pumpbility.style.background = color;
+            pumpbility.style.webkitTextFillColor = "transparent";
+            pumpbility.style.color = "transparent";
+            pumpbility.style.webkitBackgroundClip = "text";
+            pumpbility.style.backgroundClip = "text";
           } else {
             pumpbility.style.color = color;
           }
@@ -591,9 +600,9 @@ document.addEventListener("DOMContentLoaded", () => {
                   play.isSuperbOn === true || play.isSuperbOn === "true";
                 const isPerfect =
                   Number(play.gr) +
-                  Number(play.gd) +
-                  Number(play.bd) +
-                  Number(play.ms) ===
+                    Number(play.gd) +
+                    Number(play.bd) +
+                    Number(play.ms) ===
                   0;
 
                 if (minusMax === 0 && isSuperb) {
@@ -612,30 +621,43 @@ document.addEventListener("DOMContentLoaded", () => {
                             </tr>`;
               }
               return `<tr style="height: 55px;">
-                            <td><a style="text-decoration: none; color: white;" href="${href}">${play.sn || ""
-                }</a></td>
+                            <td><a style="text-decoration: none; color: white;" href="${href}">${
+                play.sn || ""
+              }</a></td>
                             <td style="text-align: center;">
                                 ${play.lvl || ""}
-                                <br><span class="rate" style="font-size: 0.8em; color: ${play.rate < 1 ? "rgb(98, 255, 93)" : "rgb(255, 82, 82)"};">
-                                    ${Number(play.rate) === 1 ||
-                  play.rate === undefined ||
-                  play.rate === "undefined" ||
-                  play.rate === "" ||
-                  play.rate === null
-                  ? ""
-                  : `(${play.rate}x)`
-                }
+                                <br><span class="rate" style="font-size: 0.8em; color: ${
+                                  play.rate < 1
+                                    ? "rgb(98, 255, 93)"
+                                    : "rgb(255, 82, 82)"
+                                };">
+                                    ${
+                                      Number(play.rate) === 1 ||
+                                      play.rate === undefined ||
+                                      play.rate === "undefined" ||
+                                      play.rate === "" ||
+                                      play.rate === null
+                                        ? ""
+                                        : `(${play.rate}x)`
+                                    }
                                 </span>
                             </td>
                             <td style="text-align: center;">${scoreCell}</td>
-                            <td style="text-align: center;">${play.grade || ""}</td>
-                            <td style="text-align: center;">${play.cleartype || ""}</td>
-                            <td style="text-align: center;">${typeof play.pumpbility === "number" &&
-                  !isNaN(play.pumpbility)
-                  ? play.pumpbility
-                  : ""
-                }</td>
-                            <td style="text-align: center;">${play.timeString || ""}</td>
+                            <td style="text-align: center;">${
+                              play.grade || ""
+                            }</td>
+                            <td style="text-align: center;">${
+                              play.cleartype || ""
+                            }</td>
+                            <td style="text-align: center;">${
+                              typeof play.pumpbility === "number" &&
+                              !isNaN(play.pumpbility)
+                                ? play.pumpbility
+                                : ""
+                            }</td>
+                            <td style="text-align: center;">${
+                              play.timeString || ""
+                            }</td>
                         </tr>`;
             })
             .join("");
@@ -670,6 +692,66 @@ document.addEventListener("DOMContentLoaded", () => {
                         </tr>
                         ${renderRows(recentPlays)}
                     `;
+        }
+
+        // Render rivals
+        if (rivalscontainer) {
+          rivalscontainer.innerHTML = `
+            <div class="rival-list" style="display:grid; grid-template-columns: repeat(3, 1fr)"></div>
+          `;
+          const userData = userDocSnap.data();
+          const rivalListDiv = rivalscontainer.querySelector(".rival-list");
+          const rivals = userData.rivals || [];
+          rivals.forEach((rival) => {
+            let rivalName = rival.user.trim();
+            return rivalName;
+          });
+          if (rivals.length > 0) {
+            // Load profile snippets for each rival
+            for (const rival of rivals) {
+              // Support both string and object format
+              let rivalName = typeof rival === "string" ? rival : rival.user;
+              if (!rivalName || typeof rivalName !== "string") continue;
+              rivalName = rivalName.trim();
+              try {
+                const rivalQuery = query(
+                  collection(db, "users"),
+                  where("username", "==", rivalName.trim())
+                );
+                const rivalSnapshot = await getDocs(rivalQuery);
+                if (rivalSnapshot) {
+                  const rivalDoc = rivalSnapshot.docs[0];
+                  const rivalData = rivalDoc.data();
+                  const rivalPumpbility =
+                    typeof rivalData.pumpbility === "number"
+                      ? rivalData.pumpbility
+                      : 0;
+                  const rivalAvatar =
+                    rivalData.profilePicture || "img/default-avatar.png";
+                  const rivalBanner = rivalData.banner || "";
+                  const rivalProfileLink = `/user.html?name=${encodeURIComponent(
+                    rivalName
+                  )}`;
+                  const rivalElem = document.createElement("div");
+                  rivalElem.className = "rival";
+                  rivalElem.innerHTML = `<div class="rivalcontainer" style="background-image: url('${rivalBanner}')">
+                                        <img src="${rivalAvatar}" alt="${rivalName}'s avatar" onerror="this.src='img/default-avatar.png'" style="width: 50px; height: 50px; border-radius: 10%; object-fit: cover; margin-right: 10px; border: 2px solid white;">
+                    <a href="${rivalProfileLink}" style="text-decoration: none; color: white">
+                      <span class="rival-name" style="font-size:x-large; font-weight:bold">${rivalName}</span></a>
+                      <span class="rival-pumpbility">Pumpbility: ${rivalPumpbility}</span>
+                    </div>
+                  `;
+                  rivalListDiv.appendChild(rivalElem);
+                }
+              } catch (err) {
+                console.error("Error loading rival:", rivalName, err);
+              }
+            }
+          } else {
+            rivalscontainer.innerHTML += `
+              <p style="color: #aaa; text-align: center;">You have no rivals. Add some from other players' profiles!</p>
+            `;
+          }
         }
       });
     } catch (e) {

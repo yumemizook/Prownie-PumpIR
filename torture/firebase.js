@@ -36,6 +36,7 @@ import {
   orderBy,
   arrayUnion,
   limit,
+  arrayRemove,
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -85,6 +86,7 @@ export {
   arrayUnion,
   reauthenticateWithCredential,
   EmailAuthProvider,
+  arrayRemove,
 };
 export default app;
 export { firebaseConfig };
