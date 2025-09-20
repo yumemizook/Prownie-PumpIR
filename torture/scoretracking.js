@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, db, getAuth, getDoc, setDoc } from "./firebase.js";
+import { addDoc, collection, doc, db, getAuth, getDoc, setDoc, query, where, getDocs } from "./firebase.js";
 
 const save = document.getElementById("save");
 const reset = document.getElementById("reset");
@@ -177,6 +177,42 @@ const bad = document.querySelector("#bd");
 const miss = document.querySelector("#ms");
 const maxCombo = document.querySelector("#mc");
 const notes = document.querySelector("#nt");
+
+
+song.addEventListener("input",
+  async () => {
+    let songquery = song.value.toLowerCase().replace(/ /g, "");  // convert to all lowercase, no spaces
+    const songsRef = collection(db, "songs");
+
+    let songDocSnap = await getDoc(doc(db, "songs", songquery));
+    let songData = songDocSnap.exists() ? songDocSnap.data() : null;
+    if (!songData) {
+      const q = query(songsRef, where("name", "==", songquery));
+      const querySnapshot = await getDocs(q);
+      songData = querySnapshot.docs.length > 0 ? querySnapshot.docs[0].data() : null;
+    }
+
+
+    if (!songData) {
+      document.querySelector(".newsong").innerHTML = "⚠️This song is not in the database yet. You can still upload a score, but it will need to be approved by an admin first. Please check for typos if you believe this is an error.";
+      document.querySelector(".bannerdisp").style.display = "none";
+      document.querySelector(".banner").src = "";
+      document.querySelector(".name").innerHTML = song.value || "";
+      document.querySelector(".artist").innerHTML = "";
+      document.querySelector(".series").innerHTML = "";
+      return;
+    }
+    if (songData) {
+      document.querySelector(".newsong").innerHTML = "";
+      document.querySelector(".banner").src = songData.banner || "/img/nobanner.png";
+      document.querySelector(".bannerdisp").style.display = "block";
+      document.querySelector(".name").innerHTML = songData.name || "";
+      document.querySelector(".artist").innerHTML = songData.artist || "Unknown artist";
+      document.querySelector(".series").innerHTML = songData.series || "Unknown series";
+    }
+  }
+);
+
 
 function getGradeFromScore(score) {
   for (let i = 0; i < gradeTable.length; i++) {
