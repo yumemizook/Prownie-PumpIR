@@ -14,6 +14,7 @@ import {
   reauthenticateWithCredential,
   EmailAuthProvider,
   sendEmailVerification,
+  sendPasswordResetEmail,
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 import {
   getStorage,
@@ -88,6 +89,8 @@ export {
   reauthenticateWithCredential,
   EmailAuthProvider,
   arrayRemove,
+  sendEmailVerification,
+  sendPasswordResetEmail,
 };
 export default app;
 export { firebaseConfig };

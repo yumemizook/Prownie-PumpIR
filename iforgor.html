@@ -1,0 +1,63 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Forgot your password? What a shame.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/auth.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
+        <script
+      src="https://kit.fontawesome.com/7263e3a28f.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="inputtext">
+      <h1>Enter email address</h1> <br>
+      <p>We will send the password recovery email to the specified address if it is linked to an account.</p>
+      <form action="#">
+        <div class="field">
+          <input type="text" id="email" required placeholder="Email" />
+        </div>
+        <div class="field">
+          <button type="submit" id="login">Send recovery email</button>
+        </div>
+      </form>
+      <div class="extra">
+        <div class="unregist"><a href="regist.html">Unregistered?</a></div>
+      </div>
+      <div class="error"></div>
+    </div>
+      <script type="module" src="./torture/firebase.js"></script>
+      <script type="module">
+        import { getAuth, sendPasswordResetEmail } from "./torture/firebase.js";
+        const auth = getAuth();
+        document.getElementById("login").addEventListener("click", (e) => {
+          e.preventDefault();
+          const email = document.getElementById("email").value;
+          sendPasswordResetEmail(auth, email)
+            .then(() => {
+              document.querySelector(".error").innerHTML =
+                "Recovery email sent! Check your inbox. And the spam folder, just in case.";
+              document.querySelector(".error").style.color = "green";
+            })
+            .catch((error) => {
+              const errorCode = error.code;
+              if (errorCode === "auth/user-not-found") {
+                document.querySelector(".error").innerHTML =
+                  "No user found with this email.";
+              } else if (errorCode === "auth/invalid-email") {
+                document.querySelector(".error").innerHTML =
+                  "Invalid email address.";
+              } else {
+                document.querySelector(".error").innerHTML =
+                  "Error sending recovery email.";
+              }
+              document.querySelector(".error").style.color = "red";
+            });
+        });
+      </script>
+  </body>
+</html>

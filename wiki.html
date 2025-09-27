@@ -130,6 +130,7 @@
         getDocs,
       } from "./torture/firebase.js";
 
+
       // Dynamically load sidebar links from Firestore
       async function loadSidebarLinks() {
         const sidebarList = document.getElementById("wiki-sidebar-list");
@@ -191,6 +192,13 @@
         const wikiDoc = await getDoc(doc(wikiRef, page));
         const wikiData = wikiDoc.data();
         const contentDiv = document.getElementById("wiki-content");
+        const title = document.querySelector(".title");
+        title.textContent = `${
+          page.charAt(0).toUpperCase() + page.slice(1).replace(/-/g, " ")
+        }`;
+        document.title = `Prownie Wiki - ${
+          page.charAt(0).toUpperCase() + page.slice(1).replace(/-/g, " ")
+        }`;
         if (wikiData && wikiData.content) {
           contentDiv.innerHTML = wikiData.content;
         } else {
