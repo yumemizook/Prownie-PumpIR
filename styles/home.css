@@ -63,7 +63,7 @@ body {
 }
 .banner-container {
   position: absolute;
-  width: 110%;
+  width: 100%;
   height: 35vh;
   overflow: hidden;
   top: 50px;

@@ -46,12 +46,19 @@ async function fetchData() {
         userData = userDocSnap.exists() ? userDocSnap.data() : {};
       } catch (e) {
         userData = {};
-      }   
-        currentName.innerHTML = `Current player name: ${user.displayName || userData.username || ""}`;    
-        currentEmail.innerHTML = `Current email: ${user.email || userData.email || ""}`;
-        currentAvatar.src = user.photoURL || userData.profilePicture || "img/default-avatar.png";
-        if (!userData.banner) {currentBanner.style.display = "none";}
-        currentBanner.src = userData.banner || "";
+      }
+      currentName.innerHTML = `Current player name: ${
+        user.displayName || userData.username || ""
+      }`;
+      currentEmail.innerHTML = `Current email: ${
+        user.email || userData.email || ""
+      }`;
+      currentAvatar.src =
+        user.photoURL || userData.profilePicture || "img/default-avatar.png";
+      if (!userData.banner) {
+        currentBanner.style.display = "none";
+      }
+      currentBanner.src = userData.banner || "";
     }
   });
 }
@@ -82,24 +89,40 @@ async function saveData() {
 
     // only 1 name change per 7 days
     if (
+      user &&
+      typeof user.displayName !== "undefined" &&
       updatedName !== user.displayName &&
       lastNameChange !== timeCreated &&
       nameChangeDue > Date.now()
     ) {
-      alert(
-        `You have to wait until ${formattedNameChangeDue} before changing your name again.`
-      );
+  const alert = document.createElement("div");
+    alert.innerHTML = `You have to wait until ${formattedNameChangeDue} to change your name again.`;
+    alert.style.position = "fixed";
+    alert.style.top = "20px";
+    alert.style.left = "50%";
+    alert.style.transform = "translateX(-50%)";
+    alert.style.background = "#7c201bff";
+    alert.style.color = "#fff";
+    alert.style.padding = "16px 32px";
+    alert.style.borderRadius = "8px";
+    alert.style.zIndex = "9999";
+    document.body.appendChild(alert);
+    setTimeout(() => {
+      if (alert.parentNode) alert.parentNode.removeChild(alert);
+    }, 2000);
       return;
-    } else {
+    } else if (user) {
+      if (docRef && typeof user.displayName !== "undefined") {
+        await updateDoc(docRef, {
+          username: updatedName,
+          lastUsernames:
+            updatedName !== user.displayName
+              ? [...lastUsernames, user.displayName]
+              : lastUsernames,
+        });
+      }
       await updateProfile(user, {
         displayName: updatedName,
-      });
-      await updateDoc(docRef, {
-        username: updatedName,
-        lastUsernames:
-          updatedName !== user.displayName
-            ? [...lastUsernames, user.displayName]
-            : lastUsernames,
       });
     }
     // Update email if changed
@@ -109,7 +132,7 @@ async function saveData() {
     await updateDoc(docRef, {
       lastNameChange: new Date().getTime(),
     });
-const alert = document.createElement("div");
+    const alert = document.createElement("div");
     alert.innerHTML = "Changes saved";
     alert.style.position = "fixed";
     alert.style.top = "20px";
@@ -211,7 +234,6 @@ changeAvatar.addEventListener("change", async (e) => {
     }, 2000);
     console.error("Avatar upload error:", err);
   }
-
 });
 changeBanner.addEventListener("change", async (e) => {
   const file = e.target.files[0];
@@ -274,9 +296,7 @@ changeBanner.addEventListener("change", async (e) => {
     }, 2000);
     console.error("Banner upload error:", err);
   }
-
 });
-
 
 document.addEventListener("DOMContentLoaded", () => {
   const deleteAccountWarning = document.getElementById(

@@ -1,170 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Prownie Wiki</title>
-    <link rel="stylesheet" href="styles/home.css">
-    <link rel="stylesheet" href="styles/navbar.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/home.css" />
+    <link rel="stylesheet" href="styles/navbar.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap"
+      rel="stylesheet"
+    />
     <link rel="shortcut icon" type="image/x-icon" href="./img/brownie.ico" />
     <style>
+      .wikicontainer {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 20px;
+      }
+      .sidebar {
+        background-color: #2d3535;
+        padding: 20px;
+        border-radius: 10px;
+        height: 93vh;
+        position: fixed;
+        top: 10px;
+        z-index: 300;
+        width: 300px;
+      }
+      .footer {
+        z-index: 0;
+      }
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+      }
+      .sidebar ul li {
+        margin-bottom: 10px;
+      }
+      .sidebar ul li a {
+        color: white;
+        text-decoration: none;
+        z-index: 100;
+      }
+      .sidebar ul li a:hover {
+        color: #00e3ff;
+      }
+      .content {
+        margin-left: 350px;
+        padding: 20px;
+        width: 100%;
+      }
+      .hidebtn {
+        text-align: left;
+        margin-bottom: 10px;
+      }
+
+      .hidebtn button {
+        background-color: #00e1ff00;
+        border: none;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .showbtn {
+        position: fixed;
+        top: 120px;
+        left: 30px;
+        z-index: 400;
+        background-color: #00e1ff00;
+        border: none;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      @media (max-width: 700px) {
         .wikicontainer {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 20px;
+          display: block;
         }
         .sidebar {
-            background-color: #2d3535;
-            padding: 20px;
-            border-radius: 10px;
-            height: 80vh;
-            position: fixed;
-            z-index: 1;
-            width: 300px;
-        }
-        .footer {
-            z-index: 0;
-        }
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-        }
-        .sidebar ul li {
-            margin-bottom: 10px;
-        }
-        .sidebar ul li a {
-            color: white;
-            text-decoration: none;
-            z-index: 100;
-        }
-        .sidebar ul li a:hover {
-            color: #00E3FF;
+          position: static;
+          width: 100%;
+          height: auto;
+          margin-bottom: 20px;
         }
         .content {
-            margin-left: 350px;
-            padding: 20px;
-            width: 100%;
+          margin-left: 0;
         }
-        @media (max-width: 900px) {
-            .wikicontainer {
-                display: block;
-            }
-            .sidebar {
-                position: static;
-                width: 100%;
-                height: auto;
-                margin-bottom: 20px;
-            }
-            .content {
-                margin-left: 0;
-            }
-        }
+      }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
-        $(function() {
-            $.get("navbar.html", function (data) {
-                $("#navbar").replaceWith(data);
-            });
-            $.get("/footer.html", function (data) {
-                $(".footer").replaceWith(data);
-            });
+      $(function () {
+        $.get("navbar.html", function (data) {
+          $("#navbar").replaceWith(data);
         });
+      });
     </script>
-</head>
-<body>
+  </head>
+  <body>
     <div id="navbar"></div>
-    <h1 style="text-align: center; margin-top: 100px;">Prownie Wiki</h1>
-    <div class="wikicontainer" style="min-height: 100vh;">
-        <div class="sidebar">
-            <ul id="wiki-sidebar-list">
-                <li><a href="#" data-page="home">&gt; Home</a></li>
-            </ul>
+    <h1 style="text-align: center; margin-top: 100px" class="title">
+      Prownie Wiki
+    </h1>
+    <button class="showbtn">Show Sidebar</button>
+    <div class="wikicontainer" style="min-height: 100vh">
+      <div class="sidebar">
+        <div class="hidebtn">
+          <button class="hidebtn2">Hide</button>
         </div>
-        <div class="content" id="wiki-content"></div>    
+        <ul id="wiki-sidebar-list">
+          <li><a href="#" data-page="home">&gt; Home</a></li>
+        </ul>
+      </div>
+      <div class="content" id="wiki-content"></div>
     </div>
-    <div class="footer"></div>
     <script type="module">
-        import {
-            getFirestore,
-            getAuth,
-            onAuthStateChanged,
-            getDoc,
-            doc,
-            db,
-            collection,
-            getDocs,
-        } from "./torture/firebase.js";
+      import {
+        getFirestore,
+        getAuth,
+        onAuthStateChanged,
+        getDoc,
+        doc,
+        db,
+        collection,
+        getDocs,
+      } from "./torture/firebase.js";
 
-        // Dynamically load sidebar links from Firestore
-        async function loadSidebarLinks() {
-            const sidebarList = document.getElementById("wiki-sidebar-list");
-            sidebarList.innerHTML = `<li><a href="#" data-page="home">&gt; Home</a></li>`;
-            try {
-                const wikiRef = collection(db, "wiki");
-                const snapshot = await getDocs(wikiRef);
-                snapshot.forEach((docSnap) => {
-                    const pageId = docSnap.id;
-                    if (pageId !== "home") {
-                        const li = document.createElement("li");
-                        //split the pageId into words
-                        const words = pageId.split("-");
-                        const pageName = words.join(" ");
-                        const parsedPageName = pageName.charAt(0).toUpperCase() + pageName.slice(1);
-                        li.innerHTML = `<a href="#" data-page="${pageId}">${parsedPageName}</a>`;
-                        sidebarList.appendChild(li);
-                    }
-                });
-            } catch (e) {
-                console.error("Error loading wiki sidebar links:", e);
+      // Dynamically load sidebar links from Firestore
+      async function loadSidebarLinks() {
+        const sidebarList = document.getElementById("wiki-sidebar-list");
+        sidebarList.innerHTML = `<li><a href="#" data-page="home">&gt; Home</a></li>`;
+        try {
+          const wikiRef = collection(db, "wiki");
+          const snapshot = await getDocs(wikiRef);
+          snapshot.forEach((docSnap) => {
+            const pageId = docSnap.id;
+            if (pageId !== "home") {
+              const li = document.createElement("li");
+              //split the pageId into words
+              const words = pageId.split("-");
+              const pageName = words.join(" ");
+              const parsedPageName =
+                pageName.charAt(0).toUpperCase() + pageName.slice(1);
+              li.innerHTML = `<a href="#" data-page="${pageId}">${parsedPageName}</a>`;
+              sidebarList.appendChild(li);
             }
+          });
+        } catch (e) {
+          console.error("Error loading wiki sidebar links:", e);
         }
+      }
+      const hideBtn = document.querySelector(".hidebtn2");
+      const sidebar = document.querySelector(".sidebar");
+      const showBtn = document.querySelector(".showbtn");
 
-        // Load a wiki page and display its content
-        async function loadWikiPage(page) {
-            const wikiRef = collection(db, "wiki");
-            const wikiDoc = await getDoc(doc(wikiRef, page));
-            const wikiData = wikiDoc.data();
-            const contentDiv = document.getElementById("wiki-content");
-            if (wikiData && wikiData.content) {
-                contentDiv.innerHTML = wikiData.content;
-            } else {
-                contentDiv.innerHTML = "<p style='color: #aaa;'>No content found for this page.</p>";
-            }
+      // Initially hide the Show Sidebar button
+      showBtn.style.display = "none";
+
+      hideBtn.addEventListener("click", () => {
+        if (sidebar.style.display === "none") {
+          sidebar.style.display = "block";
+          hideBtn.textContent = "Hide";
+          showBtn.style.display = "none";
+          document.querySelector(".content").style.marginLeft = "350px";
+        } else {
+          sidebar.style.display = "none";
+          hideBtn.textContent = "Show";
+          showBtn.style.display = "block";
+          document.querySelector(".content").style.marginLeft = "10px";
         }
+      });
 
-        // Helper to get query param
-        function getQueryParam(name) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(name);
+      showBtn.addEventListener("click", () => {
+        sidebar.style.display = "block";
+        hideBtn.textContent = "Hide";
+        showBtn.style.display = "none";
+        if (window.innerWidth < 700) {
+          return;
+        } else {
+          document.querySelector(".content").style.marginLeft = "350px";
         }
+      });
+      // Load a wiki page and display its content
+      async function loadWikiPage(page) {
+        const wikiRef = collection(db, "wiki");
+        const wikiDoc = await getDoc(doc(wikiRef, page));
+        const wikiData = wikiDoc.data();
+        const contentDiv = document.getElementById("wiki-content");
+        if (wikiData && wikiData.content) {
+          contentDiv.innerHTML = wikiData.content;
+        } else {
+          contentDiv.innerHTML =
+            "<p style='color: #aaa;'>No content found for this page.</p>";
+        }
+      }
 
-        // Event delegation for sidebar links
-        document.addEventListener("click", function(e) {
-            if (e.target.matches('.sidebar a[data-page]')) {
-                e.preventDefault();
-                const page = e.target.getAttribute("data-page");
-                loadWikiPage(page);
-                // Only update URL if not already on that page
-                if (getQueryParam("page") !== page) {
-                    window.history.pushState({page}, "", `./wiki.html?page=${page}`);
-                }
-            }
-        });
+      // Helper to get query param
+      function getQueryParam(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+      }
 
-        // Handle browser navigation (back/forward)
-        window.addEventListener("popstate", function(e) {
-            const page = getQueryParam("page") || "home";
-            loadWikiPage(page);
-        });
+      // Event delegation for sidebar links
+      document.addEventListener("click", function (e) {
+        if (e.target.matches(".sidebar a[data-page]")) {
+          e.preventDefault();
+          const page = e.target.getAttribute("data-page");
+          loadWikiPage(page);
+          // Only update URL if not already on that page
+          if (getQueryParam("page") !== page) {
+            window.history.pushState({ page }, "", `./wiki.html?page=${page}`);
+          }
+        }
+      });
 
-        // Initial load
-        loadSidebarLinks();
-        const initialPage = getQueryParam("page") || "home";
-        loadWikiPage(initialPage);
+      // Handle browser navigation (back/forward)
+      window.addEventListener("popstate", function (e) {
+        const page = getQueryParam("page") || "home";
+        loadWikiPage(page);
+      });
+
+      // Initial load
+      loadSidebarLinks();
+      const initialPage = getQueryParam("page") || "home";
+      loadWikiPage(initialPage);
     </script>
-</body>
+  </body>
 </html>

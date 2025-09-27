@@ -186,7 +186,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  playerName.innerHTML = foundUser.lastUsernames ? foundUser.username + `<span style='font-size: 0.4em; color: #aaa;'> Formerly known as: ${foundUser.lastUsernames.join(", ")}</span>` : foundUser.username;
+  playerName.innerHTML = foundUser.lastUsernames.length > 0 ? foundUser.username + `<span style='font-size: 0.4em; color: #aaa;'> Formerly known as: ${foundUser.lastUsernames.join(", ")}</span>` : foundUser.username;
   playerAvatar.src = foundUser.profilePicture;
   pumpbility.innerHTML = `PUMBILITY: ${foundUser.pumpbility}`;
   if (!formatDistanceToNow) {
