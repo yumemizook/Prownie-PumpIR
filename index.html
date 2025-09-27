@@ -117,7 +117,11 @@
             lastNameChange: new Date().getTime(),
           });
         }
-        document.querySelector(".welcome").innerHTML = "Welcome back, " + userDoc.data().username + "!";
+        if (user.emailVerified === false) {
+          document.querySelector(".welcome").innerHTML = "Welcome, " + (userDoc.data().username || "User") + "! <br> <span style='color:red'> Please verify your email ASAP. </span>";
+        } else {
+          document.querySelector(".welcome").innerHTML = "Welcome back, " + userDoc.data().username + "!";
+        }
       } catch (firestoreReadError) {
         console.error("Failed to read from Firestore:", firestoreReadError);
       }
