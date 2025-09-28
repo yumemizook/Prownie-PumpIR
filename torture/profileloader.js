@@ -315,7 +315,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const userDocRef = doc(db, "users", user.uid);
       const userDocSnap = await getDoc(userDocRef);
       const lastUsernames = userDocSnap.data().lastUsernames;
-      if (lastUsernames.length > 0) {
+      if (lastUsernames && lastUsernames.length > 0) {
         playerName.innerHTML =
           user.displayName +
           `<span style='font-size: 0.4em; color: #aaa;'> Formerly known as: ${lastUsernames.join(
@@ -615,11 +615,11 @@ document.addEventListener("DOMContentLoaded", () => {
               } else {
                 scoreCell = play.score || "";
               }
-              if (play.timestamp < Date.now() - 1000 * 60 * 60 * 24 * 30) {
-                return `<tr>
-                                <td colspan="7" style="text-align:center; color:#aaa;">No recent plays</td>
-                            </tr>`;
-              }
+              // if (play.timestamp < Date.now() - 1000 * 60 * 60 * 24 * 30) {
+              //   return `<tr>
+              //                   <td colspan="7" style="text-align:center; color:#aaa;">No recent plays</td>
+              //               </tr>`;
+              // }
               return `<tr style="height: 55px;">
                             <td><a style="text-decoration: none; color: white;" href="${href}">${
                 play.sn || ""
