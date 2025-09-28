@@ -197,18 +197,10 @@ const auth = getAuth();
       });
 
       async function validatePasswords() {
-        var username = document.getElementById("username").value.trim();
-        var email = document.getElementById("email").value.trim();
         var password = document.getElementById("pw").value;
         var confirmPassword = document.getElementById("cpw").value;
-        var profilePicture = "/img/default-avatar.png"; // placeholder pfp
 
         // Validation checks
-        if (username.length < 6) {
-          alert("Username is too short! Lengthen it to at least 6 characters.");
-          return;
-        }
-
         if (password.length < 8) {
           alert(
             "Password is too short to be secure! Lengthen it to at least 8 characters."
@@ -228,11 +220,6 @@ const auth = getAuth();
 
         if (!password.match(numbers)) {
           alert("Password must contain at least one number!");
-          return;
-        }
-
-        if (!email.includes("@")) {
-          alert("Email is invalid!");
           return;
         }
 
