@@ -615,7 +615,7 @@ document.addEventListener("DOMContentLoaded", () => {
               } else {
                 scoreCell = play.score || "";
               }
-              // if (play.timestamp < Date.now() - 1000 * 60 * 60 * 24 * 30) {
+              // if (play.timestamp < Date.now() - 1000 * 60 * 60 * 24 * 365) {
               //   return `<tr>
               //                   <td colspan="7" style="text-align:center; color:#aaa;">No recent plays</td>
               //               </tr>`;
@@ -722,6 +722,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (rivalSnapshot) {
                   const rivalDoc = rivalSnapshot.docs[0];
                   const rivalData = rivalDoc.data();
+                  if (rivalData.role === "banned") {
+                    // Skip banned users
+                    continue;
+                  }
                   const rivalPumpbility =
                     typeof rivalData.pumpbility === "number"
                       ? rivalData.pumpbility
