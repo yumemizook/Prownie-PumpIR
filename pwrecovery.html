@@ -257,6 +257,10 @@ const auth = getAuth();
           document.querySelector(".error").style.color = "red";
         }
         }
+          document.getElementById("login").addEventListener("click", function (e) {
+            e.preventDefault();
+            validatePasswords();
+          });
     </script>
     <script type="module" src="./torture/firebase.js"></script>
   </body>
