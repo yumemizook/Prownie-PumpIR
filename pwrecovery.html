@@ -237,17 +237,18 @@ const auth = getAuth();
               window.location.href = "login.html"; // Redirect to login page after 3 seconds
             }, 3000);
           document.querySelector(".error").style.color = "green";
-        } catch (error) {
-          console.error("Error updating password:", error);
-          document.querySelector(".error").innerHTML =
-            "Error updating password. Please try again.";
-          document.querySelector(".error").style.color = "red";
+          } catch (error) {
+            console.error("Error updating password:", error);
+            document.querySelector(".error").innerHTML =
+              "Error updating password. Please try again.";
+            document.querySelector(".error").style.color = "red";
+          }
         }
-        }
-          document.getElementById("login").addEventListener("click", function (e) {
-            e.preventDefault();
-            validatePasswords();
-          });
+  
+        document.getElementById("login").addEventListener("click", function (e) {
+          e.preventDefault();
+          validatePasswords();
+        });
     </script>
     <script type="module" src="./torture/firebase.js"></script>
   </body>
